@@ -1,14 +1,20 @@
 package com.reubenjohn.studytimer;
 
-import com.reubenjohn.studytimer.util.SystemUiHider;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.reubenjohn.studytimer.util.SystemUiHider;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -16,34 +22,56 @@ import android.view.View;
  * 
  * @see SystemUiHider
  */
-public class Home extends Activity {
-	/**
-	 * Whether or not the system UI should be auto-hidden after
-	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-	 */
-	private static final boolean AUTO_HIDE = true;
+public class Home extends Activity implements OnClickListener {
 
-	/**
-	 * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-	 * user interaction before hiding the system UI.
-	 */
-	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+	private class Preferences {
 
-	/**
-	 * If set, will toggle the system UI visibility upon interaction. Otherwise,
-	 * will show the system UI visibility upon interaction.
-	 */
-	private static final boolean TOGGLE_ON_CLICK = true;
+		public static final boolean AUTO_HIDE = true;
 
-	/**
-	 * The flags to pass to {@link SystemUiHider#getInstance}.
-	 */
-	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+		/**
+		 * If {@link #Preferences.AUTO_HIDE} is set, the number of milliseconds to wait
+		 * after user interaction before hiding the system UI.
+		 */
+		public static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+
+		/**
+		 * The flags to pass to {@link SystemUiHider#getInstance}.
+		 */
+		public static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+	}
 
 	/**
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
 	private SystemUiHider mSystemUiHider;
+	TimerView elapse;
+	TextView tv_elapse, display;
+	Button toggle, lap;
+	View controlsView, contentView;
+	StudyTimer T;
+
+	/**
+	 * Touch listener to use for in-layout UI controls to delay hiding the
+	 * system UI. This is to prevent the jarring behavior of controls going away
+	 * while interacting with activity UI.
+	 */
+	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+		@Override
+		public boolean onTouch(View view, MotionEvent motionEvent) {
+			if (Preferences.AUTO_HIDE) {
+				delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
+			}
+			return false;
+		}
+	};
+
+	Handler mHideHandler = new Handler();
+	Runnable mHideRunnable = new Runnable() {
+		@Override
+		public void run() {
+			mSystemUiHider.hide();
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +79,75 @@ public class Home extends Activity {
 
 		setContentView(R.layout.home);
 
-		final View controlsView = findViewById(R.id.fullscreen_content_controls);
-		final View contentView = findViewById(R.id.fullscreen_content);
+		bridgeXML();
+		setListeners();
+		initializeFeilds();
+		setPositions();
+		T=new StudyTimer(Home.this);
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+
+		// Trigger the initial hide() shortly after the activity has been
+		// created, to briefly hint to the user that UI controls
+		// are available.
+		delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
+	}
+
+	/**
+	 * Schedules a call to hide() in [delay] milliseconds, canceling any
+	 * previously scheduled calls.
+	 */
+	private void delayedHide(int delayMillis) {
+		mHideHandler.removeCallbacks(mHideRunnable);
+		mHideHandler.postDelayed(mHideRunnable, delayMillis);
+	}
+
+	protected void bridgeXML() {
+		tv_elapse = (TextView) findViewById(R.id.tv_elapse);
+		display = (TextView) findViewById(R.id.tv_display);
+		controlsView = findViewById(R.id.fullscreen_content_controls);
+		contentView = findViewById(R.id.fullscreen_content);
+		toggle = (Button) findViewById(R.id.b_toggle);
+		lap = (Button) findViewById(R.id.b_lap);
+	}
+
+	protected void setPositions() {
+	}
+
+	protected void setListeners() {
+		toggle.setOnClickListener(this);
+		lap.setOnClickListener(this);
+		findViewById(R.id.b_toggle).setOnTouchListener(mDelayHideTouchListener);
+		contentView.setOnClickListener(this);
+	}
+
+	protected void initializeFeilds() {
+		setupSystemUIHider();
+		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+				LinearLayout.LayoutParams.WRAP_CONTENT,
+				LinearLayout.LayoutParams.WRAP_CONTENT,1.f);
+		params.gravity=Gravity.CENTER;
+		params.weight=1.f;
+		
+		elapse = new TimerView(this,T.elapse);
+		elapse.setText("elapse");
+		elapse.setLayoutParams(params);
+		elapse.setTextSize(50);
+		elapse.setTextColor(Color.GREEN);
+
+		LinearLayout fullscreenContent = (LinearLayout) findViewById(R.id.fullscreen_content);
+		fullscreenContent.addView(elapse);
+	}
+
+	protected void setupSystemUIHider() {
 
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,
-				HIDER_FLAGS);
+				Preferences.HIDER_FLAGS);
 		mSystemUiHider.setup();
 		mSystemUiHider
 				.setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
@@ -92,71 +182,29 @@ public class Home extends Activity {
 									: View.GONE);
 						}
 
-						if (visible && AUTO_HIDE) {
+						if (visible && Preferences.AUTO_HIDE) {
 							// Schedule a hide().
-							delayedHide(AUTO_HIDE_DELAY_MILLIS);
+							delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
 						}
 					}
 				});
 
-		// Set up the user interaction to manually show or hide the system UI.
-		contentView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				if (TOGGLE_ON_CLICK) {
-					mSystemUiHider.toggle();
-				} else {
-					mSystemUiHider.show();
-				}
-			}
-		});
-
-		// Upon interacting with UI controls, delay any scheduled hide()
-		// operations to prevent the jarring behavior of controls going away
-		// while interacting with the UI.
-		findViewById(R.id.dummy_button).setOnTouchListener(
-				mDelayHideTouchListener);
 	}
 
 	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.b_toggle:
+			elapse.timer.toggle();
+			break;
+		case R.id.b_lap:
+			elapse.timer.stop();
+			tv_elapse.setText("Stopped");
+			break;
+		case R.id.fullscreen_content:
+			mSystemUiHider.show();
+			break;
 
-		// Trigger the initial hide() shortly after the activity has been
-		// created, to briefly hint to the user that UI controls
-		// are available.
-		delayedHide(100);
-	}
-
-	/**
-	 * Touch listener to use for in-layout UI controls to delay hiding the
-	 * system UI. This is to prevent the jarring behavior of controls going away
-	 * while interacting with activity UI.
-	 */
-	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-		@Override
-		public boolean onTouch(View view, MotionEvent motionEvent) {
-			if (AUTO_HIDE) {
-				delayedHide(AUTO_HIDE_DELAY_MILLIS);
-			}
-			return false;
 		}
-	};
-
-	Handler mHideHandler = new Handler();
-	Runnable mHideRunnable = new Runnable() {
-		@Override
-		public void run() {
-			mSystemUiHider.hide();
-		}
-	};
-
-	/**
-	 * Schedules a call to hide() in [delay] milliseconds, canceling any
-	 * previously scheduled calls.
-	 */
-	private void delayedHide(int delayMillis) {
-		mHideHandler.removeCallbacks(mHideRunnable);
-		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
 }

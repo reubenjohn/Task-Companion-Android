@@ -2,7 +2,9 @@
 <resources>
 
     <string name="app_name">StudyTimer</string>
-    <string name="dummy_button">Dummy Button</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="lap">Lap</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
