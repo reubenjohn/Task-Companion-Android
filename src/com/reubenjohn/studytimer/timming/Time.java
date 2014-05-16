@@ -1,4 +1,4 @@
-package com.reubenjohn.studytimer;
+package com.reubenjohn.studytimer.timming;
 
 public class Time {
 	short hours, minutes, seconds, centiSeconds, milliSeconds;

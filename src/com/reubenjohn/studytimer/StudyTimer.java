@@ -1,18 +1,40 @@
 package com.reubenjohn.studytimer;
 
 import android.content.Context;
+import android.os.Handler;
 
-public class StudyTimer {
+import com.reubenjohn.studytimer.timming.FrameTimer;
+import com.reubenjohn.studytimer.timming.Timer;
 
-	public Timer elapse;
+public class StudyTimer implements Runnable{
 
-	StudyTimer(Context context) {
-		elapse = new Timer();
+	public FrameTimer framer;
+	Timer runtime;
+	Handler thisHandler;
+	
+	boolean running=false;
 
+	StudyTimer(Context context,Handler thisHandler) {
+		framer = new FrameTimer();
+		runtime=new Timer();
+		this.thisHandler=thisHandler;
+	}
+
+	public void startTimer() {
+		running=true;
+		runtime.start();
 	}
 
 	protected void reset() {
-		elapse.reset();
+		framer.reset();
+		runtime.start();
+	}
+
+	@Override
+	public void run() {
+			framer.startFrame();
+			framer.endFrame();
+			thisHandler.postDelayed(this, framer.getRemainingTime());
 	}
 
 }

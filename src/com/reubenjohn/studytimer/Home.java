@@ -1,11 +1,13 @@
 package com.reubenjohn.studytimer;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
@@ -49,6 +52,8 @@ public class Home extends Activity implements OnClickListener {
 	Button toggle, lap;
 	View controlsView, contentView;
 	StudyTimer T;
+	Handler tHandler=new Handler();
+	Toast t_elapseStarted,t_elapseStopped;
 
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
@@ -78,22 +83,23 @@ public class Home extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.home);
+		
+		T=new StudyTimer(Home.this,tHandler);
 
 		bridgeXML();
 		setListeners();
 		initializeFeilds();
-		setPositions();
-		T=new StudyTimer(Home.this);
+
 	}
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-
-		// Trigger the initial hide() shortly after the activity has been
-		// created, to briefly hint to the user that UI controls
-		// are available.
 		delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
+		Log.d("StudyTimer", "Home created");
+		tHandler.removeCallbacks(T);
+		tHandler.postDelayed(T, 0);
+		Log.d("StudyTimer", "Handler posted StudyTimer runnable");
 	}
 
 	/**
@@ -114,14 +120,17 @@ public class Home extends Activity implements OnClickListener {
 		lap = (Button) findViewById(R.id.b_lap);
 	}
 
-	protected void setPositions() {
-	}
-
 	protected void setListeners() {
 		toggle.setOnClickListener(this);
 		lap.setOnClickListener(this);
 		findViewById(R.id.b_toggle).setOnTouchListener(mDelayHideTouchListener);
 		contentView.setOnClickListener(this);
+	}
+
+	@SuppressLint("ShowToast")
+	protected void initializeToasts(){
+		t_elapseStarted=Toast.makeText(Home.this, "Elapse started", Toast.LENGTH_SHORT);
+		t_elapseStopped=Toast.makeText(Home.this, "Elapse stopped", Toast.LENGTH_SHORT);
 	}
 
 	protected void initializeFeilds() {
@@ -132,14 +141,17 @@ public class Home extends Activity implements OnClickListener {
 		params.gravity=Gravity.CENTER;
 		params.weight=1.f;
 		
-		elapse = new TimerView(this,T.elapse);
+		elapse = new TimerView(Home.this,T.framer);
 		elapse.setText("elapse");
 		elapse.setLayoutParams(params);
 		elapse.setTextSize(50);
 		elapse.setTextColor(Color.GREEN);
+		T.framer.setFrameTimerListener(elapse);
 
 		LinearLayout fullscreenContent = (LinearLayout) findViewById(R.id.fullscreen_content);
 		fullscreenContent.addView(elapse);
+		
+		initializeToasts();
 	}
 
 	protected void setupSystemUIHider() {
@@ -159,10 +171,6 @@ public class Home extends Activity implements OnClickListener {
 					@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 					public void onVisibilityChange(boolean visible) {
 						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-							// If the ViewPropertyAnimator API is available
-							// (Honeycomb MR2 and later), use it to animate the
-							// in-layout UI controls at the bottom of the
-							// screen.
 							if (mControlsHeight == 0) {
 								mControlsHeight = controlsView.getHeight();
 							}
@@ -175,15 +183,11 @@ public class Home extends Activity implements OnClickListener {
 									.translationY(visible ? 0 : mControlsHeight)
 									.setDuration(mShortAnimTime);
 						} else {
-							// If the ViewPropertyAnimator APIs aren't
-							// available, simply show or hide the in-layout UI
-							// controls.
 							controlsView.setVisibility(visible ? View.VISIBLE
 									: View.GONE);
 						}
 
 						if (visible && Preferences.AUTO_HIDE) {
-							// Schedule a hide().
 							delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
 						}
 					}
@@ -196,9 +200,13 @@ public class Home extends Activity implements OnClickListener {
 		switch (v.getId()) {
 		case R.id.b_toggle:
 			elapse.timer.toggle();
+			if(elapse.timer.isRunning())
+				t_elapseStarted.show();
+			else
+				t_elapseStopped.show();
 			break;
 		case R.id.b_lap:
-			elapse.timer.stop();
+			T.framer.startFrame();
 			tv_elapse.setText("Stopped");
 			break;
 		case R.id.fullscreen_content:

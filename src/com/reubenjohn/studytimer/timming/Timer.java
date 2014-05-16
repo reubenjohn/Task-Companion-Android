@@ -1,4 +1,5 @@
-package com.reubenjohn.studytimer;
+package com.reubenjohn.studytimer.timming;
+
 
 public class Timer {
 	private long Initial = 0, cummulative = 0;
@@ -9,7 +10,7 @@ public class Timer {
 		running = false;
 	}
 
-	Timer() {
+	public Timer() {
 		reset();
 	}
 	Timer(long startWith) {
