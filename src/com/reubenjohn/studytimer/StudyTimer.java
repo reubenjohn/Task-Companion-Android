@@ -1,23 +1,20 @@
 package com.reubenjohn.studytimer;
 
-import android.content.Context;
 import android.os.Handler;
 
-import com.reubenjohn.studytimer.timming.FrameTimer;
 import com.reubenjohn.studytimer.timming.Timer;
+import com.reubenjohn.studytimer.timming.frametimer.FrameTimer;
 
-public class StudyTimer implements Runnable{
+public class StudyTimer {
 
 	public FrameTimer framer;
 	Timer runtime;
-	Handler thisHandler;
 	
 	boolean running=false;
 
-	StudyTimer(Context context,Handler thisHandler) {
-		framer = new FrameTimer();
+	StudyTimer(Handler thisHandler) {
+		framer = new FrameTimer(thisHandler);
 		runtime=new Timer();
-		this.thisHandler=thisHandler;
 	}
 
 	public void startTimer() {
@@ -28,13 +25,6 @@ public class StudyTimer implements Runnable{
 	protected void reset() {
 		framer.reset();
 		runtime.start();
-	}
-
-	@Override
-	public void run() {
-			framer.startFrame();
-			framer.endFrame();
-			thisHandler.postDelayed(this, framer.getRemainingTime());
 	}
 
 }

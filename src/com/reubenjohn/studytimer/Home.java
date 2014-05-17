@@ -1,21 +1,16 @@
 package com.reubenjohn.studytimer;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
@@ -25,7 +20,7 @@ import com.reubenjohn.studytimer.util.SystemUiHider;
  * 
  * @see SystemUiHider
  */
-public class Home extends Activity implements OnClickListener {
+public class Home extends FragmentActivity implements OnClickListener {
 
 	private class Preferences {
 
@@ -47,13 +42,11 @@ public class Home extends Activity implements OnClickListener {
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
 	private SystemUiHider mSystemUiHider;
-	TimerView elapse;
-	TextView tv_elapse, display;
 	Button toggle, lap;
 	View controlsView, contentView;
 	StudyTimer T;
+	TimerElementsFragment timerElements;
 	Handler tHandler=new Handler();
-	Toast t_elapseStarted,t_elapseStopped;
 
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
@@ -84,7 +77,7 @@ public class Home extends Activity implements OnClickListener {
 
 		setContentView(R.layout.home);
 		
-		T=new StudyTimer(Home.this,tHandler);
+		T=new StudyTimer(tHandler);
 
 		bridgeXML();
 		setListeners();
@@ -97,8 +90,7 @@ public class Home extends Activity implements OnClickListener {
 		super.onPostCreate(savedInstanceState);
 		delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
 		Log.d("StudyTimer", "Home created");
-		tHandler.removeCallbacks(T);
-		tHandler.postDelayed(T, 0);
+		T.framer.start();
 		Log.d("StudyTimer", "Handler posted StudyTimer runnable");
 	}
 
@@ -112,8 +104,6 @@ public class Home extends Activity implements OnClickListener {
 	}
 
 	protected void bridgeXML() {
-		tv_elapse = (TextView) findViewById(R.id.tv_elapse);
-		display = (TextView) findViewById(R.id.tv_display);
 		controlsView = findViewById(R.id.fullscreen_content_controls);
 		contentView = findViewById(R.id.fullscreen_content);
 		toggle = (Button) findViewById(R.id.b_toggle);
@@ -127,14 +117,11 @@ public class Home extends Activity implements OnClickListener {
 		contentView.setOnClickListener(this);
 	}
 
-	@SuppressLint("ShowToast")
-	protected void initializeToasts(){
-		t_elapseStarted=Toast.makeText(Home.this, "Elapse started", Toast.LENGTH_SHORT);
-		t_elapseStopped=Toast.makeText(Home.this, "Elapse stopped", Toast.LENGTH_SHORT);
-	}
-
 	protected void initializeFeilds() {
 		setupSystemUIHider();
+		timerElements=(TimerElementsFragment) getSupportFragmentManager().findFragmentById(R.id.home_timer_elements);
+		T.framer.setFrameTimerListener(timerElements.elapse);
+		/*
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.WRAP_CONTENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT,1.f);
@@ -150,8 +137,7 @@ public class Home extends Activity implements OnClickListener {
 
 		LinearLayout fullscreenContent = (LinearLayout) findViewById(R.id.fullscreen_content);
 		fullscreenContent.addView(elapse);
-		
-		initializeToasts();
+		*/
 	}
 
 	protected void setupSystemUIHider() {
@@ -199,15 +185,16 @@ public class Home extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.b_toggle:
+			timerElements.toggle();
+			/*
 			elapse.timer.toggle();
 			if(elapse.timer.isRunning())
 				t_elapseStarted.show();
 			else
 				t_elapseStopped.show();
+			*/
 			break;
 		case R.id.b_lap:
-			T.framer.startFrame();
-			tv_elapse.setText("Stopped");
 			break;
 		case R.id.fullscreen_content:
 			mSystemUiHider.show();

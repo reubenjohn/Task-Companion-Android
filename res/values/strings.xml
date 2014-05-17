@@ -6,5 +6,7 @@
     <string name="stop">Stop</string>
     <string name="lap">Lap</string>
     <string name="dummy_content">DUMMY CONTENT</string>
+    <string name="l_elapse">Elapsed</string>
+    <string name="intitial_time">00:00.000</string>
 
 </resources>

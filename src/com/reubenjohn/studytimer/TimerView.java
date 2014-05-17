@@ -1,48 +1,33 @@
 package com.reubenjohn.studytimer;
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.util.Log;
+import android.os.Bundle;
 import android.widget.TextView;
 
-import com.reubenjohn.studytimer.timming.FrameTimer;
-import com.reubenjohn.studytimer.timming.FrameTimerListener;
 import com.reubenjohn.studytimer.timming.Timer;
+import com.reubenjohn.studytimer.timming.frametimer.FrameTimerListener;
 
-public class TimerView extends TextView implements FrameTimerListener {
+public class TimerView implements FrameTimerListener {
 
 	public Timer timer;
-	private FrameTimer framer;
+	private TextView text;
 
-	public void commonConstruction(){
-		timer=new Timer();
-	}
-	public TimerView(Context context) {
-		super(context);
-		commonConstruction();
+	public void commonConstruction() {
+		timer = new Timer();
 	}
 
-	public TimerView(Context context, FrameTimer frameTimer) {
-		super(context);
-		framer = frameTimer;
+	public TimerView() {
 		commonConstruction();
 	}
 
 	public void updateText() {
-		setText(timer.getFormattedTime());	
+		if (text != null) {
+			text.setText(timer.getFormattedTime());
+		}
 	}
 
-	
-public void reset() {
+	public void reset() {
 		timer.reset();
 	}
-
-	@Override
-protected void onDraw(Canvas canvas) {
-	super.onDraw(canvas);
-	if(framer==null)
-		setText(timer.getFormattedTime());	
-}
 
 	@Override
 	public void onNewFrame() {
@@ -57,5 +42,13 @@ protected void onDraw(Canvas canvas) {
 	@Override
 	public void onReset() {
 
+	}
+
+	public void setTextView(TextView textView){
+		text=textView;
+	}
+
+	public void saveStateToBundle(Bundle outState){
+		timer.saveStateToBundle(outState);
 	}
 }

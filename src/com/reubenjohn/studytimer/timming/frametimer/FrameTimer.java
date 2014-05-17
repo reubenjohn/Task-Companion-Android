@@ -1,15 +1,25 @@
-package com.reubenjohn.studytimer.timming;
+package com.reubenjohn.studytimer.timming.frametimer;
+
+import android.os.Handler;
+
+import com.reubenjohn.studytimer.timming.Timer;
 
 
-public class FrameTimer {
-	public static int defaultInterval = 20;
+public class FrameTimer implements Runnable{
+	public static int defaultInterval = 200;
 	private long frame = 0;
 	private int interval = defaultInterval;
+	private boolean running=false;
+	
+	private Handler thisHandler;
 
 	private Timer timer;
 	private FrameTimerListener listener;
+	private FrameIntervalListener frameIL;
 
-	public FrameTimer() {
+	public FrameTimer(Handler handler) {
+		running=false;
+		thisHandler=handler;
 		timer = new Timer();
 		listener = new FrameTimerListener() {
 
@@ -25,14 +35,36 @@ public class FrameTimer {
 			public void onEndFrame() {
 			}
 		};
+		frameIL=new FrameIntervalListener() {
+			@Override
+			public void OnFrameReached() {
+			}
+		};
 	}
 
-	public void startFrame() {
+	public void start(){
+		running=true;
+		thisHandler.removeCallbacks(this);
+		thisHandler.postDelayed(this, 0);
+	}
+	public void stop(){
+		running=false;
+		thisHandler.removeCallbacks(this);
+	}
+
+	public void addFrameIntervalListener(FrameIntervalListener listener){
+		frameIL=listener;
+	}
+	
+	protected void startFrame() {
 		timer.start();
 		listener.onNewFrame();
+		if(frame%frameIL.getInterval()==0){
+			frameIL.OnFrameReached();
+		}
 	}
 
-	public void endFrame() {
+	protected void endFrame() {
 		timer.reset();
 		timer.start();
 		frame++;
@@ -40,6 +72,7 @@ public class FrameTimer {
 	}
 
 	public void reset() {
+		stop();
 		timer.reset();
 		frame = 0;
 		listener.onReset();
@@ -98,5 +131,15 @@ public class FrameTimer {
 
 	public String getFormattedTime(String format) {
 		return timer.getFormattedTime(format);
+	}
+
+
+	@Override
+	public void run() {
+		if(running){
+			startFrame();
+			endFrame();
+			thisHandler.postDelayed(this, getRemainingTime());
+		}
 	}
 }

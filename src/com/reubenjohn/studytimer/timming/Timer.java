@@ -1,5 +1,7 @@
 package com.reubenjohn.studytimer.timming;
 
+import android.os.Bundle;
+
 
 public class Timer {
 	private long Initial = 0, cummulative = 0;
@@ -59,4 +61,9 @@ public class Timer {
 		return running;
 	}
 
+	public void saveStateToBundle(Bundle outState){
+		outState.putLong("Initial", Initial);
+		outState.putLong("cummulative", cummulative);
+		outState.putBoolean("running", running);
+	}
 }
