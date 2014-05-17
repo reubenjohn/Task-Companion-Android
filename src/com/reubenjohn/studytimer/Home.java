@@ -5,15 +5,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.reubenjohn.studytimer.timming.frametimer.FrameIntervalListener;
-import com.reubenjohn.studytimer.timming.frametimer.FrameIntervalListenerContainer;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
 /**
@@ -44,7 +43,6 @@ public class Home extends FragmentActivity implements OnClickListener {
 	Button toggle, lap;
 	View controlsView, contentView;
 	StudyTimer T;
-	TimerElementsFragment timerElements;
 	Handler tHandler = new Handler();
 
 	/**
@@ -76,15 +74,6 @@ public class Home extends FragmentActivity implements OnClickListener {
 
 		setContentView(R.layout.home);
 
-		T = new StudyTimer(tHandler);
-		T.framer.setInterval(100);
-		T.framer.addFrameReachListener(new FrameIntervalListener() {
-			@Override
-			public void OnFrameReached() {
-				T.logStatus();
-			}
-		}, 100);
-
 		bridgeXML();
 		setListeners();
 		initializeFeilds();
@@ -94,9 +83,15 @@ public class Home extends FragmentActivity implements OnClickListener {
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
-		delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
 		Log.d("StudyTimer", "Home created");
-		T.startTimer();
+		delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
+	}
+	
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		T.onStop();
 	}
 
 	@Override
@@ -136,9 +131,15 @@ public class Home extends FragmentActivity implements OnClickListener {
 
 	protected void initializeFeilds() {
 		setupSystemUIHider();
-		timerElements = (TimerElementsFragment) getSupportFragmentManager()
-				.findFragmentById(R.id.home_timer_elements);
-		T.framer.addFrameTimerListener(timerElements.elapse);
+		
+		T = new StudyTimer(tHandler,getSupportFragmentManager());
+		T.framer.setInterval(100);
+		T.framer.addFrameReachListener(new FrameIntervalListener() {
+			@Override
+			public void OnFrameReached() {
+				T.logStatus();
+			}
+		}, 100);
 		/*
 		 * LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 		 * LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -201,13 +202,10 @@ public class Home extends FragmentActivity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.b_toggle:
-			timerElements.toggle();
-			/*
-			 * elapse.timer.toggle(); if(elapse.timer.isRunning())
-			 * t_elapseStarted.show(); else t_elapseStopped.show();
-			 */
+			T.toggle();
 			break;
 		case R.id.b_lap:
+			T.lap();
 			break;
 		case R.id.fullscreen_content:
 			mSystemUiHider.show();

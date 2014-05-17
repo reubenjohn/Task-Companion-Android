@@ -8,5 +8,6 @@
     <string name="dummy_content">DUMMY CONTENT</string>
     <string name="l_elapse">Elapsed</string>
     <string name="intitial_time">00:00.000</string>
+    <string name="empty_lap_adapter">No laps</string>
 
 </resources>
