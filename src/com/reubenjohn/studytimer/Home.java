@@ -10,8 +10,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.reubenjohn.studytimer.timming.frametimer.FrameIntervalListener;
+import com.reubenjohn.studytimer.timming.frametimer.FrameIntervalListenerContainer;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
 /**
@@ -38,15 +40,12 @@ public class Home extends FragmentActivity implements OnClickListener {
 		public static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
 	}
 
-	/**
-	 * The instance of the {@link SystemUiHider} for this activity.
-	 */
 	private SystemUiHider mSystemUiHider;
 	Button toggle, lap;
 	View controlsView, contentView;
 	StudyTimer T;
 	TimerElementsFragment timerElements;
-	Handler tHandler=new Handler();
+	Handler tHandler = new Handler();
 
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
@@ -76,8 +75,15 @@ public class Home extends FragmentActivity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.home);
-		
-		T=new StudyTimer(tHandler);
+
+		T = new StudyTimer(tHandler);
+		T.framer.setInterval(100);
+		T.framer.addFrameReachListener(new FrameIntervalListener() {
+			@Override
+			public void OnFrameReached() {
+				T.logStatus();
+			}
+		}, 100);
 
 		bridgeXML();
 		setListeners();
@@ -90,8 +96,19 @@ public class Home extends FragmentActivity implements OnClickListener {
 		super.onPostCreate(savedInstanceState);
 		delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
 		Log.d("StudyTimer", "Home created");
-		T.framer.start();
-		Log.d("StudyTimer", "Handler posted StudyTimer runnable");
+		T.startTimer();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		T.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		T.onPause();
 	}
 
 	/**
@@ -119,25 +136,24 @@ public class Home extends FragmentActivity implements OnClickListener {
 
 	protected void initializeFeilds() {
 		setupSystemUIHider();
-		timerElements=(TimerElementsFragment) getSupportFragmentManager().findFragmentById(R.id.home_timer_elements);
-		T.framer.setFrameTimerListener(timerElements.elapse);
+		timerElements = (TimerElementsFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.home_timer_elements);
+		T.framer.addFrameTimerListener(timerElements.elapse);
 		/*
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-				LinearLayout.LayoutParams.WRAP_CONTENT,
-				LinearLayout.LayoutParams.WRAP_CONTENT,1.f);
-		params.gravity=Gravity.CENTER;
-		params.weight=1.f;
-		
-		elapse = new TimerView(Home.this,T.framer);
-		elapse.setText("elapse");
-		elapse.setLayoutParams(params);
-		elapse.setTextSize(50);
-		elapse.setTextColor(Color.GREEN);
-		T.framer.setFrameTimerListener(elapse);
-
-		LinearLayout fullscreenContent = (LinearLayout) findViewById(R.id.fullscreen_content);
-		fullscreenContent.addView(elapse);
-		*/
+		 * LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+		 * LinearLayout.LayoutParams.WRAP_CONTENT,
+		 * LinearLayout.LayoutParams.WRAP_CONTENT,1.f);
+		 * params.gravity=Gravity.CENTER; params.weight=1.f;
+		 * 
+		 * elapse = new TimerView(Home.this,T.framer); elapse.setText("elapse");
+		 * elapse.setLayoutParams(params); elapse.setTextSize(50);
+		 * elapse.setTextColor(Color.GREEN);
+		 * T.framer.setFrameTimerListener(elapse);
+		 * 
+		 * LinearLayout fullscreenContent = (LinearLayout)
+		 * findViewById(R.id.fullscreen_content);
+		 * fullscreenContent.addView(elapse);
+		 */
 	}
 
 	protected void setupSystemUIHider() {
@@ -187,12 +203,9 @@ public class Home extends FragmentActivity implements OnClickListener {
 		case R.id.b_toggle:
 			timerElements.toggle();
 			/*
-			elapse.timer.toggle();
-			if(elapse.timer.isRunning())
-				t_elapseStarted.show();
-			else
-				t_elapseStopped.show();
-			*/
+			 * elapse.timer.toggle(); if(elapse.timer.isRunning())
+			 * t_elapseStarted.show(); else t_elapseStopped.show();
+			 */
 			break;
 		case R.id.b_lap:
 			break;

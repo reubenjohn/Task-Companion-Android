@@ -4,6 +4,8 @@ import android.os.Bundle;
 
 
 public class Timer {
+	static String defaultFormat="%HH:%MM:%SS.$sss";
+	private String format=defaultFormat;
 	private long Initial = 0, cummulative = 0;
 	boolean running = false;
 
@@ -41,7 +43,18 @@ public class Timer {
 
 	// TODO create method to manually set timer to a certain value (setElapse)
 	// **remember to set Initial to currentTime...**
+	
+	/*
+	 * Change the format of the Formatted String Eg:"%HH:%MM:%SS.$sss" 
+	 */
+	public void setFormat(String format){
+		this.format=format;
+	}
 
+	public static void setDefulatFormat(String format){
+		defaultFormat=format;
+	}
+	
 	public long getElapse() {
 		if (running)
 			return cummulative + (System.currentTimeMillis() - Initial);
@@ -50,7 +63,7 @@ public class Timer {
 	}
 
 	public String getFormattedTime() {
-		return Time.getFormattedTime("%HH:%MM:%SS.$sss", getElapse());
+		return Time.getFormattedTime(format, getElapse());
 	}
 	
 	public String getFormattedTime(String format) {
@@ -62,8 +75,8 @@ public class Timer {
 	}
 
 	public void saveStateToBundle(Bundle outState){
-		outState.putLong("Initial", Initial);
-		outState.putLong("cummulative", cummulative);
-		outState.putBoolean("running", running);
+		outState.putLong("Timer.Initial", Initial);
+		outState.putLong("Timer.cummulative", cummulative);
+		outState.putBoolean("Timer.running", running);
 	}
 }

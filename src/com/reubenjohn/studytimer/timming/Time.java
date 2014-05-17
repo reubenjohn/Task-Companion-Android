@@ -1,5 +1,7 @@
 package com.reubenjohn.studytimer.timming;
 
+import android.util.Log;
+
 public class Time {
 	short hours, minutes, seconds, centiSeconds, milliSeconds;
 	int days;
@@ -60,6 +62,10 @@ public class Time {
 		return (short) ((timeInMilliSeconds / 10) % 100);
 	}
 
+	private static int getDeciSeconds(long timeInMilliSeconds) {
+		return (short) ((timeInMilliSeconds / 100) % 10);
+	}
+	
 	public static short getSeconds(long timeInMilliSeconds) {
 		return (short) ((timeInMilliSeconds / 1000) % 60);
 	}
@@ -76,21 +82,32 @@ public class Time {
 		return (short) ((timeInMilliSeconds / 1000 / 60 / 60 / 24));
 	}
 
-	private static StringBuilder substituteVariable(StringBuilder builder,
+	private static boolean substituteVariable(StringBuilder builder,
 			String representation, int substitution) {
 		int index = builder.indexOf(representation);
 		if (index != -1) {
 			builder.delete(index, index + representation.length());
-			builder.insert(index, substitution);
+			builder.insert(index, String.format("%0"+Integer.toString(representation.length()-1)+"d", substitution));
+			return true;
 		}
-		return builder;
+		else
+			return false;
 	}
 
 	private static String substituteVariables(String raw, long milliSeconds) {
-
+		StringBuilder builder=new StringBuilder(raw);
+		substituteVariable(builder, "%HH", getHours(milliSeconds));
+		substituteVariable(builder, "%MM", getMinutes(milliSeconds));
+		substituteVariable(builder, "%SS", getSeconds(milliSeconds));
+		if(!substituteVariable(builder, "%sss", getMilliSeconds(milliSeconds)))
+			if(!substituteVariable(builder, "%ss", getCentiSeconds(milliSeconds)))
+					substituteVariable(builder, "%s", getDeciSeconds(milliSeconds));
+		return builder.toString();
+		/*
 		return String.format("%02d:%02d:%02d.%03d", getHours(milliSeconds),
 				getMinutes(milliSeconds), getSeconds(milliSeconds),
 				getMilliSeconds(milliSeconds));
+		*/
 	}
 
 	public static String getFormattedTime(String format, long milliseconds) {

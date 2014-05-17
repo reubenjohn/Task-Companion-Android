@@ -1,66 +1,54 @@
 package com.reubenjohn.studytimer.timming.frametimer;
 
+import java.util.ArrayList;
+
 import android.os.Handler;
+import android.util.Log;
 
 import com.reubenjohn.studytimer.timming.Timer;
 
-
-public class FrameTimer implements Runnable{
-	public static int defaultInterval = 200;
+public class FrameTimer implements Runnable {
+	public static int defaultInterval = 20;
 	private long frame = 0;
 	private int interval = defaultInterval;
-	private boolean running=false;
-	
+	private boolean running = false;
+
 	private Handler thisHandler;
 
 	private Timer timer;
-	private FrameTimerListener listener;
-	private FrameIntervalListener frameIL;
+	private ArrayList<FrameTimerListener> listeners;
+	private ArrayList<FrameIntervalListenerContainer> frameILC;
 
 	public FrameTimer(Handler handler) {
-		running=false;
-		thisHandler=handler;
+		running = false;
+		thisHandler = handler;
 		timer = new Timer();
-		listener = new FrameTimerListener() {
-
-			@Override
-			public void onReset() {
-			}
-
-			@Override
-			public void onNewFrame() {
-			}
-
-			@Override
-			public void onEndFrame() {
-			}
-		};
-		frameIL=new FrameIntervalListener() {
-			@Override
-			public void OnFrameReached() {
-			}
-		};
+		listeners = new ArrayList<FrameTimerListener>();
+		frameILC = new ArrayList<FrameIntervalListenerContainer>();
 	}
 
-	public void start(){
-		running=true;
+	public void start() {
+		Log.d("StudyTimer", "FrameTimer.start() called");
+		running = true;
 		thisHandler.removeCallbacks(this);
 		thisHandler.postDelayed(this, 0);
 	}
-	public void stop(){
-		running=false;
+
+	public void stop() {
+		Log.d("StudyTimer", "FrameTimer.stop() called");
+		running = false;
 		thisHandler.removeCallbacks(this);
 	}
 
-	public void addFrameIntervalListener(FrameIntervalListener listener){
-		frameIL=listener;
-	}
-	
 	protected void startFrame() {
 		timer.start();
-		listener.onNewFrame();
-		if(frame%frameIL.getInterval()==0){
-			frameIL.OnFrameReached();
+		for (FrameTimerListener listener : listeners) {
+			listener.onNewFrame();
+		}
+		for (FrameIntervalListenerContainer container : frameILC) {
+			if (frame % container.interval == 0) {
+				container.listener.OnFrameReached();
+			}
 		}
 	}
 
@@ -68,14 +56,18 @@ public class FrameTimer implements Runnable{
 		timer.reset();
 		timer.start();
 		frame++;
-		listener.onEndFrame();
+		for (FrameTimerListener listener : listeners) {
+			listener.onEndFrame();
+		}
 	}
 
 	public void reset() {
 		stop();
 		timer.reset();
 		frame = 0;
-		listener.onReset();
+		for (FrameTimerListener listener : listeners) {
+			listener.onReset();
+		}
 	}
 
 	public void hardReset() {
@@ -92,20 +84,35 @@ public class FrameTimer implements Runnable{
 		resetDefaults();
 	}
 
-	public void createSmartSleep(){
+	public void createSmartSleep() {
 		try {
 			Thread.sleep(getRemainingTime());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	public void addFrameIntervalListenerContainer(
+			FrameIntervalListenerContainer frameIntervalListenerContainer) {
+		frameILC.add(frameIntervalListenerContainer);
+	}
+
+	public void addFrameReachListener(FrameIntervalListener frameIntervalListener,
+			int interval) {
+		frameILC.add(new FrameIntervalListenerContainer(frameIntervalListener,
+				interval));
+	}
+
+	public void addFrameTimerListener(FrameTimerListener listener) {
+		listeners.add(listener);
+	}
+
 	public void setInterval(int interval) {
 		this.interval = interval;
 	}
 
-	public void setFrameTimerListener(FrameTimerListener listener) {
-		this.listener = listener;
+	public void setFrequency(float frequency) {
+		setInterval((int) (1000 / frequency));
 	}
 
 	public long getFrame() {
@@ -133,13 +140,13 @@ public class FrameTimer implements Runnable{
 		return timer.getFormattedTime(format);
 	}
 
-
 	@Override
 	public void run() {
-		if(running){
+		if (running) {
 			startFrame();
 			endFrame();
 			thisHandler.postDelayed(this, getRemainingTime());
 		}
 	}
+
 }

@@ -19,6 +19,12 @@ public class TimerElementsFragment extends Fragment implements
 	Toast t_elapseStarted, t_elapseStopped;
 
 	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+	}
+
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.timer_elements_fragment, container,
@@ -36,6 +42,7 @@ public class TimerElementsFragment extends Fragment implements
 	protected void initializeFeilds() {
 		elapse = new TimerView();
 		elapse.setTextView(tv_elapse);
+		elapse.timer.setFormat("%MM:%SS.%s");
 	}
 
 	@SuppressLint("ShowToast")
