@@ -5,14 +5,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.reubenjohn.studytimer.timming.frametimer.FrameIntervalListener;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
 /**
@@ -25,7 +23,7 @@ public class Home extends FragmentActivity implements OnClickListener {
 
 	private class Preferences {
 
-		public static final boolean AUTO_HIDE = true;
+		public static final boolean AUTO_HIDE = false;
 
 		/**
 		 * If {@link #Preferences.AUTO_HIDE} is set, the number of milliseconds to wait
@@ -84,7 +82,8 @@ public class Home extends FragmentActivity implements OnClickListener {
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		Log.d("StudyTimer", "Home created");
-		delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
+		if(Preferences.AUTO_HIDE)
+			delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
 	}
 	
 
@@ -133,13 +132,7 @@ public class Home extends FragmentActivity implements OnClickListener {
 		setupSystemUIHider();
 		
 		T = new StudyTimer(tHandler,getSupportFragmentManager());
-		T.framer.setInterval(100);
-		T.framer.addFrameReachListener(new FrameIntervalListener() {
-			@Override
-			public void OnFrameReached() {
-				T.logStatus();
-			}
-		}, 100);
+		T.setStatusLogging(true);
 		/*
 		 * LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 		 * LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -170,6 +163,7 @@ public class Home extends FragmentActivity implements OnClickListener {
 					int mControlsHeight;
 					int mShortAnimTime;
 
+					@SuppressWarnings("unused")
 					@Override
 					@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 					public void onVisibilityChange(boolean visible) {

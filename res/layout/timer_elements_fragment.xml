@@ -1,26 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="200dp"
+    android:layout_margin="4dp"
+    android:background="@color/light_blue"
     android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/tv_l_elapse"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center"
-        android:text="@string/l_elapse"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_green" />
+        android:layout_margin="4dp"
+        android:layout_weight="1"
+        android:baselineAligned="false"
+        android:orientation="horizontal" >
 
-    <TextView
-        android:id="@+id/tv_elapse"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="4dp"
+            tools:ignore="NestedWeights" >
+
+            <TextView
+                android:id="@+id/tv_l_total_elapse"
+                style="@style/TimeStyle"
+                android:text="@string/l_total_elapse"
+                android:textColor="@color/orange"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_total_elapse"
+                style="@style/TimeStyle"
+                android:textColor="@color/orange"
+                android:textSize="30sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="4dp" >
+
+            <TextView
+                android:id="@+id/tv_l_average"
+                style="@style/TimeStyle"
+                android:text="@string/l_average"
+                android:textColor="@color/blue"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tv_average"
+                style="@style/TimeStyle"
+                android:text="@string/intitial_accurate_time"
+                android:textColor="@color/blue"
+                android:textSize="30sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/intitial_time"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="50sp"
-        android:textColor="@color/green" />
+        android:layout_height="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="4dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="8dp" >
+
+        <TextView
+            android:id="@+id/tv_l_elapse"
+            style="@style/TimeStyle"
+            android:text="@string/l_elapse"
+            android:textColor="@color/green_dark"
+            android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/tv_elapse"
+            style="@style/TimeStyle"
+            android:textColor="@color/green"
+            android:textSize="45sp" />
+    </LinearLayout>
 
 </LinearLayout>

@@ -4,7 +4,9 @@ import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.timming.Timer;
+import com.reubenjohn.studytimer.timming.frametimer.FrameIntervalListener;
 import com.reubenjohn.studytimer.timming.frametimer.FrameTimer;
 
 public class StudyTimer {
@@ -14,58 +16,115 @@ public class StudyTimer {
 	TimerElementsFragment timerElements;
 	LapsFragment lapsF;
 
-	boolean running = false;
+	private static class logging {
+		static boolean status = false;
+		static int loggingInterval = 300;
+		static FrameIntervalListener listener=null;
+	}
 
 	StudyTimer(Handler thisHandler, FragmentManager fragM) {
-		Timer.setDefulatFormat("%MM:%SS.%sss");
+		Time.setDefaultFormat("%MM:%SS.%s");
 		framer = new FrameTimer(thisHandler);
+		framer.setInterval(100);
 		runtime = new Timer();
-		timerElements = (TimerElementsFragment) fragM.findFragmentById(R.id.home_timer_elements);
-		lapsF=(LapsFragment) fragM.findFragmentById(R.id.home_laps);
+		runtime.setFormat("%MM:%SS.%sss");
+		timerElements = (TimerElementsFragment) fragM
+				.findFragmentById(R.id.home_timer_elements);
+		lapsF = (LapsFragment) fragM.findFragmentById(R.id.home_laps);
+		timerElements.initializeLapCount(lapsF.getLapCount());
+		timerElements.setAverage(lapsF.getAverage());
+		setListeners(framer);
 		runtime.start();
-		framer.addFrameTimerListener(timerElements.elapse);
 	}
 
 	public void toggle() {
 		timerElements.toggle();
 	}
-	
-	public void lap(){
-		Log.d("StudyTimer", "attempting to lap");
-		if(lapsF!=null){
-			lapsF.addlap(timerElements.elapse.timer.getFormattedTime());
+
+	public void lap() {
+		if (lapsF != null) {
+			lapsF.addlap(timerElements.getFormatedElapse(),(int)timerElements.getElapse());
 		}
+		timerElements.setAverage(lapsF.getAverage());
+		timerElements.lap(lapsF.getLapCount());
 	}
+
 	protected void reset() {
 		framer.reset();
 		runtime.start();
+		timerElements.reset();
+
 	}
 
 	public void onPause() {
 		framer.stop();
+		runtime.stop();
 		Log.d("StudyTimer", "onPause() called");
 	}
 
 	public void onResume() {
 		Log.d("StudyTimer", "onResume() called");
 		framer.start();
+		runtime.start();
 	}
 
-	public void onStop(){
-		runtime.stop();
+	public void onStop() {
 	}
 
 	public void logStatus() {
-		Log.d("StudyTimer", getStatus());
+		Log.i("StudyTimer", getStatus());
 	}
 
 	public String getStatus() {
 		return "Status: Runtime[" + runtime.getFormattedTime() + "] Frame["
-				+ framer.getFrame() + "]";
+				+ framer.getFrame() + "] " + getTimerElementsStatus() + " "
+				+ getLapsFStatus();
 	}
 
-	protected void setListeners() {
-		framer.addFrameTimerListener(timerElements.elapse);
+	public String getTimerElementsStatus() {
+		if (timerElements != null)
+			return "Basic timer elements[OK]";
+		else
+			return "Basic timer elements[BAD]";
 	}
 
+	public String getDBFStatus() {
+		if (lapsF != null)
+			return "Lap elements[OK]: Laps[" + lapsF.getLapCount() + "]";
+		else
+			return "Lap elements[BAD]";
+	}
+
+	public String getLapsFStatus() {
+		if (lapsF != null)
+			return "Lap elements[OK]: Laps[" + lapsF.getLapCount() + "]";
+		else
+			return "Lap elements[BAD]";
+	}
+	
+	protected void setListeners(FrameTimer framer) {
+		timerElements.addFrameTimerListenersTo(framer);
+	}
+
+	public void setStatusLogging(boolean status) {
+		if (status) {
+			if (!logging.status) {
+				logging.status = true;
+				logging.listener=new FrameIntervalListener() {
+					@Override
+					public void OnFrameReached() {
+						logStatus();
+					}
+				};
+				framer.addFrameReachListener(logging.listener, logging.loggingInterval);
+			}
+		}
+		else{
+			if(logging.status){
+				if(logging.listener!=null)
+					logging.status=false;
+					framer.removeFrameIntervalListenerContainer(logging.listener);
+			}
+		}
+	}
 }

@@ -2,9 +2,18 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="green">#00EE00</color>
-    <color name="dark_green">#00EE00</color>
-    <color name="blue">#0000EE</color>
+    <color name="green_dark">#00EE00</color>
+    <color name="blue">#0000FF</color>
     <color name="light_blue">#00AAEE</color>
+    <color name="light_blue_shade">#0088CC</color>
+    <color name="blue_medium">#7F00FF</color>
     <color name="orange">#FF6600</color>
+    <color name="purple2">#912CEE</color>
+    <color name="pink_broadway">#FF0066</color>
+    <color name="red">#FF0000</color>
+    <color name="stained_glass">#2E37FE</color>
+    <color name="silver">#E6E8FA</color>
+    
+    
 
 </resources>

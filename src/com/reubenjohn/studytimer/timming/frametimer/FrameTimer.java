@@ -9,7 +9,7 @@ import com.reubenjohn.studytimer.timming.Timer;
 
 public class FrameTimer implements Runnable {
 	public static int defaultInterval = 20;
-	private long frame = 0;
+	private long frame = 0, nextFrame = 0;
 	private int interval = defaultInterval;
 	private boolean running = false;
 
@@ -32,16 +32,18 @@ public class FrameTimer implements Runnable {
 		running = true;
 		thisHandler.removeCallbacks(this);
 		thisHandler.postDelayed(this, 0);
+		timer.start();
 	}
 
 	public void stop() {
 		Log.d("StudyTimer", "FrameTimer.stop() called");
 		running = false;
 		thisHandler.removeCallbacks(this);
+		timer.stop();
 	}
 
 	protected void startFrame() {
-		timer.start();
+		nextFrame = (int) ((frame + 1) * interval);
 		for (FrameTimerListener listener : listeners) {
 			listener.onNewFrame();
 		}
@@ -53,8 +55,6 @@ public class FrameTimer implements Runnable {
 	}
 
 	protected void endFrame() {
-		timer.reset();
-		timer.start();
 		frame++;
 		for (FrameTimerListener listener : listeners) {
 			listener.onEndFrame();
@@ -84,7 +84,7 @@ public class FrameTimer implements Runnable {
 		resetDefaults();
 	}
 
-	public void createSmartSleep() {
+	public void createSmartThreadSleep() {
 		try {
 			Thread.sleep(getRemainingTime());
 		} catch (InterruptedException e) {
@@ -92,21 +92,42 @@ public class FrameTimer implements Runnable {
 		}
 	}
 
-	public void addFrameIntervalListenerContainer(
+	public void smartDelayStartNextFrame() {
+		if (thisHandler != null)
+			thisHandler.postDelayed(this, getRemainingTime());
+	}
+
+	public int addFrameIntervalListenerContainer(
 			FrameIntervalListenerContainer frameIntervalListenerContainer) {
 		frameILC.add(frameIntervalListenerContainer);
+		return frameILC.indexOf(frameIntervalListenerContainer);
 	}
 
-	public void addFrameReachListener(FrameIntervalListener frameIntervalListener,
-			int interval) {
-		frameILC.add(new FrameIntervalListenerContainer(frameIntervalListener,
-				interval));
+	public int addFrameReachListener(
+			FrameIntervalListener frameIntervalListener, int interval) {
+		FrameIntervalListenerContainer container=new FrameIntervalListenerContainer(frameIntervalListener,
+				interval);
+		frameILC.add(container);
+		return frameILC.indexOf(container);
 	}
 
-	public void addFrameTimerListener(FrameTimerListener listener) {
+	public int addFrameTimerListener(FrameTimerListener listener) {
 		listeners.add(listener);
+		return listeners.indexOf(listener);
 	}
 
+	public void removeFrameIntervalListenerContainer(Object object){
+		frameILC.remove(object);
+	}
+	
+	public void removeFrameReachListener(Object object){
+		frameILC.remove(object);
+	}
+	
+	public void removeFrameTimerListener(Object object){
+		listeners.remove(object);
+	}
+	
 	public void setInterval(int interval) {
 		this.interval = interval;
 	}
@@ -128,8 +149,8 @@ public class FrameTimer implements Runnable {
 	}
 
 	public int getRemainingTime() {
-		return (int) ((interval >= timer.getElapse()) ? (interval - timer
-				.getElapse()) : 0);
+		long elapse = timer.getElapse();
+		return (int) ((nextFrame >= elapse) ? (nextFrame - elapse) : 0);
 	}
 
 	public String getFormattedTime() {
@@ -145,7 +166,7 @@ public class FrameTimer implements Runnable {
 		if (running) {
 			startFrame();
 			endFrame();
-			thisHandler.postDelayed(this, getRemainingTime());
+			smartDelayStartNextFrame();
 		}
 	}
 

@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
     tools:context="com.reubenjohn.studytimer.Home" >
 
     <LinearLayout
@@ -10,88 +9,78 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:orientation="vertical" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:fitsSystemWindows="true"
-            android:gravity="center"
-            android:keepScreenOn="true"
-            android:text="@string/dummy_content"
-            android:textColor="#33b5e5"
-            android:textSize="50sp"
-            android:textStyle="bold" />
+        android:orientation="vertical"
+        tools:ignore="UselessParent" >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_margin="2dp"
+            android:layout_weight="20"
             android:gravity="center"
             android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/tv_elapse"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="bottom"
-                android:text="@string/dummy_content"
-                android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <fragment
                 android:id="@+id/home_timer_elements"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                class="com.reubenjohn.studytimer.TimerElementsFragment" />
-            
+                android:layout_height="0dp"
+                android:layout_weight="11.5"
+                class="com.reubenjohn.studytimer.TimerElementsFragment"
+                tools:ignore="NestedWeights"
+                tools:layout="@layout/timer_elements_fragment" />
+
             <fragment
                 android:id="@+id/home_laps"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                class="com.reubenjohn.studytimer.LapsFragment" />
+                android:layout_height="0dp"
+                android:layout_weight="11"
+                class="com.reubenjohn.studytimer.LapsFragment"
+                tools:layout="@layout/laps_fragment" />
 
         </LinearLayout>
-    </LinearLayout>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true" >
-
-        <LinearLayout
-            android:id="@+id/fullscreen_content_controls"
-            style="?metaButtonBarStyle"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:background="@color/black_overlay"
-            android:orientation="horizontal"
-            tools:ignore="UselessParent" >
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="2.5"
+            android:fitsSystemWindows="true" >
 
-            <Button
-                android:id="@+id/b_toggle"
-                style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@color/dark_green"
-                android:text="@string/start"
-                android:textColor="@color/light_blue"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:id="@+id/fullscreen_content_controls"
+                style="?metaButtonBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="bottom|center_horizontal"
+                android:background="@color/black_overlay"
+                android:orientation="horizontal"
+                tools:ignore="UselessParent" >
 
-            <Button
-                android:id="@+id/b_lap"
-                style="?metaButtonBarButtonStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@color/blue"
-                android:text="@string/lap"
-                android:textColor="@color/green"
-                android:textStyle="bold" />
-        </LinearLayout>
-    </FrameLayout>
+                <Button
+                    android:id="@+id/b_toggle"
+                    style="?metaButtonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@color/green_dark"
+                    android:text="@string/start"
+                    android:textColor="@color/light_blue"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/b_lap"
+                    style="?metaButtonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@color/blue"
+                    android:text="@string/lap"
+                    android:textColor="@color/green"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
 
 </FrameLayout>
