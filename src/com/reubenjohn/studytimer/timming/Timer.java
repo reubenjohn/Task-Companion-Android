@@ -84,4 +84,9 @@ public class Timer {
 		cummulative=elapse;
 		initial=System.currentTimeMillis();
 	}
+
+	public void setStartTime(long startTime) {
+		initial=startTime;		
+	}
+
 }

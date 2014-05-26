@@ -13,5 +13,19 @@
     <string name="intitial_time">00:00.0</string>
     <string name="intitial_accurate_time">00:00.000</string>
     <string name="empty_lap_adapter">No laps</string>
-
+	<string name="package_name">com.reubenjohn.studytimer</string>
+    <string name="preferences">Preferences</string>
+    <string name="activity_name_preferences">Preferences</string>
+    <string name="l_target_time_picker">Pick your ideal lap time</string>
+    
+    <string name="l_new_session">Start new session</string>
+    <string name="title_session_setup">Session setup</string>
+    <string name="session_setup_positive">Create</string>
+    <string name="session_setup_negative">Cancel</string>
+    <string-array name="session_setup_elements">
+        <item>Set target laptime </item>
+        <item>Set elapsed time</item>
+        <item>Set current lap number</item>
+    </string-array>
+    
 </resources>

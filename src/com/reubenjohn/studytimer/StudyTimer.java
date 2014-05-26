@@ -8,20 +8,27 @@ import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.timming.Timer;
 import com.reubenjohn.studytimer.timming.frametimer.FrameIntervalListener;
 import com.reubenjohn.studytimer.timming.frametimer.FrameTimer;
+import com.reubenjohn.studytimer.timming.frametimer.FrameTimerListener;
 
-public class StudyTimer {
+public class StudyTimer implements FrameTimerListener {
 
 	public FrameTimer framer;
 	Timer runtime;
 	TimerElementsFragment timerElements;
 	LapsFragment lapsF;
-
+	FillerFragment filler;
 	private static class logging {
 		static boolean status = false;
 		static int loggingInterval = 300;
 		static FrameIntervalListener listener=null;
 	}
 
+	public class SessionInfo{
+		public long totalElapse;
+		public long currentElapse;
+		public int laps;
+	}
+	
 	StudyTimer(Handler thisHandler, FragmentManager fragM) {
 		Time.setDefaultFormat("%MM:%SS.%s");
 		framer = new FrameTimer(thisHandler);
@@ -31,12 +38,20 @@ public class StudyTimer {
 		timerElements = (TimerElementsFragment) fragM
 				.findFragmentById(R.id.home_timer_elements);
 		lapsF = (LapsFragment) fragM.findFragmentById(R.id.home_laps);
+		filler = (FillerFragment) fragM
+				.findFragmentById(R.id.filler_background);
 		timerElements.initializeLapCount(lapsF.getLapCount());
 		timerElements.setAverage(lapsF.getAverage());
 		setListeners(framer);
 		runtime.start();
 	}
 
+	public void startNewSession(SessionInfo sessionInfo) {
+		if(sessionInfo==null){
+			reset();
+		}
+	}
+	
 	public void toggle() {
 		timerElements.toggle();
 	}
@@ -53,7 +68,6 @@ public class StudyTimer {
 		framer.reset();
 		runtime.start();
 		timerElements.reset();
-
 	}
 
 	public void onPause() {
@@ -104,6 +118,7 @@ public class StudyTimer {
 	
 	protected void setListeners(FrameTimer framer) {
 		timerElements.addFrameTimerListenersTo(framer);
+		framer.addFrameTimerListener(this);
 	}
 
 	public void setStatusLogging(boolean status) {
@@ -127,4 +142,34 @@ public class StudyTimer {
 			}
 		}
 	}
+	
+	public void setTargetTime(long timeInMilliseconds) {
+		timerElements.setTargetTIme(timeInMilliseconds);
+	}
+	
+	public float getLapProgress() {
+		assert timerElements!=null;
+		if(timerElements!=null)
+			return timerElements.getLapProgress();
+		else
+			return -1;
+	}
+
+
+	@Override
+	public void onNewFrame() {
+		filler.updateFillerProgress(timerElements.getLapProgress());
+	}
+
+	@Override
+	public void onEndFrame() {
+		
+	}
+
+	@Override
+	public void onReset() {
+		
+	}
+
+
 }

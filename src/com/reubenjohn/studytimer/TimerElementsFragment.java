@@ -1,9 +1,10 @@
-package com.reubenjohn.studytimer;	
+package com.reubenjohn.studytimer;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,20 +18,24 @@ public class TimerElementsFragment extends Fragment implements
 		FrameTimerListener {
 
 	private TextView tv_elapse, tv_total_elapse, tv_average;
-	private TimerView elapse, total_elapse;
-	int lapCount = 0;
-	boolean realTimeAverageEnabled = true,running=false;
-	int average = 0;
+	private TimerView elapse, totalElapse;
+	int lapCount;
+	boolean realTimeAverageEnabled = true, running;
+	int average;
+	private long targetTime;
 
-	protected static class keys{
-		public static final String elapse="ELAPSE";
-		public static String total_elapse="TOTAL_ELAPSE";
+	protected static class keys {
+		public static final String elapse = "ELAPSE";
+		public static String totalElapse = "TOTAL_ELAPSE";
+		public static String running = "RUNNING";
+		public static String stopTime="STOP_TIME_TIME";
+		public static String targetTime="TARGET_TIME";
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-
+		outState.putBoolean(keys.running, running);
 	}
 
 	@Override
@@ -40,59 +45,73 @@ public class TimerElementsFragment extends Fragment implements
 				false);
 		bridgeXML(v);
 		initializeFeilds();
+		if (savedInstanceState != null) {
+
+			if (savedInstanceState.getBoolean(keys.running, false)) {
+				start();
+			}
+		}
 		return v;
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		SharedPreferences prefs=getActivity().getPreferences(Context.MODE_PRIVATE);
-		if(!running){
-			elapse.setElapse(prefs.getLong(keys.elapse, 0));
-			total_elapse.setElapse(prefs.getLong(keys.total_elapse, 0));
+		SharedPreferences prefs = getActivity().getPreferences(
+				Context.MODE_PRIVATE);
+		Log.d("StudyTimer", "Timer Elements resume state:"+running);
+		elapse.setElapse(prefs.getLong(keys.elapse, 0));
+		totalElapse.setElapse(prefs.getLong(keys.totalElapse, 0));		
+		targetTime=prefs.getLong(keys.targetTime, Time.getTimeInMilliseconds(0, 0, 1, 0, 0));
+		if (running) {
+			elapse.setStartTime(prefs.getLong(keys.stopTime, 0));
+			totalElapse.setStartTime(prefs.getLong(keys.stopTime, 0));
 		}
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		SharedPreferences prefs=getActivity().getPreferences(Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor=prefs.edit();
+		SharedPreferences prefs = getActivity().getPreferences(
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
 		editor.putLong(keys.elapse, elapse.getElapse());
-		editor.putLong(keys.total_elapse, total_elapse.getElapse());
+		editor.putLong(keys.totalElapse, totalElapse.getElapse());
+		editor.putLong(keys.stopTime, System.currentTimeMillis());
 		editor.commit();
 	}
 
 	public void start() {
 		elapse.start();
-		total_elapse.start();
-		running=true;
+		totalElapse.start();
+		running = true;
 	}
 
 	public void stop() {
 		elapse.stop();
-		total_elapse.stop();
-		running=false;
+		totalElapse.stop();
+		running = false;
 	}
 
 	public void toggle() {
-		if(running)
-			running=false;
+		if (running)
+			running = false;
 		else
-			running=true;
+			running = true;
 		elapse.toggle();
-		total_elapse.toggle();
+		totalElapse.toggle();
 	}
 
 	public void lap(int lapCount) {
 		elapse.reset();
-		elapse.start();
+		if (running)
+			elapse.start();
 		this.lapCount = lapCount;
 	}
 
 	public void reset() {
 		elapse.reset();
-		total_elapse.reset();
+		totalElapse.reset();
 	}
 
 	public void initializeLapCount(int lapCount) {
@@ -106,19 +125,25 @@ public class TimerElementsFragment extends Fragment implements
 	public void setAverage(int average) {
 		this.average = average;
 		if (!realTimeAverageEnabled)
-			tv_average.setText(Time.getFormattedTime("%MM:%SS.%sss",
-					average));
+			tv_average.setText(Time.getFormattedTime("%MM:%SS.%sss", average));
 	}
 
+	public void setTargetTIme(long targetTime) {
+		this.targetTime=targetTime;
+		SharedPreferences.Editor editor=getActivity().getPreferences(Context.MODE_PRIVATE).edit();
+		editor.putLong(keys.targetTime, targetTime);
+		editor.commit();
+	}
+	
 	public void addFrameTimerListenersTo(FrameTimer framer) {
 		framer.addFrameTimerListener(elapse);
-		framer.addFrameTimerListener(total_elapse);
+		framer.addFrameTimerListener(totalElapse);
 		framer.addFrameTimerListener(this);
 	}
 
 	public void removeFrameTimerListenersFrom(FrameTimer framer) {
 		framer.removeFrameTimerListener(elapse);
-		framer.removeFrameTimerListener(total_elapse);
+		framer.removeFrameTimerListener(totalElapse);
 	}
 
 	protected void bridgeXML(View v) {
@@ -132,7 +157,7 @@ public class TimerElementsFragment extends Fragment implements
 		factory.setDefaultFormat("%MM:%SS.%s");
 
 		elapse = factory.produceTimerView(tv_elapse);
-		total_elapse = factory.produceTimerView(tv_total_elapse);
+		totalElapse = factory.produceTimerView(tv_total_elapse);
 	}
 
 	@Override
@@ -140,7 +165,8 @@ public class TimerElementsFragment extends Fragment implements
 		if (realTimeAverageEnabled) {
 			int realTimeAverage = (int) (average * lapCount + elapse
 					.getElapse()) / (lapCount + 1);
-			tv_average.setText(Time.getFormattedTime("%MM:%SS.%sss",realTimeAverage));
+			tv_average.setText(Time.getFormattedTime("%MM:%SS.%sss",
+					realTimeAverage));
 		}
 	}
 
@@ -155,6 +181,15 @@ public class TimerElementsFragment extends Fragment implements
 
 	public long getElapse() {
 		return elapse.getElapse();
+	}
+
+	public float getLapProgress() {
+		if(targetTime==0){
+			return -1;
+		}
+		else{
+			return (100.f*elapse.getElapse())/targetTime;
+		}
 	}
 
 }

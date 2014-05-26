@@ -86,4 +86,9 @@ public class TimerView implements FrameTimerListener {
 	public void setElapse(long elapse) {
 		timer.setElapse(elapse);
 	}
+
+	public void setStartTime(long startTime) {
+		timer.setStartTime(startTime);
+	}
+
 }

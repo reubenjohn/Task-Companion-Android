@@ -16,25 +16,17 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:background">@color/light_blue_shade</item>
+    </style>
+    
+    <style name="AppHomeTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:windowBackground">@color/light_blue</item>
     </style>
 
     <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@null</item>
-        <item name="metaButtonBarStyle">@style/ButtonBar</item>
-        <item name="metaButtonBarButtonStyle">@style/ButtonBarButton</item>
+        <item name="android:windowBackground">@color/light_blue</item>
     </style>
-
-    <style name="ButtonBar">
-        <item name="android:paddingLeft">2dp</item>
-        <item name="android:paddingTop">5dp</item>
-        <item name="android:paddingRight">2dp</item>
-        <item name="android:paddingBottom">0dp</item>
-        <item name="android:background">@android:drawable/bottom_bar</item>
-    </style>
-
-    <style name="ButtonBarButton" />
 
     <style name="TimeStyle">
         <item name="android:layout_width">wrap_content</item>
@@ -43,6 +35,15 @@
         <item name="android:text">@string/intitial_time</item>
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+    
+    <style name="TimeStyleLabel" parent="TimeStyle" >
+        <item name="android:textSize">15sp</item>
+    </style>
+    
+    <style name="LightFragment">
+        <item name="android:background">@color/light_blue</item>
     </style>
 
 </resources>

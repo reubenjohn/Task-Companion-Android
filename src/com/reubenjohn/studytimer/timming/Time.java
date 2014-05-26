@@ -6,6 +6,11 @@ public class Time {
 	static String defaultFormat = "Day:%DD %HH:%MM:%SS.%ss";
 	String format;
 
+	public static long getTimeInMilliseconds(long day, int hour, int minute, int second,
+			int milliSecond) {
+		return milliSecond+(second+(minute+(hour+(day)*24)*60)*60)*1000;
+	}
+	
 	public void setTime(long timeInMilliSeconds) {
 		milliSeconds = (short) (timeInMilliSeconds % 1000);
 		centiSeconds = (short) (timeInMilliSeconds % 100);
@@ -15,16 +20,25 @@ public class Time {
 		days = (short) ((timeInMilliSeconds / 1000 / 60 / 60 / 24));
 	}
 
+	public void setTime(long day, int hour, int minute, int second,
+			int milliSecond) {
+		setTime(Time.getTimeInMilliseconds(day, hour, minute, second, milliSecond));
+	}
+	
 	public void setFormat(String format) {
 		this.format = format;
 	}
-	
-	public static void setDefaultFormat(String defaultFormat){
-		Time.defaultFormat=defaultFormat;
+
+	public static void setDefaultFormat(String defaultFormat) {
+		Time.defaultFormat = defaultFormat;
 	}
 
-	Time(long timeInMilliSeconds) {
-		setTime(timeInMilliSeconds);
+	Time(long milliseconds) {
+		setTime(milliseconds);
+	}
+
+	Time(long day, int hour, int minute, int second, int milliSecond) {
+		setTime(day, hour, minute, second, milliSecond);
 	}
 
 	Time(long timeInMilliSeconds, String format) {

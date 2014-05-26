@@ -1,16 +1,26 @@
 package com.reubenjohn.studytimer;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TimePicker;
 
+import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
 /**
@@ -19,7 +29,7 @@ import com.reubenjohn.studytimer.util.SystemUiHider;
  * 
  * @see SystemUiHider
  */
-public class Home extends FragmentActivity implements OnClickListener {
+public class Home extends ActionBarActivity implements OnClickListener {
 
 	private class Preferences {
 
@@ -42,6 +52,7 @@ public class Home extends FragmentActivity implements OnClickListener {
 	View controlsView, contentView;
 	StudyTimer T;
 	Handler tHandler = new Handler();
+	Boolean isLargeLayoutBoolean=false;
 
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
@@ -76,6 +87,13 @@ public class Home extends FragmentActivity implements OnClickListener {
 		setListeners();
 		initializeFeilds();
 
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater=getMenuInflater();
+		inflater.inflate(R.menu.home, menu);
+		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
@@ -133,6 +151,7 @@ public class Home extends FragmentActivity implements OnClickListener {
 		
 		T = new StudyTimer(tHandler,getSupportFragmentManager());
 		T.setStatusLogging(true);
+		isLargeLayoutBoolean=getResources().getBoolean(R.bool.large_layout);
 		/*
 		 * LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 		 * LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -189,7 +208,6 @@ public class Home extends FragmentActivity implements OnClickListener {
 						}
 					}
 				});
-
 	}
 
 	@Override
@@ -206,5 +224,53 @@ public class Home extends FragmentActivity implements OnClickListener {
 			break;
 
 		}
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent i;
+		switch(item.getItemId()){
+		case R.id.mi_preferences:
+			i=new Intent("com.reubenjohn.studytimer.PREFERENCES");
+			startActivity(i);
+			break;
+		case R.id.mi_new_session:
+			showSessionDialog(isLargeLayoutBoolean);
+			break;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	protected void showSessionDialog(boolean windowed){
+		AlertDialog.Builder builder=new AlertDialog.Builder(Home.this);
+		final TimePickerDialog timePicker=new TimePickerDialog(Home.this, new OnTimeSetListener() {
+			
+			@Override
+			public void onTimeSet(TimePicker view, int minute, int second) {
+				long target=Time.getTimeInMilliseconds(0, 0, minute, second, 0);
+				Log.d("StudyTimer","Target time set: "+target);
+				T.setTargetTime(target);
+			}
+		}, 1, 0, true);
+		builder.setTitle(R.string.title_session_setup)
+		.setItems(R.array.session_setup_elements, new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch(which){
+				case 0:
+					Log.d("StudyTimer","Set target time dialog");
+					timePicker.show();
+					break;
+				case 1:
+					
+					break;
+				case 2:
+					break;
+				}
+			}
+		})
+		.show();
+		
 	}
 }

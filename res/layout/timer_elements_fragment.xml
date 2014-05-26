@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:layout_margin="4dp"
-    android:background="@color/light_blue"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -28,16 +27,14 @@
 
             <TextView
                 android:id="@+id/tv_l_total_elapse"
-                style="@style/TimeStyle"
+                style="@style/TimeStyleLabel"
                 android:text="@string/l_total_elapse"
-                android:textColor="@color/orange"
-                android:textSize="20sp" />
+                android:textColor="@color/orange" />
 
             <TextView
                 android:id="@+id/tv_total_elapse"
                 style="@style/TimeStyle"
-                android:textColor="@color/orange"
-                android:textSize="30sp" />
+                android:textColor="@color/orange" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,17 +48,15 @@
 
             <TextView
                 android:id="@+id/tv_l_average"
-                style="@style/TimeStyle"
+                style="@style/TimeStyleLabel"
                 android:text="@string/l_average"
-                android:textColor="@color/blue"
-                android:textSize="20sp" />
+                android:textColor="@color/blue" />
 
             <TextView
                 android:id="@+id/tv_average"
                 style="@style/TimeStyle"
                 android:text="@string/intitial_accurate_time"
-                android:textColor="@color/blue"
-                android:textSize="30sp" />
+                android:textColor="@color/blue" />
         </LinearLayout>
     </LinearLayout>
 
@@ -72,7 +67,7 @@
         android:layout_margin="4dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:padding="8dp" >
+        android:padding="0dp" >
 
         <TextView
             android:id="@+id/tv_l_elapse"
