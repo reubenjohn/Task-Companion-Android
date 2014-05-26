@@ -28,8 +28,8 @@ public class TimerElementsFragment extends Fragment implements
 		public static final String elapse = "ELAPSE";
 		public static String totalElapse = "TOTAL_ELAPSE";
 		public static String running = "RUNNING";
-		public static String stopTime="STOP_TIME_TIME";
-		public static String targetTime="TARGET_TIME";
+		public static String stopTime = "STOP_TIME_TIME";
+		public static String targetTime = "TARGET_TIME";
 	}
 
 	@Override
@@ -59,10 +59,11 @@ public class TimerElementsFragment extends Fragment implements
 		super.onResume();
 		SharedPreferences prefs = getActivity().getPreferences(
 				Context.MODE_PRIVATE);
-		Log.d("StudyTimer", "Timer Elements resume state:"+running);
+		Log.d("StudyTimer", "Timer Elements resume state:" + running);
 		elapse.setElapse(prefs.getLong(keys.elapse, 0));
-		totalElapse.setElapse(prefs.getLong(keys.totalElapse, 0));		
-		targetTime=prefs.getLong(keys.targetTime, Time.getTimeInMilliseconds(0, 0, 1, 0, 0));
+		totalElapse.setElapse(prefs.getLong(keys.totalElapse, 0));
+		targetTime = prefs.getLong(keys.targetTime,
+				Time.getTimeInMilliseconds(0, 0, 1, 0, 0));
 		if (running) {
 			elapse.setStartTime(prefs.getLong(keys.stopTime, 0));
 			totalElapse.setStartTime(prefs.getLong(keys.stopTime, 0));
@@ -129,12 +130,13 @@ public class TimerElementsFragment extends Fragment implements
 	}
 
 	public void setTargetTIme(long targetTime) {
-		this.targetTime=targetTime;
-		SharedPreferences.Editor editor=getActivity().getPreferences(Context.MODE_PRIVATE).edit();
+		this.targetTime = targetTime;
+		SharedPreferences.Editor editor = getActivity().getPreferences(
+				Context.MODE_PRIVATE).edit();
 		editor.putLong(keys.targetTime, targetTime);
 		editor.commit();
 	}
-	
+
 	public void addFrameTimerListenersTo(FrameTimer framer) {
 		framer.addFrameTimerListener(elapse);
 		framer.addFrameTimerListener(totalElapse);
@@ -184,11 +186,10 @@ public class TimerElementsFragment extends Fragment implements
 	}
 
 	public float getLapProgress() {
-		if(targetTime==0){
+		if (targetTime == 0) {
 			return -1;
-		}
-		else{
-			return (100.f*elapse.getElapse())/targetTime;
+		} else {
+			return (100.f * elapse.getElapse()) / targetTime;
 		}
 	}
 

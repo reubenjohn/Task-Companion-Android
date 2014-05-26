@@ -45,14 +45,14 @@ public class SessionSetupFragment extends DialogFragment {
 						.getStringArray(R.array.session_setup_elements));
 		list.setAdapter(adapter);
 	}
-	
-	public void setPositiveListener(OnClickListener listener){
+
+	public void setPositiveListener(OnClickListener listener) {
 		assert listener != null;
 		if (listener != null)
 			positive.setOnClickListener(listener);
 	}
-	
-	public void setNegativeListener(OnClickListener listener){
+
+	public void setNegativeListener(OnClickListener listener) {
 		assert positive != null;
 		if (listener != null)
 			negative.setOnClickListener(listener);

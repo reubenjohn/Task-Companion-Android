@@ -68,27 +68,19 @@
             android:orientation="horizontal"
             tools:ignore="UselessParent" >
 
-            <Button
+            <ToggleButton
                 android:id="@+id/b_toggle"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="@color/green_dark"
-                android:text="@string/start"
-                android:textColor="@color/light_blue"
-                android:textSize="25sp"
-                android:textStyle="bold" />
+                style="@style/ToggleButton" />
 
             <Button
                 android:id="@+id/b_lap"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="@color/blue"
-                android:text="@string/lap"
-                android:textColor="@color/green"
-                android:textSize="25sp"
-                android:textStyle="bold" />
+                style="@style/LapButton" />
         </LinearLayout>
     </FrameLayout>
 

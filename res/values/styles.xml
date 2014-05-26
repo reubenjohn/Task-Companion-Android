@@ -17,15 +17,16 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    
+
     <style name="AppHomeTheme" parent="AppBaseTheme">
+
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:windowBackground">@color/light_blue</item>
+        <item name="android:windowBackground">@color/blue_light</item>
     </style>
 
     <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
         <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@color/light_blue</item>
+        <item name="android:windowBackground">@color/blue_light</item>
     </style>
 
     <style name="TimeStyle">
@@ -37,13 +38,35 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">25sp</item>
     </style>
-    
-    <style name="TimeStyleLabel" parent="TimeStyle" >
+
+    <style name="TimeStyleLabel" parent="TimeStyle">
         <item name="android:textSize">15sp</item>
     </style>
-    
+
     <style name="LightFragment">
-        <item name="android:background">@color/light_blue</item>
+        <item name="android:background">@color/blue_light</item>
+    </style>
+
+    <style name="ToggleButton">
+        <item name="android:text">@string/start</item>
+        <item name="android:textColor">@drawable/toggle_text_color</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textOff">@string/start</item>
+        <item name="android:textOn">@string/stop</item>
+        <item name="android:textOff">@string/start</item>
+    </style>
+    <style name="LapButton">
+        <item name="android:text">@string/lap</item>
+        <item name="android:textColor">@color/blue_light</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="ResetButton">
+        <item name="android:text">@string/reset</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

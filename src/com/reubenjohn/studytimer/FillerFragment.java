@@ -2,7 +2,6 @@ package com.reubenjohn.studytimer;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +25,11 @@ public class FillerFragment extends Fragment {
 	}
 
 	public void updateFillerProgress(float percentage) {
-		if(empty!=null){
-			Log.d("StudyTimer","filler progress: "+percentage);
-			empty.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, percentage));
+		if (empty != null) {
+			// Log.d("StudyTimer","filler progress: "+percentage);
+			empty.setLayoutParams(new LinearLayout.LayoutParams(
+					LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT,
+					percentage));
 		}
 	}
 }

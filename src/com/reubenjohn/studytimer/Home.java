@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TimePicker;
+import android.widget.ToggleButton;
 
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
@@ -48,11 +49,12 @@ public class Home extends ActionBarActivity implements OnClickListener {
 	}
 
 	private SystemUiHider mSystemUiHider;
-	Button toggle, lap;
+	ToggleButton toggle;
+	Button lap;
 	View controlsView, contentView;
 	StudyTimer T;
 	Handler tHandler = new Handler();
-	Boolean isLargeLayoutBoolean=false;
+	Boolean isLargeLayoutBoolean = false;
 
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
@@ -91,7 +93,7 @@ public class Home extends ActionBarActivity implements OnClickListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater=getMenuInflater();
+		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.home, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -100,10 +102,9 @@ public class Home extends ActionBarActivity implements OnClickListener {
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
 		Log.d("StudyTimer", "Home created");
-		if(Preferences.AUTO_HIDE)
+		if (Preferences.AUTO_HIDE)
 			delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
 	}
-	
 
 	@Override
 	protected void onStop() {
@@ -135,7 +136,7 @@ public class Home extends ActionBarActivity implements OnClickListener {
 	protected void bridgeXML() {
 		controlsView = findViewById(R.id.fullscreen_content_controls);
 		contentView = findViewById(R.id.fullscreen_content);
-		toggle = (Button) findViewById(R.id.b_toggle);
+		toggle = (ToggleButton) findViewById(R.id.b_toggle);
 		lap = (Button) findViewById(R.id.b_lap);
 	}
 
@@ -148,10 +149,10 @@ public class Home extends ActionBarActivity implements OnClickListener {
 
 	protected void initializeFeilds() {
 		setupSystemUIHider();
-		
-		T = new StudyTimer(tHandler,getSupportFragmentManager());
+
+		T = new StudyTimer(tHandler, getSupportFragmentManager());
 		T.setStatusLogging(true);
-		isLargeLayoutBoolean=getResources().getBoolean(R.bool.large_layout);
+		isLargeLayoutBoolean = getResources().getBoolean(R.bool.large_layout);
 		/*
 		 * LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
 		 * LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -225,13 +226,13 @@ public class Home extends ActionBarActivity implements OnClickListener {
 
 		}
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent i;
-		switch(item.getItemId()){
+		switch (item.getItemId()) {
 		case R.id.mi_preferences:
-			i=new Intent("com.reubenjohn.studytimer.PREFERENCES");
+			i = new Intent("com.reubenjohn.studytimer.PREFERENCES");
 			startActivity(i);
 			break;
 		case R.id.mi_new_session:
@@ -241,36 +242,41 @@ public class Home extends ActionBarActivity implements OnClickListener {
 		return super.onOptionsItemSelected(item);
 	}
 
-	protected void showSessionDialog(boolean windowed){
-		AlertDialog.Builder builder=new AlertDialog.Builder(Home.this);
-		final TimePickerDialog timePicker=new TimePickerDialog(Home.this, new OnTimeSetListener() {
-			
-			@Override
-			public void onTimeSet(TimePicker view, int minute, int second) {
-				long target=Time.getTimeInMilliseconds(0, 0, minute, second, 0);
-				Log.d("StudyTimer","Target time set: "+target);
-				T.setTargetTime(target);
-			}
-		}, 1, 0, true);
+	protected void showSessionDialog(boolean windowed) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
+		final TimePickerDialog timePicker = new TimePickerDialog(Home.this,
+				new OnTimeSetListener() {
+
+					@Override
+					public void onTimeSet(TimePicker view, int minute,
+							int second) {
+						long target = Time.getTimeInMilliseconds(0, 0, minute,
+								second, 0);
+						Log.d("StudyTimer", "Target time set: " + target);
+						T.setTargetTime(target);
+					}
+				}, 1, 0, true);
 		builder.setTitle(R.string.title_session_setup)
-		.setItems(R.array.session_setup_elements, new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				switch(which){
-				case 0:
-					Log.d("StudyTimer","Set target time dialog");
-					timePicker.show();
-					break;
-				case 1:
-					
-					break;
-				case 2:
-					break;
-				}
-			}
-		})
-		.show();
-		
+				.setItems(R.array.session_setup_elements,
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								switch (which) {
+								case 0:
+									Log.d("StudyTimer",
+											"Set target time dialog");
+									timePicker.show();
+									break;
+								case 1:
+
+									break;
+								case 2:
+									break;
+								}
+							}
+						}).show();
+
 	}
 }

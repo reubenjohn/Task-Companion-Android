@@ -32,10 +32,10 @@ public class TimerView implements FrameTimerListener {
 		timer.stop();
 	}
 
-	public void reset(){
+	public void reset() {
 		timer.reset();
 	}
-	
+
 	public void toggle() {
 		timer.toggle();
 	}

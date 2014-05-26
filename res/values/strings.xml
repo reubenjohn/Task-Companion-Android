@@ -4,6 +4,7 @@
     <string name="app_name">StudyTimer</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
+    <string name="reset">Reset</string>
     <string name="lap">Lap</string>
     <string name="dummy_content">DUMMY CONTENT</string>
     <string name="l_elapse">Elapsed</string>

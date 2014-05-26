@@ -4,8 +4,9 @@
     <color name="green">#00EE00</color>
     <color name="green_dark">#00EE00</color>
     <color name="blue">#0000FF</color>
-    <color name="light_blue">#00AAEE</color>
-    <color name="light_blue_shade">#0088CC</color>
+    <color name="blue_light">#00AAEE</color>
+    <color name="blue_light_bright">#55EEEE</color>
+    <color name="blue_light_shadow">#0088CC</color>
     <color name="blue_medium">#7F00FF</color>
     <color name="blue_dark">#528B8B</color>
     <color name="orange">#FF6600</color>

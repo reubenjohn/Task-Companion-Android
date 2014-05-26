@@ -3,6 +3,8 @@ package com.reubenjohn.studytimer;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.timming.Timer;
@@ -10,25 +12,26 @@ import com.reubenjohn.studytimer.timming.frametimer.FrameIntervalListener;
 import com.reubenjohn.studytimer.timming.frametimer.FrameTimer;
 import com.reubenjohn.studytimer.timming.frametimer.FrameTimerListener;
 
-public class StudyTimer implements FrameTimerListener {
+public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	public FrameTimer framer;
 	Timer runtime;
 	TimerElementsFragment timerElements;
 	LapsFragment lapsF;
 	FillerFragment filler;
+
 	private static class logging {
 		static boolean status = false;
 		static int loggingInterval = 300;
-		static FrameIntervalListener listener=null;
+		static FrameIntervalListener listener = null;
 	}
 
-	public class SessionInfo{
+	public class SessionInfo {
 		public long totalElapse;
 		public long currentElapse;
 		public int laps;
 	}
-	
+
 	StudyTimer(Handler thisHandler, FragmentManager fragM) {
 		Time.setDefaultFormat("%MM:%SS.%s");
 		framer = new FrameTimer(thisHandler);
@@ -47,18 +50,19 @@ public class StudyTimer implements FrameTimerListener {
 	}
 
 	public void startNewSession(SessionInfo sessionInfo) {
-		if(sessionInfo==null){
+		if (sessionInfo == null) {
 			reset();
 		}
 	}
-	
+
 	public void toggle() {
 		timerElements.toggle();
 	}
 
 	public void lap() {
 		if (lapsF != null) {
-			lapsF.addlap(timerElements.getFormatedElapse(),(int)timerElements.getElapse());
+			lapsF.addlap(timerElements.getFormatedElapse(),
+					(int) timerElements.getElapse());
 		}
 		timerElements.setAverage(lapsF.getAverage());
 		timerElements.lap(lapsF.getLapCount());
@@ -115,7 +119,7 @@ public class StudyTimer implements FrameTimerListener {
 		else
 			return "Lap elements[BAD]";
 	}
-	
+
 	protected void setListeners(FrameTimer framer) {
 		timerElements.addFrameTimerListenersTo(framer);
 		framer.addFrameTimerListener(this);
@@ -125,36 +129,35 @@ public class StudyTimer implements FrameTimerListener {
 		if (status) {
 			if (!logging.status) {
 				logging.status = true;
-				logging.listener=new FrameIntervalListener() {
+				logging.listener = new FrameIntervalListener() {
 					@Override
 					public void OnFrameReached() {
 						logStatus();
 					}
 				};
-				framer.addFrameReachListener(logging.listener, logging.loggingInterval);
+				framer.addFrameReachListener(logging.listener,
+						logging.loggingInterval);
 			}
-		}
-		else{
-			if(logging.status){
-				if(logging.listener!=null)
-					logging.status=false;
-					framer.removeFrameIntervalListenerContainer(logging.listener);
+		} else {
+			if (logging.status) {
+				if (logging.listener != null)
+					logging.status = false;
+				framer.removeFrameIntervalListenerContainer(logging.listener);
 			}
 		}
 	}
-	
+
 	public void setTargetTime(long timeInMilliseconds) {
 		timerElements.setTargetTIme(timeInMilliseconds);
 	}
-	
+
 	public float getLapProgress() {
-		assert timerElements!=null;
-		if(timerElements!=null)
+		assert timerElements != null;
+		if (timerElements != null)
 			return timerElements.getLapProgress();
 		else
 			return -1;
 	}
-
 
 	@Override
 	public void onNewFrame() {
@@ -163,13 +166,25 @@ public class StudyTimer implements FrameTimerListener {
 
 	@Override
 	public void onEndFrame() {
-		
+
 	}
 
 	@Override
 	public void onReset() {
-		
+
 	}
 
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.b_toggle:
+			toggle();
+			break;
+		case R.id.b_lap:
+			lap();
+			break;
+
+		}
+	}
 
 }

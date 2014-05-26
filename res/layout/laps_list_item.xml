@@ -29,7 +29,7 @@
         android:layout_gravity="center"
         android:layout_margin="4dp"
         android:layout_weight="5"
-        android:background="@color/light_blue_shade"
+        android:background="@color/blue_light_shadow"
         android:gravity="center"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
