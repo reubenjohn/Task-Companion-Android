@@ -3,21 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:weightSum="100" >
+    android:orientation="horizontal" >
 
-    <View
-        android:id="@+id/empty_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0"
-        android:background="@color/transparent"
-        tools:ignore="InefficientWeight" />
-
-    <View
-        android:id="@+id/filler_rectangle"
+    <ProgressBar
+        android:id="@+id/pb_filler"
+        style="@style/Widget.ProgressBar.Vertical"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:background="@color/yellow" />
+        android:layout_height="fill_parent"
+        android:progress="25" />
 
 </LinearLayout>

@@ -3,20 +3,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/congruent_outline"
+    android:background="@drawable/rectangle_rounded_glass"
+    android:fadingEdge="horizontal"
+    android:fadingEdgeLength="8dp"
     android:orientation="vertical"
     android:padding="4dp" >
 
-    <TextView
-        android:id="@+id/tv_l_laps"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/l_laps"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/background_light"
-        android:textSize="25sp"
-        android:textStyle="bold" />
+        android:padding="4dp" >
+
+        <TextView
+            android:id="@+id/tv_current_lap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/rectangle_rounded_glass"
+            android:padding="4dp"
+            android:text="@string/sample_lap"
+            android:textColor="@color/blue_light_bright"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_l_laps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tv_current_lap"
+            android:layout_alignBottom="@+id/tv_current_lap"
+            android:layout_centerHorizontal="true"
+            android:text="@string/l_laps"
+            android:textColor="@color/orange_yellow"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/lv_laps"

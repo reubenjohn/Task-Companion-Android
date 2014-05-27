@@ -15,6 +15,7 @@
             android:id="@+id/filler_background"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_gravity="center"
             class="com.reubenjohn.studytimer.FillerFragment"
             tools:layout="@layout/filler" />
 
