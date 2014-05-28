@@ -6,9 +6,11 @@ import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -18,6 +20,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
@@ -30,7 +34,7 @@ import com.reubenjohn.studytimer.util.SystemUiHider;
  * 
  * @see SystemUiHider
  */
-public class Home extends ActionBarActivity implements OnClickListener {
+public class Home extends ActionBarActivity implements OnClickListener, OnCheckedChangeListener {
 
 	private class Preferences {
 
@@ -54,7 +58,7 @@ public class Home extends ActionBarActivity implements OnClickListener {
 	View controlsView, contentView;
 	StudyTimer T;
 	Handler tHandler = new Handler();
-	Boolean isLargeLayoutBoolean = false;
+	Boolean isLargeLayoutBoolean = false, resetRequested;
 
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
@@ -79,6 +83,10 @@ public class Home extends ActionBarActivity implements OnClickListener {
 		}
 	};
 
+	private static class keys{
+		static final int resetSession=10;
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -115,7 +123,13 @@ public class Home extends ActionBarActivity implements OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		T.onResume();
+
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		boolean requestReset = prefs.getBoolean("key_pref_data_reset_stats",
+				false);
+		Log.d("StudyTimer", "resumed Home: requestReset=" + requestReset);
+		T.onResume(requestReset);
 	}
 
 	@Override
@@ -141,7 +155,7 @@ public class Home extends ActionBarActivity implements OnClickListener {
 	}
 
 	protected void setListeners() {
-		toggle.setOnClickListener(this);
+		toggle.setOnCheckedChangeListener(this);
 		lap.setOnClickListener(this);
 		findViewById(R.id.b_toggle).setOnTouchListener(mDelayHideTouchListener);
 		contentView.setOnClickListener(this);
@@ -214,9 +228,6 @@ public class Home extends ActionBarActivity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.b_toggle:
-			T.toggle();
-			break;
 		case R.id.b_lap:
 			T.lap();
 			break;
@@ -228,18 +239,42 @@ public class Home extends ActionBarActivity implements OnClickListener {
 	}
 
 	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean newState) {
+		if(newState==true)
+			T.start();
+		else
+			T.stop();
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent i;
 		switch (item.getItemId()) {
 		case R.id.mi_preferences:
 			i = new Intent("com.reubenjohn.studytimer.PREFERENCES");
-			startActivity(i);
+			startActivityForResult(i, 0);
 			break;
 		case R.id.mi_new_session:
 			showSessionDialog(isLargeLayoutBoolean);
 			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == keys.resetSession) {
+			if (resultCode == RESULT_OK) {
+				resetRequested = data.getBooleanExtra("KEY_RESET_REQUESTED",
+						false);
+				Log.d("StudyTimer", "result=" + resetRequested);
+				if(resetRequested){
+					toggle.setChecked(false);
+					T.reset();	
+				}
+			}
+		}
 	}
 
 	protected void showSessionDialog(boolean windowed) {
@@ -279,4 +314,5 @@ public class Home extends ActionBarActivity implements OnClickListener {
 						}).show();
 
 	}
+
 }

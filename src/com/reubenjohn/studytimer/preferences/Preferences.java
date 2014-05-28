@@ -1,9 +1,15 @@
-package com.reubenjohn.studytimer;
+package com.reubenjohn.studytimer.preferences;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.util.Log;
+import android.view.View;
+import android.widget.ListView;
+
+import com.reubenjohn.studytimer.R;
 
 public class Preferences extends PreferenceActivity {
 	private static int prefs = R.xml.preferences;
@@ -39,6 +45,18 @@ public class Preferences extends PreferenceActivity {
 			// private members seem to be visible for inner class, and
 			// making it static made things so much easier
 		}
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		Log.d("StudyTimer", "Preference "+position+" clicked");
+		if (position == 1) {
+			Intent i = new Intent();
+			i.putExtra("KEY_RESET_REQUESTED", true);
+			setResult(RESULT_OK, i);
+			finish();
+		}
+		super.onListItemClick(l, v, position, id);
 	}
 
 }

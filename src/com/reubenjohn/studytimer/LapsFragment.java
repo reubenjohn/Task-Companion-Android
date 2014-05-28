@@ -3,6 +3,7 @@ package com.reubenjohn.studytimer;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,15 +63,24 @@ public class LapsFragment extends Fragment {
 	}
 
 	public void reset() {
+		Log.d("StudyTimer", "LapsFragment reset");
+		db.reset();
+		cached_lapCount=0;
+		average=0;
+		formatedAverage=getResources().getString(R.string.intitial_accurate_time);
+		updateCurentLap(0);
 	}
 
-	public void addlap(String newLap, int newElapsed) {
+	public boolean hasNoLaps(){
+		return cached_lapCount==0;
+	}
+	public boolean addLap(String newLap, int newElapsed) {
 		db.addLap(newLap, newElapsed);
 		generateListView();
 		cached_lapCount++;
 		updateCurentLap(cached_lapCount);
 		// average=getAverage();
-
+		return cached_lapCount==1;
 	}
 
 	protected void updateCurentLap(int lapCount) {

@@ -43,15 +43,27 @@
                     tools:ignore="NestedWeights"
                     tools:layout="@layout/timer_elements_fragment" />
 
-                <fragment
-                    android:id="@+id/home_laps"
+                <FrameLayout
+                    android:id="@+id/home_laps_container"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:layout_weight="12"
-                    class="com.reubenjohn.studytimer.LapsFragment"
-                    tools:layout="@layout/laps_fragment" />
+                    android:layout_weight="12" >
+
+                    <fragment
+                        android:id="@+id/home_empty_laps"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        class="com.reubenjohn.studytimer.EmptyLapFragment"
+                        tools:layout="@layout/empty_lap_fragment" />
+                    <fragment
+                        android:id="@+id/home_laps"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        class="com.reubenjohn.studytimer.LapsFragment"
+                        tools:layout="@layout/laps_fragment" />
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>
@@ -71,17 +83,17 @@
 
             <ToggleButton
                 android:id="@+id/b_toggle"
+                style="@style/ToggleButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1"
-                style="@style/ToggleButton" />
+                android:layout_weight="1" />
 
             <Button
                 android:id="@+id/b_lap"
+                style="@style/LapButton"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
-                android:layout_weight="1"
-                style="@style/LapButton" />
+                android:layout_weight="1" />
         </LinearLayout>
     </FrameLayout>
 

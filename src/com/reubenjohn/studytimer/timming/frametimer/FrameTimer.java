@@ -9,7 +9,7 @@ import com.reubenjohn.studytimer.timming.Timer;
 
 public class FrameTimer implements Runnable {
 	public static int defaultInterval = 20;
-	private long frame = 0, nextFrame = 0;
+	private long frame, nextFrame;
 	private int interval = defaultInterval;
 	private boolean running = false;
 

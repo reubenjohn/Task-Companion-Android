@@ -20,6 +20,10 @@
     <string name="activity_name_preferences">Preferences</string>
     <string name="l_target_time_picker">Pick your ideal lap time</string>
     
+    <string name="pref_data_title">Data options</string>
+    <string name="pref_data_reset_stats">Reset statistics</string>
+    <string name="pref_data_reset_stats_summary">This will clear all laps and your current session</string>
+    
     <string name="l_new_session">Start new session</string>
     <string name="title_session_setup">Session setup</string>
     <string name="session_setup_positive">Create</string>

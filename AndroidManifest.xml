@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.reubenjohn.studytimer.Preferences"
+            android:name="com.reubenjohn.studytimer.preferences.Preferences"
             android:label="@string/preferences" >
             <intent-filter>
                 <action android:name="com.reubenjohn.studytimer.PREFERENCES" />

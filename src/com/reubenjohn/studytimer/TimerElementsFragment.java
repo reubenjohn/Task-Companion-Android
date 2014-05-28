@@ -19,10 +19,12 @@ public class TimerElementsFragment extends Fragment implements
 
 	private TextView tv_elapse, tv_total_elapse, tv_average;
 	private TimerView elapse, totalElapse;
-	int lapCount;
+	int cached_lapCount;
 	boolean realTimeAverageEnabled = true, running;
 	int average;
 	private long targetTime;
+
+	static long defaultTargetTime = Time.getTimeInMilliseconds(0, 0, 1, 0, 0);
 
 	protected static class keys {
 		public static final String elapse = "ELAPSE";
@@ -59,11 +61,10 @@ public class TimerElementsFragment extends Fragment implements
 		super.onResume();
 		SharedPreferences prefs = getActivity().getPreferences(
 				Context.MODE_PRIVATE);
-		Log.d("StudyTimer", "Timer Elements resume state:" + running);
+		Log.d("StudyTimer", "Timer Elements resume state: running=" + running);
 		elapse.setElapse(prefs.getLong(keys.elapse, 0));
 		totalElapse.setElapse(prefs.getLong(keys.totalElapse, 0));
-		targetTime = prefs.getLong(keys.targetTime,
-				Time.getTimeInMilliseconds(0, 0, 1, 0, 0));
+		targetTime = prefs.getLong(keys.targetTime, defaultTargetTime);
 		if (running) {
 			elapse.setStartTime(prefs.getLong(keys.stopTime, 0));
 			totalElapse.setStartTime(prefs.getLong(keys.stopTime, 0));
@@ -73,13 +74,19 @@ public class TimerElementsFragment extends Fragment implements
 	@Override
 	public void onPause() {
 		super.onPause();
-		SharedPreferences prefs = getActivity().getPreferences(
-				Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putLong(keys.elapse, elapse.getElapse());
-		editor.putLong(keys.totalElapse, totalElapse.getElapse());
-		editor.putLong(keys.stopTime, System.currentTimeMillis());
-		editor.commit();
+		saveTimes();
+	}
+
+	@Override
+	public void onStop() {
+		saveTimes();
+		super.onStop();
+	}
+	
+	@Override
+	public void onDestroy() {
+		saveTimes();
+		super.onDestroy();
 	}
 
 	public void start() {
@@ -107,16 +114,32 @@ public class TimerElementsFragment extends Fragment implements
 		elapse.reset();
 		if (running)
 			elapse.start();
-		this.lapCount = lapCount;
+		this.cached_lapCount = lapCount;
 	}
 
 	public void reset() {
+		Log.d("StudyTimer", "TimerElements reset");
 		elapse.reset();
 		totalElapse.reset();
+		cached_lapCount = 0;
+		average = 0;
+		targetTime = getActivity().getPreferences(Context.MODE_PRIVATE)
+				.getLong(keys.targetTime, defaultTargetTime);
+		resetSavedData();
+	}
+
+	protected void resetSavedData() {
+		SharedPreferences prefs = getActivity().getPreferences(
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.remove(keys.elapse);
+		editor.remove(keys.totalElapse);
+		editor.remove(keys.stopTime);
+		editor.commit();
 	}
 
 	public void initializeLapCount(int lapCount) {
-		this.lapCount = lapCount;
+		this.cached_lapCount = lapCount;
 	}
 
 	public String getFormatedElapse() {
@@ -165,8 +188,8 @@ public class TimerElementsFragment extends Fragment implements
 	@Override
 	public void onNewFrame() {
 		if (realTimeAverageEnabled) {
-			int realTimeAverage = (int) (average * lapCount + elapse
-					.getElapse()) / (lapCount + 1);
+			int realTimeAverage = (int) (average * cached_lapCount + elapse
+					.getElapse()) / (cached_lapCount + 1);
 			tv_average.setText(Time.getFormattedTime("%MM:%SS.%sss",
 					realTimeAverage));
 		}
@@ -193,4 +216,13 @@ public class TimerElementsFragment extends Fragment implements
 		}
 	}
 
+	public void saveTimes() {
+		SharedPreferences prefs = getActivity().getPreferences(
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putLong(keys.elapse, elapse.getElapse());
+		editor.putLong(keys.totalElapse, totalElapse.getElapse());
+		editor.putLong(keys.stopTime, System.currentTimeMillis());
+		editor.commit();
+	}
 }

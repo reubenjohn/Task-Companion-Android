@@ -1,7 +1,9 @@
 package com.reubenjohn.studytimer;
 
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,7 +20,10 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	Timer runtime;
 	TimerElementsFragment timerElements;
 	LapsFragment lapsF;
+	EmptyLapFragment emptyLap;
 	FillerFragment filler;
+	SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
+	FragmentManager fragM;
 
 	private static class logging {
 		static boolean status = false;
@@ -33,20 +38,38 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	}
 
 	StudyTimer(Handler thisHandler, FragmentManager fragM) {
-		Time.setDefaultFormat("%MM:%SS.%s");
 		framer = new FrameTimer(thisHandler);
-		framer.setInterval(100);
-		runtime = new Timer();
-		runtime.setFormat("%MM:%SS.%sss");
+		bridgeFragments(fragM);
+		initializeFeilds();
+		setListeners(framer);
+		runtime.start();
+
+	}
+
+	protected void bridgeFragments(FragmentManager fragM) {
+		this.fragM = fragM;
 		timerElements = (TimerElementsFragment) fragM
 				.findFragmentById(R.id.home_timer_elements);
 		lapsF = (LapsFragment) fragM.findFragmentById(R.id.home_laps);
+		emptyLap = (EmptyLapFragment) fragM
+				.findFragmentById(R.id.home_empty_laps);
 		filler = (FillerFragment) fragM
 				.findFragmentById(R.id.filler_background);
+		assert timerElements != null;
+		assert lapsF != null;
+		assert emptyLap != null;
+		assert filler != null;
+	}
+
+	protected void initializeFeilds() {
 		timerElements.initializeLapCount(lapsF.getLapCount());
 		timerElements.setAverage(lapsF.getAverage());
-		setListeners(framer);
-		runtime.start();
+		Time.setDefaultFormat("%MM:%SS.%s");
+		framer.setInterval(100);
+		runtime = new Timer();
+		runtime.setFormat("%MM:%SS.%sss");
+		setNoLapMode(lapsF.hasNoLaps());
+
 	}
 
 	public void startNewSession(SessionInfo sessionInfo) {
@@ -55,23 +78,39 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		}
 	}
 
+	public void start() {
+		timerElements.start();
+	}
+
+	public void stop() {
+		timerElements.stop();
+	}
+
 	public void toggle() {
 		timerElements.toggle();
 	}
 
 	public void lap() {
 		if (lapsF != null) {
-			lapsF.addlap(timerElements.getFormatedElapse(),
+			lapsF.addLap(timerElements.getFormatedElapse(),
 					(int) timerElements.getElapse());
+			setNoLapMode(lapsF.hasNoLaps());
 		}
 		timerElements.setAverage(lapsF.getAverage());
 		timerElements.lap(lapsF.getLapCount());
 	}
 
-	protected void reset() {
-		framer.reset();
-		runtime.start();
+	public void reset() {
+		Log.d("StudyTimer", "reset() called");
 		timerElements.reset();
+		lapsF.reset();
+		framer.reset();
+		setNoLapMode(true);
+	}
+
+	protected void hardReset() {
+		reset();
+		runtime.reset();
 	}
 
 	public void onPause() {
@@ -80,10 +119,15 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		Log.d("StudyTimer", "onPause() called");
 	}
 
-	public void onResume() {
-		Log.d("StudyTimer", "onResume() called");
-		framer.start();
-		runtime.start();
+	public void onResume(boolean requestReset) {
+		Log.d("StudyTimer", "onResume() called with reset request "
+				+ requestReset);
+		if (requestReset)
+			reset();
+		else {
+			framer.start();
+			runtime.start();
+		}
 	}
 
 	public void onStop() {
@@ -185,6 +229,18 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 			break;
 
 		}
+	}
+
+	public void setNoLapMode(boolean noLaps) {
+		FragmentTransaction transaction = fragM.beginTransaction();
+		if (noLaps) {
+			transaction.hide(lapsF);
+			transaction.show(emptyLap);
+		} else {
+			transaction.hide(emptyLap);
+			transaction.show(lapsF);
+		}
+		transaction.commit();
 	}
 
 }

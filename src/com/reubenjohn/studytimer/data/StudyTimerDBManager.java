@@ -42,10 +42,20 @@ public class StudyTimerDBManager {
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.d("StudyTimerDB", "execSQL(" + LapDBManager.DESTROY_TABLE + ")");
-			// TODO Auto-generated method stub
+			reset();
+		}
+
+		protected void destroyTable(SQLiteDatabase db){
 			db.execSQL(LapDBManager.DESTROY_TABLE);
 			onCreate(db);
 		}
+		
+		public void reset() {
+			SQLiteDatabase db = getWritableDatabase();
+			Log.d("StudyTimerDB", "execSQL(" + LapDBManager.CREATE_TABLE + ")");
+			destroyTable(db);
+		}
+
 	}
 
 	public static class LapDBManager {
@@ -112,8 +122,8 @@ public class StudyTimerDBManager {
 		return (int) cursor.getLong(0);
 	}
 
-	public String getFormattedAverage(){
-		int average=getAverage();
+	public String getFormattedAverage() {
+		int average = getAverage();
 		return Time.getFormattedTime(average);
 	}
 
@@ -151,4 +161,10 @@ public class StudyTimerDBManager {
 		result = result.substring(0, (result.length() - 2));
 		return result += " }";
 	}
+
+	public void reset() {
+		Log.d("StudyTimer", "Database reset");
+		helper.reset();
+	}
+	
 }
