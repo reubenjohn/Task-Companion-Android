@@ -82,7 +82,7 @@ public class TimerElementsFragment extends Fragment implements
 		saveTimes();
 		super.onStop();
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		saveTimes();
@@ -126,6 +126,10 @@ public class TimerElementsFragment extends Fragment implements
 		targetTime = getActivity().getPreferences(Context.MODE_PRIVATE)
 				.getLong(keys.targetTime, defaultTargetTime);
 		resetSavedData();
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 
 	protected void resetSavedData() {
@@ -225,4 +229,5 @@ public class TimerElementsFragment extends Fragment implements
 		editor.putLong(keys.stopTime, System.currentTimeMillis());
 		editor.commit();
 	}
+
 }

@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,9 +38,11 @@ import com.reubenjohn.studytimer.util.SystemUiHider;
 public class Home extends ActionBarActivity implements OnClickListener,
 		OnCheckedChangeListener {
 
-	private class Preferences {
+	private static class Preferences {
 
-		public static final boolean AUTO_HIDE = false;
+		public static boolean AUTO_HIDE = false;
+
+		public static boolean HIDE_BUTONS = false;
 
 		/**
 		 * If {@link #Preferences.AUTO_HIDE} is set, the number of milliseconds to wait
@@ -59,7 +62,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	View controlsView, contentView;
 	StudyTimer T;
 	Handler tHandler = new Handler();
-	Boolean isLargeLayoutBoolean = false;
+	Boolean isLargeLayoutBoolean = false, editModeActive;
 	FrameLayout lapsContainer;
 	LapsContainerParams lapsContainerParams;
 
@@ -109,6 +112,32 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 	}
 
+	ActionMode sessionEditActionMode;
+	private ActionMode.Callback sessionEditActionModeCallBack = new ActionMode.Callback() {
+
+		@Override
+		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+			return false;
+		}
+
+		@Override
+		public void onDestroyActionMode(ActionMode mode) {
+
+		}
+
+		@Override
+		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+			MenuInflater inflater = mode.getMenuInflater();
+			inflater.inflate(R.menu.context_session_edit, menu);
+			return true;
+		}
+
+		@Override
+		public boolean onActionItemClicked(ActionMode mode, MenuItem menu) {
+			return false;
+		}
+	};
+
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
 	 * system UI. This is to prevent the jarring behavior of controls going away
@@ -131,10 +160,6 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			mSystemUiHider.hide();
 		}
 	};
-
-	private static class keys {
-		static final int resetSession = 10;
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -190,10 +215,11 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	}
 
 	public void confirmReset() {
+		final boolean wasRunning = T.isRunning();
 		T.stop();
 		AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
-		builder.setTitle(R.string.reset_session_title)
-				.setMessage(R.string.reset_session_message)
+		builder.setTitle(R.string.session_reset_title)
+				.setMessage(R.string.session_reset_message)
 				.setIcon(R.drawable.ic_action_replay)
 				.setPositiveButton(R.string.reset,
 						new DialogInterface.OnClickListener() {
@@ -204,8 +230,23 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 							}
 						})
-				.setNegativeButton(R.string.reset_session_negative, null)
-				.show();
+				.setNegativeButton(R.string.session_reset_negative,
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								if (wasRunning)
+									T.start();
+							}
+						})
+				.setOnCancelListener(new DialogInterface.OnCancelListener() {
+
+					@Override
+					public void onCancel(DialogInterface arg0) {
+						if (wasRunning)
+							T.start();
+					}
+				}).show();
 		// TODO disable the positive button for 2 seconds
 		// TODO add warning sound in case it is pressed in the pocket
 	}
@@ -244,6 +285,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		lapsContainerParams = new LapsContainerParams();
 		lapsContainer.setLayoutParams(lapsContainerParams
 				.getLayoutParams(!T.lapsF.hasNoLaps()));
+
 	}
 
 	protected void setupSystemUIHider() {
@@ -259,30 +301,35 @@ public class Home extends ActionBarActivity implements OnClickListener,
 					int mControlsHeight;
 					int mShortAnimTime;
 
-					@SuppressWarnings("unused")
 					@Override
 					@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 					public void onVisibilityChange(boolean visible) {
-						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-							if (mControlsHeight == 0) {
-								mControlsHeight = controlsView.getHeight();
+						if (Preferences.HIDE_BUTONS) {
+							if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+								if (mControlsHeight == 0) {
+									mControlsHeight = controlsView.getHeight();
+								}
+								if (mShortAnimTime == 0) {
+									mShortAnimTime = getResources()
+											.getInteger(
+													android.R.integer.config_shortAnimTime);
+								}
+								controlsView
+										.animate()
+										.translationY(
+												visible ? 0 : mControlsHeight)
+										.setDuration(mShortAnimTime);
+							} else {
+								controlsView
+										.setVisibility(visible ? View.VISIBLE
+												: View.GONE);
 							}
-							if (mShortAnimTime == 0) {
-								mShortAnimTime = getResources().getInteger(
-										android.R.integer.config_shortAnimTime);
+
+							if (visible && Preferences.AUTO_HIDE) {
+								delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
 							}
-							controlsView
-									.animate()
-									.translationY(visible ? 0 : mControlsHeight)
-									.setDuration(mShortAnimTime);
-						} else {
-							controlsView.setVisibility(visible ? View.VISIBLE
-									: View.GONE);
 						}
 
-						if (visible && Preferences.AUTO_HIDE) {
-							delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
-						}
 					}
 				});
 	}
@@ -329,6 +376,11 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			break;
 		case R.id.mi_reset:
 			confirmReset();
+			break;
+		case R.id.mi_edit_session:
+			if (sessionEditActionMode == null)
+				sessionEditActionMode = Home.this
+						.startSupportActionMode(sessionEditActionModeCallBack);
 			break;
 		}
 		return super.onOptionsItemSelected(item);

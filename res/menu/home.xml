@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" >
-    <item 
+
+    <item
         android:id="@+id/mi_new_session"
         android:icon="@drawable/ic_action_add_alarm"
         android:title="@string/l_new_session"
-        app:showAsAction="ifRoom" />
-    
+        android:showAsAction="ifRoom" />
+
     <!-- TODO make items also accessible from menu -->
-    
-    <item 
-        android:id="@+id/mi_preferences"
-        android:icon="@drawable/ic_action_settings"
-        android:title="@string/preferences"
-        app:showAsAction="ifRoom" />
-    <item 
+
+    <item
+        android:id="@+id/mi_edit_session"
+        android:icon="@drawable/ic_action_edit"
+        android:title="@string/session_edit_title"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/mi_reset"
         android:icon="@drawable/ic_action_replay"
-        android:title="@string/reset" />
+        android:title="@string/session_reset_title"/>
+    <item
+        android:id="@+id/mi_preferences"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/preferences"/>
+
 </menu>

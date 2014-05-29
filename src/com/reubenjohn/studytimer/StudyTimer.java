@@ -108,6 +108,10 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		setNoLapMode(true);
 	}
 
+	public boolean isRunning() {
+		return timerElements.isRunning();
+	}
+
 	protected void hardReset() {
 		reset();
 		runtime.reset();

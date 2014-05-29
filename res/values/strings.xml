@@ -19,11 +19,14 @@
     <string name="preferences">Preferences</string>
     <string name="activity_name_preferences">Preferences</string>
     <string name="l_target_time_picker">Pick your ideal lap time</string>
+        
+    <string name="session_reset_title">Reset session</string>
+    <string name="session_reset_message">This will clear the current lap list and reset the timers</string>
+    <string name="session_reset_positive">Reset session</string>
+    <string name="session_reset_negative">Cancel</string>
     
-    <string name="reset_session_title">Warning! Reset session?</string>
-    <string name="reset_session_message">This will clear the current lap list and reset the timers</string>
-    <string name="reset_session_positive">Reset session</string>
-    <string name="reset_session_negative">Cancel</string>
+    <string name="session_edit_title">Edit session</string>
+    <string name="session_edit_done">Done</string>
     
     <string name="pref_data_title">Data options</string>
     <string name="pref_data_reset_stats">Reset statistics</string>
