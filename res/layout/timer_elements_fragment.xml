@@ -16,6 +16,7 @@
         android:orientation="horizontal" >
 
         <LinearLayout
+            android:id="@+id/total_elapse"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -39,6 +40,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/average"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

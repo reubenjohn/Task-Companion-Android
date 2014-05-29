@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.reubenjohn.studytimer.data.LapsCursorAdapter;
 import com.reubenjohn.studytimer.data.StudyTimerDBManager;
 
-public class LapsFragment extends Fragment {
+public class LapsFragment extends Fragment implements TimerElementsFragment.TimerElementsListener {
 
 	private LapsCursorAdapter adapter;
 	private StudyTimerDBManager db;
@@ -22,7 +22,7 @@ public class LapsFragment extends Fragment {
 	String formatedAverage = null;
 	long average = 0;
 	int cached_lapCount;
-
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -108,6 +108,13 @@ public class LapsFragment extends Fragment {
 
 	public String getFormattedAverage() {
 		return db.getFormattedAverage();
+	}
+
+
+	@Override
+	public void onTotalElapseSetManually(long elapse) {
+		Log.d("StudyTImer","TODO distribute elapse to laps");
+		db.distributeToLaps(elapse);
 	}
 
 }

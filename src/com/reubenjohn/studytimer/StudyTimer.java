@@ -16,6 +16,13 @@ import com.reubenjohn.studytimer.timming.frametimer.FrameTimerListener;
 
 public class StudyTimer implements FrameTimerListener, OnClickListener {
 
+	public static final class MODES {
+
+		public static final int NORMAL = 0;
+		public static final int SESSION_EDIT = 1;
+
+	}
+
 	public FrameTimer framer;
 	Timer runtime;
 	TimerElementsFragment timerElements;
@@ -171,6 +178,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	protected void setListeners(FrameTimer framer) {
 		timerElements.addFrameTimerListenersTo(framer);
 		framer.addFrameTimerListener(this);
+		timerElements.setTimerElementsListener(lapsF);
 	}
 
 	public void setStatusLogging(boolean status) {
@@ -196,6 +204,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	}
 
 	public void setTargetTime(long timeInMilliseconds) {
+		Log.d("StudyTimer", "Target time set: " + timeInMilliseconds);
 		timerElements.setTargetTIme(timeInMilliseconds);
 	}
 
@@ -245,6 +254,19 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 			transaction.show(lapsF);
 		}
 		transaction.commit();
+	}
+
+	public void setMode(int MODE) {
+		switch (MODE) {
+		case MODES.NORMAL:
+		case MODES.SESSION_EDIT:
+			Log.d("StudyTimer", "Setting mode to: " + MODE);
+			timerElements.setMode(MODE);
+			break;
+		default:
+			Log.d("StudyTimer", "Unknown TimerElement mode request received: "
+					+ MODE);
+		}
 	}
 
 }

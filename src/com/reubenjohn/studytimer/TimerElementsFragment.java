@@ -1,5 +1,7 @@
 package com.reubenjohn.studytimer;
 
+import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,20 +11,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
+import com.reubenjohn.studytimer.StudyTimer.MODES;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.timming.frametimer.FrameTimer;
 import com.reubenjohn.studytimer.timming.frametimer.FrameTimerListener;
 
 public class TimerElementsFragment extends Fragment implements
-		FrameTimerListener {
+		android.view.View.OnClickListener, FrameTimerListener {
 
+	private int mode;
 	private TextView tv_elapse, tv_total_elapse, tv_average;
 	private TimerView elapse, totalElapse;
 	int cached_lapCount;
 	boolean realTimeAverageEnabled = true, running;
 	int average;
 	private long targetTime;
+
+	private static class layout {
+		public static View total_elapse;
+	}
 
 	static long defaultTargetTime = Time.getTimeInMilliseconds(0, 0, 1, 0, 0);
 
@@ -33,6 +42,12 @@ public class TimerElementsFragment extends Fragment implements
 		public static String stopTime = "STOP_TIME_TIME";
 		public static String targetTime = "TARGET_TIME";
 	}
+
+	public interface TimerElementsListener {
+		public void onTotalElapseSetManually(long elapse);
+	};
+
+	public TimerElementsListener timerElementsListener;
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
@@ -128,6 +143,12 @@ public class TimerElementsFragment extends Fragment implements
 		resetSavedData();
 	}
 
+	public void setTotalElapse(long elapse) {
+		Log.d("StudyTimer", "Total elapse set: " + elapse);
+		totalElapse.setElapse(elapse);
+		timerElementsListener.onTotalElapseSetManually(elapse);
+	}
+
 	public boolean isRunning() {
 		return running;
 	}
@@ -179,6 +200,7 @@ public class TimerElementsFragment extends Fragment implements
 		tv_elapse = (TextView) v.findViewById(R.id.tv_elapse);
 		tv_total_elapse = (TextView) v.findViewById(R.id.tv_total_elapse);
 		tv_average = (TextView) v.findViewById(R.id.tv_average);
+		layout.total_elapse = (View) v.findViewById(R.id.total_elapse);
 	}
 
 	protected void initializeFeilds() {
@@ -187,6 +209,9 @@ public class TimerElementsFragment extends Fragment implements
 
 		elapse = factory.produceTimerView(tv_elapse);
 		totalElapse = factory.produceTimerView(tv_total_elapse);
+
+		layout.total_elapse.setOnClickListener(this);
+
 	}
 
 	@Override
@@ -228,6 +253,55 @@ public class TimerElementsFragment extends Fragment implements
 		editor.putLong(keys.totalElapse, totalElapse.getElapse());
 		editor.putLong(keys.stopTime, System.currentTimeMillis());
 		editor.commit();
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.total_elapse:
+			if (mode == MODES.SESSION_EDIT) {
+				Log.d("StudyTimer", "Showing total elapse dialog");
+				showTotalElapseDialog();
+			}
+			break;
+		}
+	}
+
+	private void showTotalElapseDialog() {
+		TimePickerDialog picker = new TimePickerDialog(getActivity(),
+				new OnTimeSetListener() {
+					int callCount = 0;
+
+					@Override
+					public void onTimeSet(TimePicker picker, int minute,
+							int second) {
+						if (callCount == 1) {
+							setTotalElapse(Time.getTimeInMilliseconds(0, 0,
+									minute, second, 0));
+						}
+						callCount++;
+					}
+				}, 1, 0, true);
+		picker.setTitle(R.string.session_edit_total_elapse_title);
+		picker.setMessage(getResources().getString(
+				R.string.session_edit_total_elapse_message));
+		picker.show();
+	}
+
+	public void setMode(int MODE) {
+		switch (MODE) {
+		case MODES.NORMAL:
+		case MODES.SESSION_EDIT:
+			mode = MODE;
+			Log.d("StudyTimer", "TimerElement mode set: " + mode);
+			break;
+		default:
+			Log.d("StudyTimer", "Unknown TimerElement mode request received: " + MODE);
+		}
+	}
+
+	public void setTimerElementsListener(TimerElementsListener listener) {
+		timerElementsListener = listener;
 	}
 
 }

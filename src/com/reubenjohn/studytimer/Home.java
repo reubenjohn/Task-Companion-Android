@@ -122,7 +122,8 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
-
+			sessionEditActionMode = null;
+			T.setMode(StudyTimer.MODES.NORMAL);
 		}
 
 		@Override
@@ -134,6 +135,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem menu) {
+			mode.finish();
 			return false;
 		}
 	};
@@ -381,6 +383,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			if (sessionEditActionMode == null)
 				sessionEditActionMode = Home.this
 						.startSupportActionMode(sessionEditActionModeCallBack);
+			T.setMode(StudyTimer.MODES.SESSION_EDIT);
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -390,14 +393,16 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
 		final TimePickerDialog timePicker = new TimePickerDialog(Home.this,
 				new OnTimeSetListener() {
+					short callCount = 0;
 
 					@Override
 					public void onTimeSet(TimePicker view, int minute,
 							int second) {
-						long target = Time.getTimeInMilliseconds(0, 0, minute,
-								second, 0);
-						Log.d("StudyTimer", "Target time set: " + target);
-						T.setTargetTime(target);
+						if (callCount == 1) {
+							T.setTargetTime(Time.getTimeInMilliseconds(0, 0,
+									minute, second, 0));
+							callCount++;
+						}
 					}
 				}, 1, 0, true);
 		builder.setTitle(R.string.title_session_setup)

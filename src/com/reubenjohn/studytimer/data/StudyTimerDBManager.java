@@ -6,6 +6,7 @@ import com.reubenjohn.studytimer.timming.Time;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -45,11 +46,11 @@ public class StudyTimerDBManager {
 			reset();
 		}
 
-		protected void destroyTable(SQLiteDatabase db){
+		protected void destroyTable(SQLiteDatabase db) {
 			db.execSQL(LapDBManager.DESTROY_TABLE);
 			onCreate(db);
 		}
-		
+
 		public void reset() {
 			SQLiteDatabase db = getWritableDatabase();
 			Log.d("StudyTimerDB", "execSQL(" + LapDBManager.CREATE_TABLE + ")");
@@ -85,6 +86,12 @@ public class StudyTimerDBManager {
 		private static final String[] listViewColumns = new String[] {
 				LapDBManager.KEY_ROWID, LapDBManager.KEY_DURATION,
 				LapDBManager.KEY_ELAPSE };
+
+		private static final String addToEachPrefix = "update " + TABLE_NAME
+				+ " set " + KEY_ELAPSE + "=" + KEY_ELAPSE + "+";
+		// TODO put weird regenerateDurationStrings command here:
+		private static final String regenerateDurationStrings = "update " + TABLE_NAME
+				+ " set " + KEY_DURATION + "=" + KEY_ELAPSE + "+";
 	}
 
 	public StudyTimerDBManager open() {
@@ -166,5 +173,26 @@ public class StudyTimerDBManager {
 		Log.d("StudyTimer", "Database reset");
 		helper.reset();
 	}
-	
+
+	public void distributeToLaps(long elapse) {
+		long induvidualContribution = elapse / getAverage();
+		addToEachLap(induvidualContribution);
+	}
+
+	public void addToEachLap(long induvidualContribution) {
+		if (DB != null) {
+			try {
+				Log.d("StudyTimerDB", LapDBManager.addToEachPrefix+induvidualContribution);
+				DB.execSQL(LapDBManager.addToEachPrefix
+						+ induvidualContribution);
+				regenerateLapStrings();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void regenerateLapStrings() {
+		// TODO execute weird command (maybe use cursors)
+	}
 }
