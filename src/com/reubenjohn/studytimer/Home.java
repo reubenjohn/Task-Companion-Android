@@ -123,13 +123,7 @@ public class Home extends ActionBarActivity implements OnClickListener, OnChecke
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(this);
-		boolean requestReset = prefs.getBoolean("key_pref_data_reset_stats",
-				false);
-		Log.d("StudyTimer", "resumed Home: requestReset=" + requestReset);
-		T.onResume(requestReset);
+		T.onResume(false);
 	}
 
 	@Override
@@ -256,6 +250,10 @@ public class Home extends ActionBarActivity implements OnClickListener, OnChecke
 			break;
 		case R.id.mi_new_session:
 			showSessionDialog(isLargeLayoutBoolean);
+			break;
+		case R.id.mi_reset:
+			T.reset();
+			toggle.setChecked(false);
 			break;
 		}
 		return super.onOptionsItemSelected(item);

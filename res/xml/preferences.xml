@@ -12,12 +12,6 @@
     <PreferenceCategory
         android:key="key_pref_data"
         android:title="@string/pref_data_title" >
-        <com.reubenjohn.studytimer.preferences.YesNoDialogPreference
-            android:dialogMessage="@string/pref_data_reset_stats_summary"
-            android:key="key_pref_data_reset_stats"
-            android:negativeButtonText="No"
-            android:positiveButtonText="Yes"
-            android:title="@string/pref_data_reset_stats" />
     </PreferenceCategory>
 
 </PreferenceScreen>

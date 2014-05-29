@@ -102,9 +102,9 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	public void reset() {
 		Log.d("StudyTimer", "reset() called");
+		stop();
 		timerElements.reset();
 		lapsF.reset();
-		framer.reset();
 		setNoLapMode(true);
 	}
 

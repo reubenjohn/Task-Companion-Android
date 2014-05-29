@@ -20,6 +20,8 @@
     <color name="transparent">#00000000</color>
     <color name="glass">#9900AAEE</color>
     <color name="glass_purple">#66EE2CEE</color>
-    
+    <color name="aquamarine">#7FFFD4</color>
+    <color name="turquoise">#0FDDAF</color>
+    <color name="cool_mint">#90FEFB</color> 
 
 </resources>

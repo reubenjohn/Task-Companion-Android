@@ -11,4 +11,8 @@
         android:icon="@drawable/ic_action_settings"
         android:title="@string/preferences"
         app:showAsAction="ifRoom" />
+    <item 
+        android:id="@+id/mi_reset"
+        android:icon="@drawable/ic_action_replay"
+        android:title="@string/reset" />
 </menu>
