@@ -20,6 +20,11 @@
     <string name="activity_name_preferences">Preferences</string>
     <string name="l_target_time_picker">Pick your ideal lap time</string>
     
+    <string name="reset_session_title">Warning! Reset session?</string>
+    <string name="reset_session_message">This will clear the current lap list and reset the timers</string>
+    <string name="reset_session_positive">Reset session</string>
+    <string name="reset_session_negative">Cancel</string>
+    
     <string name="pref_data_title">Data options</string>
     <string name="pref_data_reset_stats">Reset statistics</string>
     <string name="pref_data_reset_stats_summary">This will clear all laps and your current session</string>

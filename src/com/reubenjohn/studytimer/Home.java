@@ -6,11 +6,9 @@ import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -22,6 +20,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
@@ -34,7 +34,8 @@ import com.reubenjohn.studytimer.util.SystemUiHider;
  * 
  * @see SystemUiHider
  */
-public class Home extends ActionBarActivity implements OnClickListener, OnCheckedChangeListener {
+public class Home extends ActionBarActivity implements OnClickListener,
+		OnCheckedChangeListener {
 
 	private class Preferences {
 
@@ -58,7 +59,55 @@ public class Home extends ActionBarActivity implements OnClickListener, OnChecke
 	View controlsView, contentView;
 	StudyTimer T;
 	Handler tHandler = new Handler();
-	Boolean isLargeLayoutBoolean = false, resetRequested;
+	Boolean isLargeLayoutBoolean = false;
+	FrameLayout lapsContainer;
+	LapsContainerParams lapsContainerParams;
+
+	private class LapsContainerParams {
+		LapsLayout lapsLayout;
+		boolean cached_isLandscape;
+
+		private class LapsLayout {
+			public LayoutParams HasLapsLayout, NoLapsLayout;
+
+			public LapsLayout() {
+				cached_isLandscape = Home.this.getResources().getBoolean(
+						R.bool.landscape);
+				// TODO find a better way to determing screen orientation
+				if (cached_isLandscape) {
+					HasLapsLayout = new LayoutParams(0,
+							LayoutParams.WRAP_CONTENT, 9.5f);
+					NoLapsLayout = new LayoutParams(LayoutParams.WRAP_CONTENT,
+							LayoutParams.WRAP_CONTENT);
+				} else {
+					HasLapsLayout = new LayoutParams(LayoutParams.MATCH_PARENT,
+							0, 12);
+					HasLapsLayout.leftMargin = 16;
+					HasLapsLayout.rightMargin = 16;
+
+					NoLapsLayout = new LayoutParams(LayoutParams.MATCH_PARENT,
+							LayoutParams.WRAP_CONTENT);
+					NoLapsLayout.leftMargin = 16;
+					NoLapsLayout.rightMargin = 16;
+				}
+			}
+		}
+
+		public LapsContainerParams() {
+			lapsLayout = new LapsLayout();
+		}
+
+		public LayoutParams getLayoutParams(boolean hasLaps) {
+			Log.d("StudyTuner", "sending lapsLayoutParames with landscape: "
+					+ lapsContainerParams.cached_isLandscape + " and hasLaps: "
+					+ hasLaps);
+			if (hasLaps) {
+				return lapsLayout.HasLapsLayout;
+			} else
+				return lapsLayout.NoLapsLayout;
+		}
+
+	}
 
 	/**
 	 * Touch listener to use for in-layout UI controls to delay hiding the
@@ -83,10 +132,10 @@ public class Home extends ActionBarActivity implements OnClickListener, OnChecke
 		}
 	};
 
-	private static class keys{
-		static final int resetSession=10;
+	private static class keys {
+		static final int resetSession = 10;
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -132,6 +181,35 @@ public class Home extends ActionBarActivity implements OnClickListener, OnChecke
 		T.onPause();
 	}
 
+	public void reset() {
+		// TODO transition the lapsCountainer layout change during reset
+		T.reset();
+		toggle.setChecked(false);
+		lapsContainer.setLayoutParams(lapsContainerParams
+				.getLayoutParams(false));
+	}
+
+	public void confirmReset() {
+		T.stop();
+		AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
+		builder.setTitle(R.string.reset_session_title)
+				.setMessage(R.string.reset_session_message)
+				.setIcon(R.drawable.ic_action_replay)
+				.setPositiveButton(R.string.reset,
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								reset();
+
+							}
+						})
+				.setNegativeButton(R.string.reset_session_negative, null)
+				.show();
+		// TODO disable the positive button for 2 seconds
+		// TODO add warning sound in case it is pressed in the pocket
+	}
+
 	/**
 	 * Schedules a call to hide() in [delay] milliseconds, canceling any
 	 * previously scheduled calls.
@@ -146,6 +224,7 @@ public class Home extends ActionBarActivity implements OnClickListener, OnChecke
 		contentView = findViewById(R.id.fullscreen_content);
 		toggle = (ToggleButton) findViewById(R.id.b_toggle);
 		lap = (Button) findViewById(R.id.b_lap);
+		lapsContainer = (FrameLayout) findViewById(R.id.home_laps_container);
 	}
 
 	protected void setListeners() {
@@ -161,21 +240,10 @@ public class Home extends ActionBarActivity implements OnClickListener, OnChecke
 		T = new StudyTimer(tHandler, getSupportFragmentManager());
 		T.setStatusLogging(true);
 		isLargeLayoutBoolean = getResources().getBoolean(R.bool.large_layout);
-		/*
-		 * LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-		 * LinearLayout.LayoutParams.WRAP_CONTENT,
-		 * LinearLayout.LayoutParams.WRAP_CONTENT,1.f);
-		 * params.gravity=Gravity.CENTER; params.weight=1.f;
-		 * 
-		 * elapse = new TimerView(Home.this,T.framer); elapse.setText("elapse");
-		 * elapse.setLayoutParams(params); elapse.setTextSize(50);
-		 * elapse.setTextColor(Color.GREEN);
-		 * T.framer.setFrameTimerListener(elapse);
-		 * 
-		 * LinearLayout fullscreenContent = (LinearLayout)
-		 * findViewById(R.id.fullscreen_content);
-		 * fullscreenContent.addView(elapse);
-		 */
+
+		lapsContainerParams = new LapsContainerParams();
+		lapsContainer.setLayoutParams(lapsContainerParams
+				.getLayoutParams(!T.lapsF.hasNoLaps()));
 	}
 
 	protected void setupSystemUIHider() {
@@ -223,7 +291,7 @@ public class Home extends ActionBarActivity implements OnClickListener, OnChecke
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.b_lap:
-			T.lap();
+			lap();
 			break;
 		case R.id.fullscreen_content:
 			mSystemUiHider.show();
@@ -232,9 +300,17 @@ public class Home extends ActionBarActivity implements OnClickListener, OnChecke
 		}
 	}
 
+	private void lap() {
+		// TODO transition the lapsCountainer layout change during lap
+		lapsContainer
+				.setLayoutParams(lapsContainerParams.getLayoutParams(true));
+		T.lap();
+
+	}
+
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean newState) {
-		if(newState==true)
+		if (newState == true)
 			T.start();
 		else
 			T.stop();
@@ -252,27 +328,10 @@ public class Home extends ActionBarActivity implements OnClickListener, OnChecke
 			showSessionDialog(isLargeLayoutBoolean);
 			break;
 		case R.id.mi_reset:
-			T.reset();
-			toggle.setChecked(false);
+			confirmReset();
 			break;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == keys.resetSession) {
-			if (resultCode == RESULT_OK) {
-				resetRequested = data.getBooleanExtra("KEY_RESET_REQUESTED",
-						false);
-				Log.d("StudyTimer", "result=" + resetRequested);
-				if(resetRequested){
-					toggle.setChecked(false);
-					T.reset();	
-				}
-			}
-		}
 	}
 
 	protected void showSessionDialog(boolean windowed) {

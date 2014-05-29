@@ -42,15 +42,30 @@
                     tools:ignore="NestedWeights"
                     tools:layout="@layout/timer_elements_fragment" />
 
-                <fragment
-                    android:id="@+id/home_laps"
+                <FrameLayout
+                    android:id="@+id/home_laps_container"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="0dp"
                     android:layout_marginRight="0dp"
-                    android:layout_weight="9.54"
-                    class="com.reubenjohn.studytimer.LapsFragment"
-                    tools:layout="@layout/laps_fragment" />
+                    android:layout_weight="9.5" >
+
+                    <fragment
+                        android:id="@+id/home_empty_laps"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        class="com.reubenjohn.studytimer.EmptyLapFragment"
+                        tools:layout="@layout/empty_lap_fragment" />
+
+                    <fragment
+                        android:id="@+id/home_laps"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        class="com.reubenjohn.studytimer.LapsFragment"
+                        tools:layout="@layout/laps_fragment" />
+
+                </FrameLayout>
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>

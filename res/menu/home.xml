@@ -6,6 +6,9 @@
         android:icon="@drawable/ic_action_add_alarm"
         android:title="@string/l_new_session"
         app:showAsAction="ifRoom" />
+    
+    <!-- TODO make items also accessible from menu -->
+    
     <item 
         android:id="@+id/mi_preferences"
         android:icon="@drawable/ic_action_settings"
