@@ -31,6 +31,7 @@ public class TimerElementsFragment extends Fragment implements
 
 	private static class layout {
 		public static View total_elapse;
+		public static View elapse;
 	}
 
 	static long defaultTargetTime = Time.getTimeInMilliseconds(0, 0, 1, 0, 0);
@@ -62,6 +63,7 @@ public class TimerElementsFragment extends Fragment implements
 				false);
 		bridgeXML(v);
 		initializeFeilds();
+		setOnClickListeners();
 		if (savedInstanceState != null) {
 
 			if (savedInstanceState.getBoolean(keys.running, false)) {
@@ -201,6 +203,7 @@ public class TimerElementsFragment extends Fragment implements
 		tv_total_elapse = (TextView) v.findViewById(R.id.tv_total_elapse);
 		tv_average = (TextView) v.findViewById(R.id.tv_average);
 		layout.total_elapse = (View) v.findViewById(R.id.total_elapse);
+		layout.elapse = (View) v.findViewById(R.id.elapse);
 	}
 
 	protected void initializeFeilds() {
@@ -210,8 +213,11 @@ public class TimerElementsFragment extends Fragment implements
 		elapse = factory.produceTimerView(tv_elapse);
 		totalElapse = factory.produceTimerView(tv_total_elapse);
 
-		layout.total_elapse.setOnClickListener(this);
+	}
 
+	protected void setOnClickListeners() {
+		layout.total_elapse.setOnClickListener(this);
+		layout.elapse.setOnClickListener(this);
 	}
 
 	@Override
@@ -237,6 +243,10 @@ public class TimerElementsFragment extends Fragment implements
 		return elapse.getElapse();
 	}
 
+	public long getTargetTime() {
+		return targetTime;
+	}
+
 	public float getLapProgress() {
 		if (targetTime == 0) {
 			return -1;
@@ -257,17 +267,43 @@ public class TimerElementsFragment extends Fragment implements
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.total_elapse:
-			if (mode == MODES.SESSION_EDIT) {
-				Log.d("StudyTimer", "Showing total elapse dialog");
-				showTotalElapseDialog();
+		Log.d("StudyTimer", "Timer Element clicked");
+		if (mode == MODES.SESSION_EDIT) {
+			switch (v.getId()) {
+			case R.id.total_elapse:
+				// showTotalElapseDialog();
+				break;
+			case R.id.elapse:
+				showElapseDialog();
+				break;
 			}
-			break;
 		}
 	}
 
+	private void showElapseDialog() {
+		Log.d("StudyTimer", "Showing elapse dialog");
+		TimePickerDialog picker = new TimePickerDialog(getActivity(),
+				new OnTimeSetListener() {
+					int callCount = 0;
+
+					@Override
+					public void onTimeSet(TimePicker picker, int minute,
+							int second) {
+						if (callCount == 1) {
+							elapse.setElapse(Time.getTimeInMilliseconds(0, 0,
+									minute, second, 0));
+						}
+						callCount++;
+					}
+				}, 1, 0, true);
+		picker.setTitle(R.string.session_edit_elapse_title);
+		picker.setMessage(getResources().getString(
+				R.string.session_edit_elapse_message));
+		picker.show();
+	}
+
 	private void showTotalElapseDialog() {
+		Log.d("StudyTimer", "Showing total elapse dialog");
 		TimePickerDialog picker = new TimePickerDialog(getActivity(),
 				new OnTimeSetListener() {
 					int callCount = 0;
@@ -296,7 +332,8 @@ public class TimerElementsFragment extends Fragment implements
 			Log.d("StudyTimer", "TimerElement mode set: " + mode);
 			break;
 		default:
-			Log.d("StudyTimer", "Unknown TimerElement mode request received: " + MODE);
+			Log.d("StudyTimer", "Unknown TimerElement mode request received: "
+					+ MODE);
 		}
 	}
 

@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.reubenjohn.studytimer.R;
-import com.reubenjohn.studytimer.data.StudyTimerDBManager.LapDBManager;
+import com.reubenjohn.studytimer.data.StudyTimerDBManager.LapDBProperties;
+import com.reubenjohn.studytimer.timming.Time;
 
 public class LapsCursorAdapter extends CursorAdapter {
 
@@ -24,7 +25,8 @@ public class LapsCursorAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		view.setBackgroundColor(context.getResources().getColor(R.color.purple2));
+		view.setBackgroundColor(context.getResources()
+				.getColor(R.color.purple2));
 		/*
 		 * if (cursor.getPosition() % 2 == 1) {
 		 * view.setBackgroundColor(context.getResources().getColor(
@@ -34,13 +36,14 @@ public class LapsCursorAdapter extends CursorAdapter {
 		 */
 		lapNumber = (TextView) view.findViewById(R.id.tv_lap_number);
 		lapNumber.setText(cursor.getString(cursor
-				.getColumnIndex(LapDBManager.keys.ROWID)));
+				.getColumnIndex(LapDBProperties.keys.ROWID)));
 
 		lapDuration = (TextView) view.findViewById(R.id.tv_lap_duration);
-		lapDuration.setText(cursor.getString(cursor
-				.getColumnIndex(LapDBManager.keys.DURATION)));
+		lapDuration.setText(Time.getFormattedTime(cursor.getLong(cursor
+				.getColumnIndex(LapDBProperties.keys.ELAPSE))));
 
 	}
+
 	// TODO overide getView() to improve performance
 
 	@Override

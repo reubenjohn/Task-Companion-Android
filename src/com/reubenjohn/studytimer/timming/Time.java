@@ -33,7 +33,7 @@ public class Time {
 		Time.defaultFormat = defaultFormat;
 	}
 
-	Time(long milliseconds) {
+	public Time(long milliseconds) {
 		setTime(milliseconds);
 	}
 

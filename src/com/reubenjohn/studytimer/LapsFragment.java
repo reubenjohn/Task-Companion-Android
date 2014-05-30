@@ -13,7 +13,8 @@ import android.widget.TextView;
 import com.reubenjohn.studytimer.data.LapsCursorAdapter;
 import com.reubenjohn.studytimer.data.StudyTimerDBManager;
 
-public class LapsFragment extends Fragment implements TimerElementsFragment.TimerElementsListener {
+public class LapsFragment extends Fragment implements
+		TimerElementsFragment.TimerElementsListener {
 
 	private LapsCursorAdapter adapter;
 	private StudyTimerDBManager db;
@@ -22,7 +23,7 @@ public class LapsFragment extends Fragment implements TimerElementsFragment.Time
 	String formatedAverage = null;
 	long average = 0;
 	int cached_lapCount;
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -54,33 +55,34 @@ public class LapsFragment extends Fragment implements TimerElementsFragment.Time
 		/*
 		 * adapter = new SimpleCursorAdapter(getActivity(),
 		 * R.layout.laps_list_item, cursor,
-		 * StudyTimerDBManager.LapDBManager.columns,
-		 * StudyTimerDBManager.LapDBManager.to);
+		 * StudyTimerDBManager.LapDBProperties.columns,
+		 * StudyTimerDBManager.LapDBProperties.to);
 		 */
-		adapter = new LapsCursorAdapter(getActivity().getApplicationContext(),
-				cursor, 0);
+		adapter = new LapsCursorAdapter(getActivity(), cursor, 0);
 		listView.setAdapter(adapter);
 	}
 
 	public void reset() {
 		Log.d("StudyTimer", "LapsFragment reset");
 		db.reset();
-		cached_lapCount=0;
-		average=0;
-		formatedAverage=getResources().getString(R.string.intitial_accurate_time);
+		cached_lapCount = 0;
+		average = 0;
+		formatedAverage = getResources().getString(
+				R.string.intitial_accurate_time);
 		updateCurentLap(0);
 	}
 
-	public boolean hasNoLaps(){
-		return cached_lapCount==0;
+	public boolean hasNoLaps() {
+		return cached_lapCount == 0;
 	}
+
 	public boolean addLap(String newLap, int newElapsed) {
 		db.addLap(newLap, newElapsed);
 		generateListView();
 		cached_lapCount++;
 		updateCurentLap(cached_lapCount);
 		// average=getAverage();
-		return cached_lapCount==1;
+		return cached_lapCount == 1;
 	}
 
 	protected void updateCurentLap(int lapCount) {
@@ -110,10 +112,8 @@ public class LapsFragment extends Fragment implements TimerElementsFragment.Time
 		return db.getFormattedAverage();
 	}
 
-
 	@Override
 	public void onTotalElapseSetManually(long elapse) {
-		Log.d("StudyTImer","TODO distribute elapse to laps");
 		db.distributeToLaps(elapse);
 	}
 

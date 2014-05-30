@@ -391,6 +391,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 	protected void showSessionDialog(boolean windowed) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
+		Time currentTarget = new Time(T.timerElements.getTargetTime());
 		final TimePickerDialog timePicker = new TimePickerDialog(Home.this,
 				new OnTimeSetListener() {
 					short callCount = 0;
@@ -398,13 +399,13 @@ public class Home extends ActionBarActivity implements OnClickListener,
 					@Override
 					public void onTimeSet(TimePicker view, int minute,
 							int second) {
-						if (callCount == 1) {
+						if (callCount % 2 == 1) {
 							T.setTargetTime(Time.getTimeInMilliseconds(0, 0,
 									minute, second, 0));
-							callCount++;
 						}
+						callCount++;
 					}
-				}, 1, 0, true);
+				}, currentTarget.getMinutes(), currentTarget.getSeconds(), true);
 		builder.setTitle(R.string.title_session_setup)
 				.setItems(R.array.session_setup_elements,
 						new DialogInterface.OnClickListener() {

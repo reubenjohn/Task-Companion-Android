@@ -1,8 +1,5 @@
 package com.reubenjohn.studytimer.data;
 
-import com.reubenjohn.studytimer.R;
-import com.reubenjohn.studytimer.timming.Time;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,12 +8,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.reubenjohn.studytimer.timming.Time;
+
 public class StudyTimerDBManager {
 
 	private final Context context;
 
 	private DBHelper helper;
 	private SQLiteDatabase DB;
+	private LapDBManager lapDB;
 
 	public StudyTimerDBManager(Context context) {
 		this.context = context;
@@ -27,7 +27,7 @@ public class StudyTimerDBManager {
 		public final static int DATABASE_VERSION = 2;
 	}
 
-	private static class DBHelper extends SQLiteOpenHelper {
+	private class DBHelper extends SQLiteOpenHelper {
 
 		public DBHelper(Context context) {
 			super(context, properties.DATABASE_NAME, null,
@@ -36,34 +36,67 @@ public class StudyTimerDBManager {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			Log.d("StudyTimerDB", "execSQL("
-					+ LapDBManager.commands.CREATE_TABLE + ")");
-			db.execSQL(LapDBManager.commands.CREATE_TABLE);
+			Log.d("StudyTimerDB",
+					"execSQL(" + LapDBProperties.commands.createTable() + ")");
+			db.execSQL(LapDBProperties.commands.createTable());
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.d("StudyTimerDB", "execSQL("
-					+ LapDBManager.commands.DESTROY_TABLE + ")");
+			switch (oldVersion) {
+			case 1:
+				if (newVersion == 1)
+					break;
+			case 2:
+				reset();
+				if (newVersion == 2)
+					break;
+			case 3:
+				if (newVersion == 3)
+					break;
+			case 4:
+				if (newVersion == 4)
+					break;
+			case 5:
+				if (newVersion == 5)
+					break;
+			case 6:
+				if (newVersion == 6)
+					break;
+			}
 			reset();
 		}
 
 		protected void destroyTable(SQLiteDatabase db) {
-			db.execSQL(LapDBManager.commands.DESTROY_TABLE);
+			db.execSQL(LapDBProperties.commands.dropTable());
 			onCreate(db);
 		}
 
 		public void reset() {
 			SQLiteDatabase db = getWritableDatabase();
-			Log.d("StudyTimerDB", "execSQL("
-					+ LapDBManager.commands.CREATE_TABLE + ")");
+			Log.d("StudyTimerDB",
+					"execSQL(" + LapDBProperties.commands.createTable() + ")");
 			destroyTable(db);
 		}
 
 	}
 
-	public static class LapDBManager {
-		public static final String TABLE_NAME = "laps";
+	public static class LapDBProperties {
+		public static String tableName(int DBVersion) {
+			switch (DBVersion) {
+			case 1:
+			case 2:
+			case 3:
+				return "laps";
+
+			default:
+				return "laps";
+			}
+		}
+
+		public static String tableName() {
+			return tableName(properties.DATABASE_VERSION);
+		}
 
 		public static final class keys {
 			public static final String ROWID = "_id";
@@ -72,42 +105,119 @@ public class StudyTimerDBManager {
 		}
 
 		public static final class columns {
-			public static final String[] columns = new String[] { keys.ROWID,
-					keys.DURATION };
-			private static final String[] listViewColumns = new String[] {
-					LapDBManager.keys.ROWID, LapDBManager.keys.DURATION,
-					LapDBManager.keys.ELAPSE };
-		}
 
-		public static final int[] to = new int[] { R.id.tv_lap_number,
-				R.id.tv_lap_duration };
+			public static String[] all(int DBVersion) {
+				switch (DBVersion) {
+				case 1:
+				case 2:
+					return new String[] { keys.ROWID, keys.DURATION,
+							keys.ELAPSE };
+				case 3:
+					return new String[] { keys.ROWID, keys.DURATION };
+
+				default:
+					return new String[] { keys.ROWID, keys.DURATION };
+				}
+			}
+
+			public static String[] all() {
+				return all(properties.DATABASE_VERSION);
+			}
+
+			public static String[] listViewColumns(int DBVersion) {
+				switch (DBVersion) {
+				case 1:
+				case 2:
+					return new String[] { LapDBProperties.keys.ROWID,
+							LapDBProperties.keys.DURATION,
+							LapDBProperties.keys.ELAPSE };
+				case 3:
+					return new String[] { LapDBProperties.keys.ROWID,
+							LapDBProperties.keys.ELAPSE };
+
+				default:
+					return new String[] { keys.ROWID, keys.DURATION };
+				}
+			}
+
+			public static String[] listViewColumns() {
+				return listViewColumns(properties.DATABASE_VERSION);
+			}
+		}
 
 		public static final class commands {
-			private static final String CREATE_TABLE = "CREATE TABLE if not exists "
-					+ TABLE_NAME
-					+ "("
-					+ keys.ROWID
-					+ " integer PRIMARY KEY autoincrement,"
-					+ keys.DURATION
-					+ " TEXT NOT NULL," + keys.ELAPSE + " integer" + ");";
-			private static final String DESTROY_TABLE = "DROP TABLE IF EXISTS "
-					+ TABLE_NAME;
+			public static String createTable(int DBVersion) {
+				String result = "CREATE TABLE if not exists ";
+				switch (DBVersion) {
+				case 1:
+				case 2:
+					result += tableName(DBVersion) + "(" + keys.ROWID
+							+ " integer PRIMARY KEY autoincrement,"
+							+ keys.DURATION + " TEXT NOT NULL," + keys.ELAPSE
+							+ " integer" + ");";
+					break;
+				case 3:
+					break;
+
+				default:
+					result += tableName(DBVersion) + "(" + keys.ROWID
+							+ " integer PRIMARY KEY autoincrement,"
+							+ keys.DURATION + " TEXT NOT NULL," + keys.ELAPSE
+							+ " integer" + ");";
+				}
+				return result;
+			}
+
+			public static String createTable() {
+				return createTable(properties.DATABASE_VERSION);
+			}
+
+			public static String dropTable(int DBVersion) {
+				return "DROP TABLE IF EXISTS " + tableName(DBVersion);
+			}
+
+			public static String dropTable() {
+				return dropTable(properties.DATABASE_VERSION);
+			}
+
+			public static String insertInto(int destinationTableversion,
+					String fromTable) {
+				String insertIntoPrefix = null;
+				switch (destinationTableversion) {
+				case 3:
+					insertIntoPrefix = "insert into "
+							+ LapDBProperties.tableName(3)
+							+ getFormattedStringArrayElements("(",
+									LapDBProperties.columns.all(), ")")
+							+ " select "
+							+ getFormattedStringArrayElements("",
+									LapDBProperties.columns.all(), "")
+							+ " from " + fromTable;
+					break;
+				default:
+					return null;
+				}
+				return insertIntoPrefix;
+			}
+
 			private static final String addToEachPrefix = "update "
-					+ TABLE_NAME + " set " + keys.ELAPSE + "=" + keys.ELAPSE
-					+ "+";
-			// TODO put weird regenerateDurationStrings command here:
-			private static final String regenerateDurationStrings = "update "
-					+ TABLE_NAME + " set " + keys.DURATION + "=" + keys.ELAPSE
+					+ tableName() + " set " + keys.ELAPSE + "=" + keys.ELAPSE
 					+ "+";
 		}
 
-		private static final String countQuery = "SELECT  * FROM " + TABLE_NAME;
+		private static final String countQuery = "SELECT  * FROM "
+				+ tableName();
+
+	}
+
+	private class LapDBManager {
 
 	}
 
 	public StudyTimerDBManager open() {
 		helper = new DBHelper(context);
 		DB = helper.getWritableDatabase();
+		lapDB = new LapDBManager();
 		return StudyTimerDBManager.this;
 	}
 
@@ -119,23 +229,23 @@ public class StudyTimerDBManager {
 
 	public long addLap(String duration, int elapse_duration) {
 		ContentValues val = new ContentValues();
-		val.put(LapDBManager.keys.DURATION, duration);
-		val.put(LapDBManager.keys.ELAPSE, elapse_duration);
+		val.put(LapDBProperties.keys.DURATION, duration);
+		val.put(LapDBProperties.keys.ELAPSE, elapse_duration);
 
-		Log.d("StudyTimerDB", "insert(" + LapDBManager.TABLE_NAME + ",null, "
-				+ val + ")");
-		return DB.insert(LapDBManager.TABLE_NAME, null, val);
+		Log.d("StudyTimerDB", "insert(" + LapDBProperties.tableName()
+				+ ",null, " + val + ")");
+		return DB.insert(LapDBProperties.tableName(), null, val);
 	}
 
 	public int getAverage() {
-		Log.d("StudyTimerDB", "rawQuery(\"SELECT CAST(avg("
-				+ LapDBManager.keys.ELAPSE + ") AS INTEGER) AS "
-				+ LapDBManager.keys.ELAPSE + " from " + LapDBManager.TABLE_NAME
-				+ ", null)\"");
+		Log.d("StudyTimerDB",
+				"rawQuery(\"SELECT CAST(avg(" + LapDBProperties.keys.ELAPSE
+						+ ") AS INTEGER) AS " + LapDBProperties.keys.ELAPSE
+						+ " from " + LapDBProperties.tableName() + ", null)\"");
 		Cursor cursor = DB.rawQuery(
-				"SELECT CAST(avg(" + LapDBManager.keys.ELAPSE
-						+ ") AS INTEGER) AS " + LapDBManager.keys.ELAPSE
-						+ " from " + LapDBManager.TABLE_NAME, null);
+				"SELECT CAST(avg(" + LapDBProperties.keys.ELAPSE
+						+ ") AS INTEGER) AS " + LapDBProperties.keys.ELAPSE
+						+ " from " + LapDBProperties.tableName(), null);
 		cursor.moveToFirst();
 		return (int) cursor.getLong(0);
 	}
@@ -148,14 +258,15 @@ public class StudyTimerDBManager {
 	public Cursor fetchAllLaps() {
 		Log.d("StudyTimerDB",
 				"query("
-						+ LapDBManager.TABLE_NAME
+						+ LapDBProperties.tableName()
 						+ ", "
-						+ getFormattedStringArrayElements(LapDBManager.columns.listViewColumns)
+						+ getFormattedStringArrayElements("{",
+								LapDBProperties.columns.listViewColumns(), "}")
 						+ " , null, null, null, null, "
-						+ LapDBManager.keys.ROWID + " DESC)");
-		Cursor cursor = DB.query(LapDBManager.TABLE_NAME,
-				LapDBManager.columns.listViewColumns, null, null, null, null,
-				LapDBManager.keys.ROWID + " DESC");
+						+ LapDBProperties.keys.ROWID + " DESC)");
+		Cursor cursor = DB.query(LapDBProperties.tableName(),
+				LapDBProperties.columns.listViewColumns(), null, null, null,
+				null, LapDBProperties.keys.ROWID + " DESC");
 		if (cursor != null) {
 			cursor.moveToFirst();
 		}
@@ -164,9 +275,9 @@ public class StudyTimerDBManager {
 
 	public int getLapCount() {
 		if (DB != null) {
-			Log.d("StudyTimerDB", "rawQuery(\"" + LapDBManager.countQuery
+			Log.d("StudyTimerDB", "rawQuery(\"" + LapDBProperties.countQuery
 					+ "\", null)");
-			Cursor cursor = DB.rawQuery(LapDBManager.countQuery, null);
+			Cursor cursor = DB.rawQuery(LapDBProperties.countQuery, null);
 			int cnt = cursor.getCount();
 			cursor.close();
 			return cnt;
@@ -174,13 +285,14 @@ public class StudyTimerDBManager {
 			return -1;
 	}
 
-	protected String getFormattedStringArrayElements(String[] array) {
-		String result = "{ ";
+	protected static String getFormattedStringArrayElements(String prefix,
+			String[] array, String postFix) {
+		String result = prefix;
 		for (String s : array) {
 			result += s + ", ";
 		}
 		result = result.substring(0, (result.length() - 2));
-		return result += " }";
+		return result += postFix;
 	}
 
 	public void reset() {
@@ -196,18 +308,13 @@ public class StudyTimerDBManager {
 	public void addToEachLap(long induvidualContribution) {
 		if (DB != null) {
 			try {
-				Log.d("StudyTimerDB", LapDBManager.commands.addToEachPrefix
+				Log.d("StudyTimerDB", LapDBProperties.commands.addToEachPrefix
 						+ induvidualContribution);
-				DB.execSQL(LapDBManager.commands.addToEachPrefix
+				DB.execSQL(LapDBProperties.commands.addToEachPrefix
 						+ induvidualContribution);
-				regenerateLapStrings();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private void regenerateLapStrings() {
-		// TODO execute weird command (maybe use cursors)
 	}
 }
