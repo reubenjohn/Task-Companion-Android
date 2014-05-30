@@ -36,24 +36,27 @@ public class StudyTimerDBManager {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			Log.d("StudyTimerDB", "execSQL(" + LapDBManager.CREATE_TABLE + ")");
-			db.execSQL(LapDBManager.CREATE_TABLE);
+			Log.d("StudyTimerDB", "execSQL("
+					+ LapDBManager.commands.CREATE_TABLE + ")");
+			db.execSQL(LapDBManager.commands.CREATE_TABLE);
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.d("StudyTimerDB", "execSQL(" + LapDBManager.DESTROY_TABLE + ")");
+			Log.d("StudyTimerDB", "execSQL("
+					+ LapDBManager.commands.DESTROY_TABLE + ")");
 			reset();
 		}
 
 		protected void destroyTable(SQLiteDatabase db) {
-			db.execSQL(LapDBManager.DESTROY_TABLE);
+			db.execSQL(LapDBManager.commands.DESTROY_TABLE);
 			onCreate(db);
 		}
 
 		public void reset() {
 			SQLiteDatabase db = getWritableDatabase();
-			Log.d("StudyTimerDB", "execSQL(" + LapDBManager.CREATE_TABLE + ")");
+			Log.d("StudyTimerDB", "execSQL("
+					+ LapDBManager.commands.CREATE_TABLE + ")");
 			destroyTable(db);
 		}
 
@@ -62,36 +65,44 @@ public class StudyTimerDBManager {
 	public static class LapDBManager {
 		public static final String TABLE_NAME = "laps";
 
-		public static final String KEY_ROWID = "_id";
-		public static final String KEY_DURATION = "duration";
-		public static final String KEY_ELAPSE = "elapse_duration";
+		public static final class keys {
+			public static final String ROWID = "_id";
+			public static final String DURATION = "duration";
+			public static final String ELAPSE = "elapse_duration";
+		}
 
-		public static final String[] columns = new String[] { KEY_ROWID,
-				KEY_DURATION };
+		public static final class columns {
+			public static final String[] columns = new String[] { keys.ROWID,
+					keys.DURATION };
+			private static final String[] listViewColumns = new String[] {
+					LapDBManager.keys.ROWID, LapDBManager.keys.DURATION,
+					LapDBManager.keys.ELAPSE };
+		}
+
 		public static final int[] to = new int[] { R.id.tv_lap_number,
 				R.id.tv_lap_duration };
 
-		private static final String CREATE_TABLE = "CREATE TABLE if not exists "
-				+ TABLE_NAME
-				+ "("
-				+ KEY_ROWID
-				+ " integer PRIMARY KEY autoincrement,"
-				+ KEY_DURATION
-				+ " TEXT NOT NULL," + KEY_ELAPSE + " integer" + ");";
-		private static final String DESTROY_TABLE = "DROP TABLE IF EXISTS "
-				+ TABLE_NAME;
+		public static final class commands {
+			private static final String CREATE_TABLE = "CREATE TABLE if not exists "
+					+ TABLE_NAME
+					+ "("
+					+ keys.ROWID
+					+ " integer PRIMARY KEY autoincrement,"
+					+ keys.DURATION
+					+ " TEXT NOT NULL," + keys.ELAPSE + " integer" + ");";
+			private static final String DESTROY_TABLE = "DROP TABLE IF EXISTS "
+					+ TABLE_NAME;
+			private static final String addToEachPrefix = "update "
+					+ TABLE_NAME + " set " + keys.ELAPSE + "=" + keys.ELAPSE
+					+ "+";
+			// TODO put weird regenerateDurationStrings command here:
+			private static final String regenerateDurationStrings = "update "
+					+ TABLE_NAME + " set " + keys.DURATION + "=" + keys.ELAPSE
+					+ "+";
+		}
 
 		private static final String countQuery = "SELECT  * FROM " + TABLE_NAME;
 
-		private static final String[] listViewColumns = new String[] {
-				LapDBManager.KEY_ROWID, LapDBManager.KEY_DURATION,
-				LapDBManager.KEY_ELAPSE };
-
-		private static final String addToEachPrefix = "update " + TABLE_NAME
-				+ " set " + KEY_ELAPSE + "=" + KEY_ELAPSE + "+";
-		// TODO put weird regenerateDurationStrings command here:
-		private static final String regenerateDurationStrings = "update " + TABLE_NAME
-				+ " set " + KEY_DURATION + "=" + KEY_ELAPSE + "+";
 	}
 
 	public StudyTimerDBManager open() {
@@ -108,8 +119,8 @@ public class StudyTimerDBManager {
 
 	public long addLap(String duration, int elapse_duration) {
 		ContentValues val = new ContentValues();
-		val.put(LapDBManager.KEY_DURATION, duration);
-		val.put(LapDBManager.KEY_ELAPSE, elapse_duration);
+		val.put(LapDBManager.keys.DURATION, duration);
+		val.put(LapDBManager.keys.ELAPSE, elapse_duration);
 
 		Log.d("StudyTimerDB", "insert(" + LapDBManager.TABLE_NAME + ",null, "
 				+ val + ")");
@@ -118,13 +129,13 @@ public class StudyTimerDBManager {
 
 	public int getAverage() {
 		Log.d("StudyTimerDB", "rawQuery(\"SELECT CAST(avg("
-				+ LapDBManager.KEY_ELAPSE + ") AS INTEGER) AS "
-				+ LapDBManager.KEY_ELAPSE + " from " + LapDBManager.TABLE_NAME
+				+ LapDBManager.keys.ELAPSE + ") AS INTEGER) AS "
+				+ LapDBManager.keys.ELAPSE + " from " + LapDBManager.TABLE_NAME
 				+ ", null)\"");
-		Cursor cursor = DB.rawQuery("SELECT CAST(avg("
-				+ LapDBManager.KEY_ELAPSE + ") AS INTEGER) AS "
-				+ LapDBManager.KEY_ELAPSE + " from " + LapDBManager.TABLE_NAME,
-				null);
+		Cursor cursor = DB.rawQuery(
+				"SELECT CAST(avg(" + LapDBManager.keys.ELAPSE
+						+ ") AS INTEGER) AS " + LapDBManager.keys.ELAPSE
+						+ " from " + LapDBManager.TABLE_NAME, null);
 		cursor.moveToFirst();
 		return (int) cursor.getLong(0);
 	}
@@ -135,13 +146,16 @@ public class StudyTimerDBManager {
 	}
 
 	public Cursor fetchAllLaps() {
-		Log.d("StudyTimerDB", "query(" + LapDBManager.TABLE_NAME + ", "
-				+ getFormattedStringArrayElements(LapDBManager.listViewColumns)
-				+ " , null, null, null, null, " + LapDBManager.KEY_ROWID
-				+ " DESC)");
+		Log.d("StudyTimerDB",
+				"query("
+						+ LapDBManager.TABLE_NAME
+						+ ", "
+						+ getFormattedStringArrayElements(LapDBManager.columns.listViewColumns)
+						+ " , null, null, null, null, "
+						+ LapDBManager.keys.ROWID + " DESC)");
 		Cursor cursor = DB.query(LapDBManager.TABLE_NAME,
-				LapDBManager.listViewColumns, null, null, null, null,
-				LapDBManager.KEY_ROWID + " DESC");
+				LapDBManager.columns.listViewColumns, null, null, null, null,
+				LapDBManager.keys.ROWID + " DESC");
 		if (cursor != null) {
 			cursor.moveToFirst();
 		}
@@ -182,8 +196,9 @@ public class StudyTimerDBManager {
 	public void addToEachLap(long induvidualContribution) {
 		if (DB != null) {
 			try {
-				Log.d("StudyTimerDB", LapDBManager.addToEachPrefix+induvidualContribution);
-				DB.execSQL(LapDBManager.addToEachPrefix
+				Log.d("StudyTimerDB", LapDBManager.commands.addToEachPrefix
+						+ induvidualContribution);
+				DB.execSQL(LapDBManager.commands.addToEachPrefix
 						+ induvidualContribution);
 				regenerateLapStrings();
 			} catch (SQLException e) {

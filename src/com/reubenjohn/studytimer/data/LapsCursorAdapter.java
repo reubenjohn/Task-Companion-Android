@@ -34,11 +34,11 @@ public class LapsCursorAdapter extends CursorAdapter {
 		 */
 		lapNumber = (TextView) view.findViewById(R.id.tv_lap_number);
 		lapNumber.setText(cursor.getString(cursor
-				.getColumnIndex(LapDBManager.KEY_ROWID)));
+				.getColumnIndex(LapDBManager.keys.ROWID)));
 
 		lapDuration = (TextView) view.findViewById(R.id.tv_lap_duration);
 		lapDuration.setText(cursor.getString(cursor
-				.getColumnIndex(LapDBManager.KEY_DURATION)));
+				.getColumnIndex(LapDBManager.keys.DURATION)));
 
 	}
 	// TODO overide getView() to improve performance
