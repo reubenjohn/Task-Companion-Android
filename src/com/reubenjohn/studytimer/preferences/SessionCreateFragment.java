@@ -10,21 +10,23 @@ import android.util.Log;
 import com.reubenjohn.studytimer.R;
 
 @TargetApi(11)
-public class PF extends PreferenceFragment {
+public class SessionCreateFragment extends PreferenceFragment {
 
-	private static int prefs = R.xml.preferences;
+	private static int layout = R.xml.new_session;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(PF.prefs); // outer class
+		Log.d("StudyTimer", "SessionCreateFragment");
+		addPreferencesFromResource(SessionCreateFragment.layout); // outer class
 		// private members seem to be visible for inner class, and
 		// making it static made things so much easier
 	}
 
 	public void setPrefListener(OnPreferenceChangeListener listener) {
 		Preference p = findPreference("checkbox_key");
-		Log.d("StudyTimer", "PreferenceListener set to fragment: " + (p != null));
+		Log.d("StudyTimer", "PreferenceListener set to fragment: "
+				+ (p != null));
 		if (p != null) {
 			p.setOnPreferenceChangeListener(listener);
 		}

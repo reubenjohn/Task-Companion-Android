@@ -27,6 +27,11 @@
     
     <string name="session_edit_title">Edit session</string>
     <string name="session_edit_done">Done</string>
+    <string name="session_edit_positive">Create session</string>
+    <string name="session_edit_negative">Cancel</string>
+    
+    <string name="session_create_target_title">Target time</string>
+    <string name="session_create_target_hint">The ideal amount of time taken per lap</string>
     
     <string name="session_edit_elapse_title">Set elapsed time in current lap</string>
     <string name="session_edit_elapse_message">Manually set the time spent in the current lap (Minutes:Seconds)</string>

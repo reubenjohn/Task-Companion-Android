@@ -13,7 +13,7 @@ import com.reubenjohn.studytimer.R;
 public class Preferences extends PreferenceActivity {
 	private static int prefs = R.xml.preferences;
 
-	PF pf;
+	PreferencesFragment pf;
 
 	public final OnPreferenceChangeListener prefListener = new OnPreferenceChangeListener() {
 
@@ -50,7 +50,7 @@ public class Preferences extends PreferenceActivity {
 
 	@TargetApi(11)
 	protected void AddResourceApi11AndGreater() {
-		pf = new PF();
+		pf = new PreferencesFragment();
 		getFragmentManager().beginTransaction()
 				.replace(android.R.id.content, pf).commit();
 		pf.setPrefListener(prefListener);

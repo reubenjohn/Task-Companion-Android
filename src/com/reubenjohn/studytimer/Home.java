@@ -26,6 +26,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
+import com.reubenjohn.studytimer.preferences.SessionSetup;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
@@ -374,7 +375,10 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			startActivityForResult(i, 0);
 			break;
 		case R.id.mi_new_session:
-			showSessionDialog(isLargeLayoutBoolean);
+			Log.d("StudyTimer", "launching CREATE_SESSION");
+			i = new Intent(Home.this, SessionSetup.class);
+			startActivity(i);
+			// showSessionDialog(isLargeLayoutBoolean);
 			break;
 		case R.id.mi_reset:
 			confirmReset();
@@ -407,6 +411,16 @@ public class Home extends ActionBarActivity implements OnClickListener,
 					}
 				}, currentTarget.getMinutes(), currentTarget.getSeconds(), true);
 		builder.setTitle(R.string.title_session_setup)
+				.setPositiveButton(R.string.session_edit_positive,
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+
+							}
+						})
+				.setNegativeButton(R.string.session_edit_negative, null)
 				.setItems(R.array.session_setup_elements,
 						new DialogInterface.OnClickListener() {
 
