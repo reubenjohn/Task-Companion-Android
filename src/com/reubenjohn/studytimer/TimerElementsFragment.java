@@ -157,6 +157,7 @@ public class TimerElementsFragment extends Fragment implements
 				STSP.fileNames.currentSession, Context.MODE_PRIVATE).getLong(
 				STSP.keys.targetTime, StudyTimer.defaults.targetTime);
 		resetSavedData();
+		removeAllLapProgressSounds();
 	}
 
 	public void setTotalElapse(long elapse) {
@@ -196,6 +197,7 @@ public class TimerElementsFragment extends Fragment implements
 	public void setTargetTIme(long targetTime) {
 		this.targetTime = targetTime;
 		if (isRunning()) {
+			removeAllLapProgressSounds();
 			postAllLapProgressSounds();
 		}
 		SharedPreferences.Editor editor = getActivity().getSharedPreferences(

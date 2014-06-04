@@ -9,14 +9,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.animation.AnticipateOvershootInterpolator;
 import android.widget.TimePicker;
 
 import com.reubenjohn.studytimer.preferences.STSP;
 import com.reubenjohn.studytimer.timming.Time;
+import com.reubenjohn.studytimer.util.kankan.widget.WheelView;
+import com.reubenjohn.studytimer.util.kankan.widget.adapters.NumericWheelAdapter;
 
 public class SessionSetup extends ActionBarActivity {
 
 	TimePicker targetPicker;
+	WheelView wheelView;
 
 	Bundle sessionInfo;
 
@@ -68,6 +72,14 @@ public class SessionSetup extends ActionBarActivity {
 		bridgeXML();
 		initializeFeilds();
 
+	}
+
+	private void initializeDigitWheel(int id) {
+		wheelView = (WheelView) findViewById(id);
+		wheelView.setViewAdapter(new NumericWheelAdapter(this, 0, 9));
+		wheelView.setCurrentItem((int) (Math.random() * 10));
+		wheelView.setCyclic(true);
+		wheelView.setInterpolator(new AnticipateOvershootInterpolator());
 	}
 
 	private void bridgeXML() {
