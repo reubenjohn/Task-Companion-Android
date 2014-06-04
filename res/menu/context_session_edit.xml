@@ -2,8 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/mi_done_editing"
-        android:showAsAction="ifRoom"
-        android:title="@string/session_edit_done"/>
+        android:id="@+id/mi_edit_target_time"
+        android:showAsAction="always"
+        android:title="@string/session_edit_target_time"
+        android:icon="@drawable/target_time"/>
 
 </menu>

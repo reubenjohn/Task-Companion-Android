@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/mi_session_create_done"
+        android:icon="@drawable/ic_action_accept"
+        android:showAsAction="always|withText"
+        android:title="@string/session_create_done"/>
+
+</menu>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:title="@string/pref_lap_progress_sounds_title" >
+        <SwitchPreference
+            android:key="key_sounds_lap_progress_switch"
+            android:summary="@string/pref_lap_progress_sounds_switch_summary"
+            android:title="@string/pref_lap_progress_sounds_switch_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="key_session_target"
+        android:summary="@string/session_create_target_hint"
+        android:title="@string/session_create_target_title" >
+    </PreferenceCategory>
+
+</PreferenceScreen>

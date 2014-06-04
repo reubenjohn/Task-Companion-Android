@@ -32,6 +32,22 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 	FragmentManager fragM;
 
+	public static class defaults {
+		public static long targetTime = 5000;
+
+		public static class sounds {
+			public static boolean lapProgress = true;
+		}
+	}
+
+	public static class keys{
+		public static class settings{
+			public static class sounds{
+				public static final String lap_progress_switch="key_sounds_lap_progress_switch";			
+			}
+		}
+	}
+	
 	private static class logging {
 		static boolean status = false;
 		static int loggingInterval = 300;

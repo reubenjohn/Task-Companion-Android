@@ -4,9 +4,11 @@ import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.reubenjohn.studytimer.StudyTimer.MODES;
+import com.reubenjohn.studytimer.preferences.STSP;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.timming.frametimer.FrameTimer;
 import com.reubenjohn.studytimer.timming.frametimer.FrameTimerListener;
@@ -29,29 +32,20 @@ public class TimerElementsFragment extends Fragment implements
 	int cached_lapCount;
 	boolean realTimeAverageEnabled = true, running, lapTimeUp;
 	int average;
-	private long targetTime, nextBeep;
-	SoundPool soundPool;
+	private long targetTime;
+	WakeLock wakeLock;
 
-	static class sounds {
-		private static int beep = 0, cutOff = 0;
+	private static class beepManager {
+		static boolean enabled = true;
+		static Handler handler;
+		static LapProgressSoundPool player;
+		static float decay = 2;
+		static int cutOff = 100;
 	}
-
-	int beepNumber = 1, beepCutOff = 50;
 
 	private static class layout {
 		public static View total_elapse;
 		public static View elapse;
-	}
-
-	static long defaultTargetTime = Time.getTimeInMilliseconds(0, 0, 1, 0, 0);
-
-	protected static class keys {
-		public static final String elapse = "ELAPSE";
-		public static final String lapTimeUp = "LAP_TIMEUP";
-		public static String totalElapse = "TOTAL_ELAPSE";
-		public static String running = "RUNNING";
-		public static String stopTime = "STOP_TIME_TIME";
-		public static String targetTime = "TARGET_TIME";
 	}
 
 	public interface TimerElementsListener {
@@ -63,7 +57,7 @@ public class TimerElementsFragment extends Fragment implements
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putBoolean(keys.running, running);
+		outState.putBoolean(STSP.keys.running, running);
 	}
 
 	@Override
@@ -74,10 +68,9 @@ public class TimerElementsFragment extends Fragment implements
 		bridgeXML(v);
 		initializeFeilds();
 		setOnClickListeners();
-		initializeAudio();
 		if (savedInstanceState != null) {
 
-			if (savedInstanceState.getBoolean(keys.running, false)) {
+			if (savedInstanceState.getBoolean(STSP.keys.running, false)) {
 				start();
 			}
 		}
@@ -87,18 +80,8 @@ public class TimerElementsFragment extends Fragment implements
 	@Override
 	public void onResume() {
 		super.onResume();
-		SharedPreferences prefs = getActivity().getPreferences(
-				Context.MODE_PRIVATE);
-		Log.d("StudyTimer", "Timer Elements resume state: running=" + running);
-		elapse.setElapse(prefs.getLong(keys.elapse, 0));
-		totalElapse.setElapse(prefs.getLong(keys.totalElapse, 0));
-		targetTime = prefs.getLong(keys.targetTime, defaultTargetTime);
-		lapTimeUp = prefs.getBoolean(keys.lapTimeUp, false);
-		if (running) {
-			elapse.setStartTime(prefs.getLong(keys.stopTime, 0));
-			totalElapse.setStartTime(prefs.getLong(keys.stopTime, 0));
-		}
-		updateBeepTime();
+		loadState();
+		loadSettings();
 	}
 
 	@Override
@@ -115,6 +98,7 @@ public class TimerElementsFragment extends Fragment implements
 
 	@Override
 	public void onDestroy() {
+		removeAllLapProgressSounds();
 		saveState();
 		super.onDestroy();
 	}
@@ -123,30 +107,43 @@ public class TimerElementsFragment extends Fragment implements
 		elapse.start();
 		totalElapse.start();
 		running = true;
+		if (beepManager.enabled) {
+			postAllLapProgressSounds();
+		}
 	}
 
 	public void stop() {
 		elapse.stop();
 		totalElapse.stop();
 		running = false;
+		if (beepManager.enabled)
+			removeAllLapProgressSounds();
 	}
 
 	public void toggle() {
-		if (running)
+		if (running) {
 			running = false;
-		else
+			if (beepManager.enabled)
+				removeAllLapProgressSounds();
+		} else {
 			running = true;
+			if (beepManager.enabled)
+				postAllLapProgressSounds();
+		}
 		elapse.toggle();
 		totalElapse.toggle();
 	}
 
 	public void lap(int lapCount) {
 		elapse.reset();
-		if (running)
+		if (running) {
 			elapse.start();
+			if (beepManager.enabled) {
+				removeAllLapProgressSounds();
+				postAllLapProgressSounds();
+			}
+		}
 		this.cached_lapCount = lapCount;
-		beepNumber = 1;
-		updateBeepTime();
 		lapTimeUp = false;
 	}
 
@@ -156,8 +153,9 @@ public class TimerElementsFragment extends Fragment implements
 		totalElapse.reset();
 		cached_lapCount = 0;
 		average = 0;
-		targetTime = getActivity().getPreferences(Context.MODE_PRIVATE)
-				.getLong(keys.targetTime, defaultTargetTime);
+		targetTime = getActivity().getSharedPreferences(
+				STSP.fileNames.currentSession, Context.MODE_PRIVATE).getLong(
+				STSP.keys.targetTime, StudyTimer.defaults.targetTime);
 		resetSavedData();
 	}
 
@@ -172,12 +170,12 @@ public class TimerElementsFragment extends Fragment implements
 	}
 
 	protected void resetSavedData() {
-		SharedPreferences prefs = getActivity().getPreferences(
-				Context.MODE_PRIVATE);
+		SharedPreferences prefs = getActivity().getSharedPreferences(
+				STSP.fileNames.currentSession, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.remove(keys.elapse);
-		editor.remove(keys.totalElapse);
-		editor.remove(keys.stopTime);
+		editor.remove(STSP.keys.elapse);
+		editor.remove(STSP.keys.totalElapse);
+		editor.remove(STSP.keys.stopTime);
 		editor.commit();
 	}
 
@@ -197,9 +195,12 @@ public class TimerElementsFragment extends Fragment implements
 
 	public void setTargetTIme(long targetTime) {
 		this.targetTime = targetTime;
-		SharedPreferences.Editor editor = getActivity().getPreferences(
-				Context.MODE_PRIVATE).edit();
-		editor.putLong(keys.targetTime, targetTime);
+		if (isRunning()) {
+			postAllLapProgressSounds();
+		}
+		SharedPreferences.Editor editor = getActivity().getSharedPreferences(
+				STSP.fileNames.currentSession, Context.MODE_PRIVATE).edit();
+		editor.putLong(STSP.keys.targetTime, targetTime);
 		editor.commit();
 	}
 
@@ -228,14 +229,12 @@ public class TimerElementsFragment extends Fragment implements
 
 		elapse = factory.produceTimerView(tv_elapse);
 		totalElapse = factory.produceTimerView(tv_total_elapse);
+		wakeLock = ((PowerManager) getActivity().getSystemService(
+				Context.POWER_SERVICE)).newWakeLock(
+				PowerManager.PARTIAL_WAKE_LOCK, "StudyTimer running wakeLock");
+		beepManager.handler = new Handler();
+		beepManager.player = new LapProgressSoundPool(getActivity(), wakeLock);
 
-	}
-
-	protected void initializeAudio() {
-		soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
-		sounds.beep = soundPool.load(getActivity(), R.raw.beep, 1);
-		sounds.cutOff = soundPool.load(getActivity(),
-				R.raw.detonator_interface, 1);
 	}
 
 	protected void setOnClickListeners() {
@@ -250,7 +249,6 @@ public class TimerElementsFragment extends Fragment implements
 					.getElapse()) / (cached_lapCount + 1);
 			tv_average.setText(Time.getFormattedTime("%MM:%SS.%sss",
 					realTimeAverage));
-			handleBeeps();
 		}
 
 	}
@@ -281,47 +279,135 @@ public class TimerElementsFragment extends Fragment implements
 	}
 
 	public long getBeepTime(int beepNumber) {
-		long beepTime = Long.MAX_VALUE;
-		beepTime = (long) (targetTime - targetTime
-				/ (Math.pow(2.f, (float) beepNumber)));
-		return beepTime;
+		if (beepNumber == Integer.MAX_VALUE)
+			return targetTime;
+		else
+			return (long) (targetTime - targetTime
+					/ (Math.pow(beepManager.decay, (float) beepNumber)));
+	}
+
+	public long getBeepDelay(int beepNumber) {
+		return getBeepTime(beepNumber) - getElapse();
+	}
+
+	public int getBeepNumberAfter(long ms) {
+		if (ms != targetTime)
+			return (int) (Math.log(targetTime / (targetTime - ms)) / Math
+					.log(beepManager.decay)) + 1;
+		else
+			return Integer.MAX_VALUE;
 	}
 
 	public long getBeepTimeAfter(long ms) {
 		if (ms != targetTime)
-			return getBeepTime((int) (Math.log(targetTime / (targetTime - ms)) / Math
-					.log(2)) + 1);
+			return getBeepTime(getBeepNumberAfter(ms));
 		else
 			return Long.MAX_VALUE;
 	}
 
-	public void updateBeepTime() {
-		nextBeep = getBeepTimeAfter(getElapse());
-		Log.d("StudyTimer", "Beep time after " + getElapse() + " is "
-				+ nextBeep);
+	public long getBeepDelayAfter(long ms) {
+		if (ms <= targetTime)
+			return getBeepTime((int) (Math.log(targetTime / (targetTime - ms)) / Math
+					.log(2)) + 1) - getElapse();
+		else
+			return Long.MAX_VALUE;
 	}
 
-	public void handleBeeps() {
-		if (getElapse() >= targetTime - beepCutOff) {
-			if (sounds.cutOff != 0 && !lapTimeUp) {
-				soundPool.play(sounds.cutOff, 1, 1, 5, 0, 1);
-				lapTimeUp = true;
+	private void postAllBeeps() {
+		long beep;
+		String delayList = Boolean.toString(targetTime
+				- (beep = getBeepTime(1)) >= beepManager.cutOff)
+				+ "&&" + Boolean.toString(beep >= getElapse()) + ": ";
+		for (int i = getBeepNumberAfter(getElapse()); targetTime
+				- (beep = getBeepTime(i)) >= beepManager.cutOff; i++) {
+			if (beep >= getElapse()) {
+				beepManager.handler.postDelayed(beepManager.player.beep, beep
+						- getElapse());
+				delayList += beep + ",";
+
 			}
-		} else if (getElapse() >= nextBeep) {
-			if (sounds.beep != 0)
-				soundPool.play(sounds.beep, 1, 1, 5, 0, 1);
-			updateBeepTime();
+		}
+		Log.d("StudyTimer", "Beeps are scheduled is " + delayList);
+	}
+
+	private void removeAllBeeps() {
+		beepManager.handler.removeCallbacks(beepManager.player.beep);
+	}
+
+	private long getRemainingLapTime() {
+		return targetTime - getElapse();
+	}
+
+	private void postCutOffSound() {
+		long delay;
+		if ((delay = getRemainingLapTime()) >= 0)
+			beepManager.handler.postDelayed(beepManager.player.cutOff, delay);
+	}
+
+	private void removeCutOffSound() {
+		beepManager.handler.removeCallbacks(beepManager.player.cutOff);
+	}
+
+	private void postAllLapProgressSounds() {
+		Log.d("StudyTimer", "WakeLock acquired");
+		wakeLock.acquire();
+		postAllBeeps();
+		postCutOffSound();
+	}
+
+	private void removeAllLapProgressSounds() {
+		if (wakeLock.isHeld()){
+			wakeLock.release();
+			Log.d("StudyTimer", "WakeLock released");
+		}
+		removeAllBeeps();
+		removeCutOffSound();
+	}
+
+	public void loadSettings() {
+		SharedPreferences settings = PreferenceManager
+				.getDefaultSharedPreferences(getActivity().getBaseContext());
+		boolean newBeepEnabledValue = settings.getBoolean(
+				StudyTimer.keys.settings.sounds.lap_progress_switch,
+				StudyTimer.defaults.sounds.lapProgress);
+		if (newBeepEnabledValue != beepManager.enabled) {
+			beepManager.enabled = newBeepEnabledValue;
+			Log.d("TimerElementsFragment",
+					"Lap progress sound setting changed to "
+							+ newBeepEnabledValue);
+			if (running) {
+				if (newBeepEnabledValue == true)
+					postAllLapProgressSounds();
+				else
+					removeAllLapProgressSounds();
+			}
 		}
 	}
 
+	public void loadState() {
+		SharedPreferences prefs = getActivity().getSharedPreferences(
+				STSP.fileNames.currentSession, Context.MODE_PRIVATE);
+		Log.d("StudyTimer", "Timer Elements resume state: running=" + running);
+		elapse.setElapse(prefs.getLong(STSP.keys.elapse, 0));
+		totalElapse.setElapse(prefs.getLong(STSP.keys.totalElapse, 0));
+		targetTime = prefs.getLong(STSP.keys.targetTime,
+				StudyTimer.defaults.targetTime);
+		lapTimeUp = prefs.getBoolean(STSP.keys.lapTimeUp, false);
+		if (running) {
+			elapse.setStartTime(prefs.getLong(STSP.keys.stopTime, 0));
+			totalElapse.setStartTime(prefs.getLong(STSP.keys.stopTime, 0));
+		}
+
+	}
+
 	public void saveState() {
-		SharedPreferences prefs = getActivity().getPreferences(
-				Context.MODE_PRIVATE);
+		SharedPreferences prefs = getActivity().getSharedPreferences(
+				STSP.fileNames.currentSession, Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putLong(keys.elapse, elapse.getElapse());
-		editor.putLong(keys.totalElapse, totalElapse.getElapse());
-		editor.putLong(keys.stopTime, System.currentTimeMillis());
-		editor.putBoolean(keys.lapTimeUp, lapTimeUp);
+		editor.putLong(STSP.keys.elapse, elapse.getElapse());
+		editor.putLong(STSP.keys.totalElapse, totalElapse.getElapse());
+		editor.putLong(STSP.keys.stopTime, System.currentTimeMillis());
+		editor.putBoolean(STSP.keys.lapTimeUp, lapTimeUp);
 		editor.commit();
 	}
 

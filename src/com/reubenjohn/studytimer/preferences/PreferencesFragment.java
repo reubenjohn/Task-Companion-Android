@@ -7,17 +7,13 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 
-import com.reubenjohn.studytimer.R;
-
 @TargetApi(11)
 public class PreferencesFragment extends PreferenceFragment {
-
-	private static int prefs = R.xml.preferences;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(PreferencesFragment.prefs); // outer class
+		addPreferencesFromResource(Preferences.prefs); // outer class
 		// private members seem to be visible for inner class, and
 		// making it static made things so much easier
 	}

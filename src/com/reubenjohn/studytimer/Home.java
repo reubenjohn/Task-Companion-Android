@@ -4,11 +4,13 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.util.Log;
@@ -26,7 +28,6 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
-import com.reubenjohn.studytimer.preferences.SessionSetup;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
@@ -38,6 +39,8 @@ import com.reubenjohn.studytimer.util.SystemUiHider;
  */
 public class Home extends ActionBarActivity implements OnClickListener,
 		OnCheckedChangeListener {
+
+	PowerManager.WakeLock wakeLock;
 
 	private static class Preferences {
 
@@ -57,6 +60,10 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		public static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
 	}
 
+	private static class codes {
+		public static final int createSession = 1241;
+	}
+
 	private SystemUiHider mSystemUiHider;
 	ToggleButton toggle;
 	Button lap;
@@ -66,6 +73,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	Boolean isLargeLayoutBoolean = false, editModeActive;
 	FrameLayout lapsContainer;
 	LapsContainerParams lapsContainerParams;
+	TimePickerDialog targetDialog;
 
 	private class LapsContainerParams {
 		LapsLayout lapsLayout;
@@ -136,7 +144,13 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem menu) {
-			mode.finish();
+			switch (menu.getItemId()) {
+			case R.id.mi_edit_target_time:
+				Time time = new Time(T.timerElements.getTargetTime());
+				targetDialog.updateTime(time.getMinutes(), time.getSeconds());
+				targetDialog.show();
+				break;
+			}
 			return false;
 		}
 	};
@@ -193,14 +207,14 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 	@Override
 	protected void onStop() {
-		super.onStop();
 		T.onStop();
+		super.onStop();
 	}
 
 	@Override
 	protected void onResume() {
-		super.onResume();
 		T.onResume(false);
+		super.onResume();
 	}
 
 	@Override
@@ -288,6 +302,23 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		lapsContainerParams = new LapsContainerParams();
 		lapsContainer.setLayoutParams(lapsContainerParams
 				.getLayoutParams(!T.lapsF.hasNoLaps()));
+
+		Time currentTarget = new Time(StudyTimer.defaults.targetTime);
+		targetDialog = new TimePickerDialog(Home.this, new OnTimeSetListener() {
+			short callCount = 0;
+
+			@Override
+			public void onTimeSet(TimePicker view, int minute, int second) {
+				if (callCount % 2 == 1) {
+					T.setTargetTime(Time.getTimeInMilliseconds(0, 0, minute,
+							second, 0));
+				}
+				callCount++;
+			}
+		}, currentTarget.getMinutes(), currentTarget.getSeconds(), true);
+		targetDialog.setTitle(R.string.target_dialog_title);
+		targetDialog.setMessage(getResources().getString(
+				R.string.target_dialog_summary));
 
 	}
 
@@ -377,7 +408,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		case R.id.mi_new_session:
 			Log.d("StudyTimer", "launching CREATE_SESSION");
 			i = new Intent(Home.this, SessionSetup.class);
-			startActivity(i);
+			startActivityForResult(i, codes.createSession);
 			// showSessionDialog(isLargeLayoutBoolean);
 			break;
 		case R.id.mi_reset:
@@ -393,7 +424,32 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		return super.onOptionsItemSelected(item);
 	}
 
-	protected void showSessionDialog(boolean windowed) {
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.d("StudyTimer",
+				"Result received with requestResult:" + requestCode
+						+ " resultCode:" + resultCode + " and data->"
+						+ Boolean.toString(data != null));
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case codes.createSession:
+				Log.d("StudyTimer", "Session created");
+				Bundle sessionInfo = data.getExtras();
+				if (sessionInfo != null) {
+					long newTarget = sessionInfo.getLong(Keys.target);
+					if (newTarget > 0) {
+						T.setTargetTime(newTarget);
+					} else {
+						Log.d("StudyTimer", "New target is invalid or not set");
+					}
+				}
+				break;
+			}
+		}
+	}
+
+	private void showSessionDialog(boolean windowed) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
 		Time currentTarget = new Time(T.timerElements.getTargetTime());
 		final TimePickerDialog timePicker = new TimePickerDialog(Home.this,

@@ -6,12 +6,11 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
-import android.util.Log;
 
 import com.reubenjohn.studytimer.R;
 
 public class Preferences extends PreferenceActivity {
-	private static int prefs = R.xml.preferences;
+	public static final int prefs = R.xml.settings;
 
 	PreferencesFragment pf;
 
@@ -20,7 +19,6 @@ public class Preferences extends PreferenceActivity {
 		@Override
 		public boolean onPreferenceChange(Preference preference, Object newValue) {
 			Intent i = new Intent();
-			i.putExtra("KEY_RESET_REQUESTED", true);
 			setResult(RESULT_OK, i);
 			finish();
 			return false;
@@ -41,11 +39,6 @@ public class Preferences extends PreferenceActivity {
 	@SuppressWarnings("deprecation")
 	protected void AddResourceApiLessThan11() {
 		addPreferencesFromResource(prefs);
-		Preference p = findPreference("checkbox_key");
-		Log.d("StudyTimer", "PreferenceListener set to Activity: " + (p != null));
-		if (p != null) {
-			p.setOnPreferenceChangeListener(prefListener);
-		}
 	}
 
 	@TargetApi(11)
@@ -53,7 +46,6 @@ public class Preferences extends PreferenceActivity {
 		pf = new PreferencesFragment();
 		getFragmentManager().beginTransaction()
 				.replace(android.R.id.content, pf).commit();
-		pf.setPrefListener(prefListener);
 	}
 
 }

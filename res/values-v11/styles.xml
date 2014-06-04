@@ -9,4 +9,8 @@
         <!-- API 11 theme customizations can go here. -->
     </style>
 
+    <style name="SessionCreateTheme" parent="Theme.AppCompat.Light">
+        <item name="android:actionModeCloseDrawable">@drawable/ic_action_cancel</item>
+    </style>
+
 </resources>

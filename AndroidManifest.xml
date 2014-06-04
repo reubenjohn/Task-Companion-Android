@@ -7,6 +7,7 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:allowBackup="true"
@@ -33,7 +34,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.reubenjohn.studytimer.preferences.SessionSetup" >
+            android:name="com.reubenjohn.studytimer.SessionSetup" >
             <intent-filter>
                 <action android:name="com.reubenjohn.studytimer.CREATE_SESSION" />
 

@@ -9,7 +9,6 @@
     </CheckBoxPreference>
 
     <com.reubenjohn.studytimer.preferences.TimePreference
-        android:defaultValue="00:00"
         android:key="key_target_time"
         android:summary="@string/session_create_target_hint"
         android:title="@string/session_create_target_title" />

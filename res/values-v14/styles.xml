@@ -3,15 +3,21 @@
     <!--
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and
-        res/values-v11/styles.xml on API 14+ devices.
+        res/values-v11/styles.xml on API 14+ devices.
     -->
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
         <!-- API 14 theme customizations can go here. -->
         <item name="android:actionBarStyle">@style/CustomLightActionBar</item>
+        <item name="android:actionModeCloseDrawable">@drawable/ic_action_cancel</item>
     </style>
-    <style name="CustomLightActionBar"
-        parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse" >
+
+    <style name="CustomLightActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
         <item name="android:background">@color/blue_dark</item>
+    </style>
+
+    <style name="SessionCreateTheme" parent="Theme.AppCompat.Light">
+        <item name="android:actionModeCloseDrawable">@drawable/ic_action_cancel</item>
     </style>
 
 </resources>
