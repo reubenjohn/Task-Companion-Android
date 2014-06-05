@@ -32,12 +32,12 @@
     <string name="session_edit_target_time">Change ideal lap time</string>
     
     <string name="session_create_target_title">Target time</string>
-    <string name="session_create_target_hint">The ideal amount of time taken per lap</string>
+    <string name="session_create_target_hint">The ideal amount of time for each lap</string>
     <string name="session_create_positive">Done</string>
     <string name="session_create_negative">Cancel</string>
     
-    <string name="session_create_target_lap_title">Total number of laps</string>
-    <string name="session_create_target_lap_hint">The total number of laps to complete the session</string>
+    <string name="session_create_target_lap_title">Total laps</string>
+    <string name="session_create_target_lap_hint">The number of laps required to complete this session</string>
     
     <string name="session_edit_elapse_title">Set elapsed time in current lap</string>
     <string name="session_edit_elapse_message">Manually set the time spent in the current lap (Minutes:Seconds)</string>

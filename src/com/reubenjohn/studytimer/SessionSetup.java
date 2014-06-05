@@ -112,6 +112,9 @@ public class SessionSetup extends ActionBarActivity {
 			sessionCreateActionMode = SessionSetup.this
 					.startSupportActionMode(sessionCreateActionModeCallBack);
 		}
+		initializeDigitWheel(R.id.wv_total_lap_picker_digit1);
+		initializeDigitWheel(R.id.wv_total_lap_picker_digit2);
+		initializeDigitWheel(R.id.wv_total_lap_picker_digit3);
 	}
 
 	@Override
