@@ -20,7 +20,7 @@ import com.reubenjohn.studytimer.util.kankan.widget.adapters.NumericWheelAdapter
 public class SessionSetup extends ActionBarActivity {
 
 	TimePicker targetPicker;
-	WheelView wheelView;
+	WheelView wheelView_100, wheelView_10, wheelView_1;
 
 	Bundle sessionInfo;
 
@@ -75,9 +75,9 @@ public class SessionSetup extends ActionBarActivity {
 	}
 
 	private void initializeDigitWheel(int id) {
-		wheelView = (WheelView) findViewById(id);
+		WheelView wheelView = (WheelView) findViewById(id);
 		wheelView.setViewAdapter(new NumericWheelAdapter(this, 0, 9));
-		wheelView.setCurrentItem((int) (Math.random() * 10));
+		wheelView.setCurrentItem(0);
 		wheelView.setCyclic(true);
 		wheelView.setInterpolator(new AnticipateOvershootInterpolator());
 	}
