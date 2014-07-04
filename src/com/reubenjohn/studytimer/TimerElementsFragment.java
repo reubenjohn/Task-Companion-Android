@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.reubenjohn.studytimer.StudyTimer.MODES;
+import com.reubenjohn.studytimer.StudyTimer.defaults;
 import com.reubenjohn.studytimer.preferences.STSP;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.timming.frametimer.FrameTimer;
@@ -80,26 +81,22 @@ public class TimerElementsFragment extends Fragment implements
 	@Override
 	public void onResume() {
 		super.onResume();
-		loadState();
 		loadSettings();
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		saveState();
 	}
 
 	@Override
 	public void onStop() {
-		saveState();
 		super.onStop();
 	}
 
 	@Override
 	public void onDestroy() {
 		removeAllLapProgressSounds();
-		saveState();
 		super.onDestroy();
 	}
 
@@ -386,32 +383,6 @@ public class TimerElementsFragment extends Fragment implements
 		}
 	}
 
-	public void loadState() {
-		SharedPreferences prefs = getActivity().getSharedPreferences(
-				STSP.fileNames.currentSession, Context.MODE_PRIVATE);
-		Log.d("StudyTimer", "Timer Elements resume state: running=" + running);
-		elapse.setElapse(prefs.getLong(STSP.keys.elapse, 0));
-		totalElapse.setElapse(prefs.getLong(STSP.keys.totalElapse, 0));
-		targetTime = prefs.getLong(STSP.keys.targetTime,
-				StudyTimer.defaults.targetTime);
-		lapTimeUp = prefs.getBoolean(STSP.keys.lapTimeUp, false);
-		if (running) {
-			elapse.setStartTime(prefs.getLong(STSP.keys.stopTime, 0));
-			totalElapse.setStartTime(prefs.getLong(STSP.keys.stopTime, 0));
-		}
-
-	}
-
-	public void saveState() {
-		SharedPreferences prefs = getActivity().getSharedPreferences(
-				STSP.fileNames.currentSession, Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putLong(STSP.keys.elapse, elapse.getElapse());
-		editor.putLong(STSP.keys.totalElapse, totalElapse.getElapse());
-		editor.putLong(STSP.keys.stopTime, System.currentTimeMillis());
-		editor.putBoolean(STSP.keys.lapTimeUp, lapTimeUp);
-		editor.commit();
-	}
 
 	@Override
 	public void onClick(View v) {
@@ -488,6 +459,38 @@ public class TimerElementsFragment extends Fragment implements
 
 	public void setTimerElementsListener(TimerElementsListener listener) {
 		timerElementsListener = listener;
+	}
+
+	public void createNewSession(Bundle sessionInfo) {
+		long newTarget = sessionInfo.getLong(STSP.keys.targetTime);
+		if (newTarget > 0) {
+			setTargetTIme(newTarget);
+		} else {
+			Log.d("StudyTimer", "New target is invalid or not set");
+		}
+	}
+
+	
+	public void putSessionInfo(Bundle sessionInfo) {
+		sessionInfo.putLong(STSP.keys.targetTime, getTargetTime());
+		sessionInfo.putLong(STSP.keys.elapse, elapse.getElapse());
+		sessionInfo.putLong(STSP.keys.totalElapse, totalElapse.getElapse());
+		sessionInfo.putLong(STSP.keys.stopTime, System.currentTimeMillis());
+		sessionInfo.putBoolean(STSP.keys.lapTimeUp, lapTimeUp);
+	}
+	
+	public void loadSessionFromBundle(Bundle sessionInfo) {
+		Log.d("StudyTimer", "Timer Elements resume state: running=" + running);
+		elapse.setElapse(sessionInfo.getLong(STSP.keys.elapse, 0));
+		totalElapse.setElapse(sessionInfo.getLong(STSP.keys.totalElapse, 0));
+		targetTime = sessionInfo.getLong(STSP.keys.targetTime,
+				StudyTimer.defaults.targetTime);
+		lapTimeUp = sessionInfo.getBoolean(STSP.keys.lapTimeUp, false);
+		if (running) {
+			elapse.setStartTime(sessionInfo.getLong(STSP.keys.stopTime, 0));
+			totalElapse.setStartTime(sessionInfo.getLong(STSP.keys.stopTime, 0));
+		}
+		
 	}
 
 }

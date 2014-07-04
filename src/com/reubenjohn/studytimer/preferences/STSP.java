@@ -11,6 +11,7 @@ public class STSP {
 		public static final String totalElapse = "TOTAL_ELAPSE";
 		public static final String running = "RUNNING";
 		public static final String stopTime = "STOP_TIME_TIME";
-		public static final String targetTime = "TARGET_TIME";		
+		public static final String targetTime = "TARGET_TIME";
+		public static final String totalLaps = "TOTAL_LAPS";		
 	}
 }

@@ -36,6 +36,9 @@
     <string name="session_create_positive">Done</string>
     <string name="session_create_negative">Cancel</string>
     
+    <string name="session_create_smart_target_description_enabled">Automatically change the target time based on your performance</string>
+    <string name="session_create_smart_target_description_disabled">Do not automatically change the target time</string>
+    
     <string name="session_create_target_lap_title">Total laps</string>
     <string name="session_create_target_lap_hint">The number of laps required to complete this session</string>
     

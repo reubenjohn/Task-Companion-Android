@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="target_time">5000</integer>
+    <integer name="total_laps">20</integer>
+    
+    <bool name="lap_progress_sounds">true</bool>
+</resources>

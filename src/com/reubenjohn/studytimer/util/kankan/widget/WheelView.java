@@ -46,8 +46,8 @@ import com.reubenjohn.studytimer.util.kankan.widget.adapters.WheelViewAdapter;
 public class WheelView extends View {
 
 	/** Top and bottom shadows colors */
-	private static final int[] SHADOWS_COLORS = new int[] { 0xFF111111,
-			0x00AAAAAA, 0x00AAAAAA };
+	private int[] SHADOWS_COLORS = new int[] { 0xFFFFFFFF, 0xFFFFFFFF,
+			0x00FFFFFF };
 
 	/** Top and bottom items offset (to hide that) */
 	private static final int ITEM_OFFSET_PERCENT = 10;
@@ -429,6 +429,12 @@ public class WheelView extends View {
 	public void setCyclic(boolean isCyclic) {
 		this.isCyclic = isCyclic;
 		invalidateWheel(false);
+	}
+
+	public void setShadowColours(int start, int center, int end) {
+		SHADOWS_COLORS[0] = start;
+		SHADOWS_COLORS[1] = center;
+		SHADOWS_COLORS[2] = end;
 	}
 
 	/**

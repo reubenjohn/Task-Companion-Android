@@ -1,5 +1,7 @@
 package com.reubenjohn.studytimer;
 
+import java.util.Map;
+
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
@@ -7,6 +9,7 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +23,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -74,6 +78,12 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	FrameLayout lapsContainer;
 	LapsContainerParams lapsContainerParams;
 	TimePickerDialog targetDialog;
+
+	public enum FullScreenStatus {
+		FULLSCREEN, PENDING_FULLSCREEN, NOT_FULLSCREEN
+	}
+
+	FullScreenStatus fullScreenStatus;
 
 	private class LapsContainerParams {
 		LapsLayout lapsLayout;
@@ -177,6 +187,16 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			mSystemUiHider.hide();
 		}
 	};
+	Runnable goFullScreen = new Runnable() {
+
+		@Override
+		public void run() {
+			toggleFullScreen(true);
+			fullScreenStatus = FullScreenStatus.FULLSCREEN;
+		}
+
+	};
+	Handler goFullSCreenHandler = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -213,19 +233,19 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 	@Override
 	protected void onResume() {
-		T.onResume(false);
+		T.onResume();
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		super.onPause();
 		T.onPause();
+		super.onPause();
 	}
 
 	public void reset() {
 		// TODO transition the lapsCountainer layout change during reset
-		T.reset();
+		T.resetSession();
 		toggle.setChecked(false);
 		lapsContainer.setLayoutParams(lapsContainerParams
 				.getLayoutParams(false));
@@ -295,7 +315,9 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	protected void initializeFeilds() {
 		setupSystemUIHider();
 
-		T = new StudyTimer(tHandler, getSupportFragmentManager());
+		StudyTimer.defaults.loadFromResources(getResources());
+		T = new StudyTimer(tHandler, getSupportFragmentManager(),
+				getSharedPreferences("session", Context.MODE_PRIVATE));
 		T.setStatusLogging(true);
 		isLargeLayoutBoolean = getResources().getBoolean(R.bool.large_layout);
 
@@ -319,6 +341,8 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		targetDialog.setTitle(R.string.target_dialog_title);
 		targetDialog.setMessage(getResources().getString(
 				R.string.target_dialog_summary));
+
+		fullScreenStatus = FullScreenStatus.NOT_FULLSCREEN;
 
 	}
 
@@ -395,6 +419,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			T.start();
 		else
 			T.stop();
+		softToggleFullScreen(newState);
 	}
 
 	@Override
@@ -406,6 +431,11 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			startActivityForResult(i, 0);
 			break;
 		case R.id.mi_new_session:
+			if (T.isRunning()) {
+				toggle.setChecked(false);
+				Log.d("Home", "Toggle button set to false");
+				T.stop();
+			}
 			Log.d("StudyTimer", "launching CREATE_SESSION");
 			i = new Intent(Home.this, SessionSetup.class);
 			startActivityForResult(i, codes.createSession);
@@ -427,22 +457,16 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Log.d("StudyTimer",
+		Log.i("StudyTimer",
 				"Result received with requestResult:" + requestCode
 						+ " resultCode:" + resultCode + " and data->"
 						+ Boolean.toString(data != null));
 		if (resultCode == RESULT_OK) {
 			switch (requestCode) {
 			case codes.createSession:
-				Log.d("StudyTimer", "Session created");
 				Bundle sessionInfo = data.getExtras();
 				if (sessionInfo != null) {
-					long newTarget = sessionInfo.getLong(Keys.target);
-					if (newTarget > 0) {
-						T.setTargetTime(newTarget);
-					} else {
-						Log.d("StudyTimer", "New target is invalid or not set");
-					}
+					T.createNewSessionFromBundle(sessionInfo);
 				}
 				break;
 			}
@@ -500,4 +524,36 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 	}
 
+	private void toggleFullScreen(boolean requestFullScreen) {
+		if (requestFullScreen) {
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			getWindow().clearFlags(
+					WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+		} else {
+			getWindow().addFlags(
+					WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		}
+	}
+
+	private void softToggleFullScreen(boolean requestFullScreen) {
+		if (requestFullScreen) {
+			if (fullScreenStatus == FullScreenStatus.NOT_FULLSCREEN) {
+				goFullSCreenHandler.postDelayed(goFullScreen,
+						Preferences.AUTO_HIDE_DELAY_MILLIS);
+				fullScreenStatus = FullScreenStatus.PENDING_FULLSCREEN;
+			}
+		} else {
+			switch (fullScreenStatus) {
+			case FULLSCREEN:
+				toggleFullScreen(false);
+				fullScreenStatus = FullScreenStatus.NOT_FULLSCREEN;
+				break;
+			case PENDING_FULLSCREEN:
+				goFullSCreenHandler.removeCallbacks(goFullScreen);
+				fullScreenStatus = FullScreenStatus.NOT_FULLSCREEN;
+				break;
+			}
+		}
+	}
 }

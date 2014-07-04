@@ -15,12 +15,22 @@
         android:layout_gravity="center"
         android:padding="4dp" >
 
+        <ProgressBar
+            android:id="@+id/pb_total_lap_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_below="@+id/tv_l_laps"
+            android:layout_centerHorizontal="true"
+            android:max="100"
+            android:progress="35" />
+
         <TextView
             android:id="@+id/tv_current_lap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentTop="true"
             android:background="@drawable/rectangle_rounded_glass"
             android:padding="4dp"
             android:text="@string/sample_lap"
@@ -35,6 +45,9 @@
             android:layout_alignBaseline="@+id/tv_current_lap"
             android:layout_alignBottom="@+id/tv_current_lap"
             android:layout_centerHorizontal="true"
+            android:background="@drawable/rectangle_rounded_glass"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:text="@string/l_laps"
             android:textColor="@color/orange_yellow"
             android:textSize="25sp"
