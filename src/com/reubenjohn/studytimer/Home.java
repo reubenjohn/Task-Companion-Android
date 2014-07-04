@@ -1,7 +1,5 @@
 package com.reubenjohn.studytimer;
 
-import java.util.Map;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
@@ -9,7 +7,6 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -537,23 +534,22 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	}
 
 	private void softToggleFullScreen(boolean requestFullScreen) {
-		if (requestFullScreen) {
-			if (fullScreenStatus == FullScreenStatus.NOT_FULLSCREEN) {
+		switch (fullScreenStatus) {
+		case FULLSCREEN:
+			toggleFullScreen(false);
+			fullScreenStatus = FullScreenStatus.NOT_FULLSCREEN;
+			break;
+		case PENDING_FULLSCREEN:
+			goFullSCreenHandler.removeCallbacks(goFullScreen);
+			fullScreenStatus = FullScreenStatus.NOT_FULLSCREEN;
+			break;
+		case NOT_FULLSCREEN:
+			if (requestFullScreen) {
 				goFullSCreenHandler.postDelayed(goFullScreen,
 						Preferences.AUTO_HIDE_DELAY_MILLIS);
 				fullScreenStatus = FullScreenStatus.PENDING_FULLSCREEN;
 			}
-		} else {
-			switch (fullScreenStatus) {
-			case FULLSCREEN:
-				toggleFullScreen(false);
-				fullScreenStatus = FullScreenStatus.NOT_FULLSCREEN;
-				break;
-			case PENDING_FULLSCREEN:
-				goFullSCreenHandler.removeCallbacks(goFullScreen);
-				fullScreenStatus = FullScreenStatus.NOT_FULLSCREEN;
-				break;
-			}
+			break;
 		}
 	}
 }
