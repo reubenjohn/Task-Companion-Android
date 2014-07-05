@@ -12,19 +12,18 @@ import com.reubenjohn.studytimer.timming.Time;
 
 public class StudyTimerDBManager {
 
-	private final Context context;
+	protected final Context context;
 
-	private DBHelper helper;
-	private SQLiteDatabase DB;
-	private LapDBManager lapDB;
+	public LapDBManager lapsDB;
 
 	public StudyTimerDBManager(Context context) {
 		this.context = context;
+		lapsDB = new LapDBManager();
 	}
 
 	private static class properties {
 		public final static String DATABASE_NAME = "StudyTimer.db";
-		public final static int DATABASE_VERSION = 2;
+		public final static int DATABASE_VERSION = 3;
 	}
 
 	private class DBHelper extends SQLiteOpenHelper {
@@ -36,9 +35,7 @@ public class StudyTimerDBManager {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			Log.d("StudyTimerDB",
-					"execSQL(" + LapDBProperties.commands.createTable() + ")");
-			db.execSQL(LapDBProperties.commands.createTable());
+			createLapsTable(db);
 		}
 
 		@Override
@@ -48,9 +45,13 @@ public class StudyTimerDBManager {
 				if (newVersion == 1)
 					break;
 			case 2:
-				reset();
-				if (newVersion == 2)
+				switch (newVersion) {
+				case 2:
 					break;
+				case 3:
+					reset(db);
+					break;
+				}
 			case 3:
 				if (newVersion == 3)
 					break;
@@ -64,19 +65,24 @@ public class StudyTimerDBManager {
 				if (newVersion == 6)
 					break;
 			}
-			reset();
+			reset(db);
 		}
 
-		protected void destroyTable(SQLiteDatabase db) {
-			db.execSQL(LapDBProperties.commands.dropTable());
-			onCreate(db);
-		}
-
-		public void reset() {
-			SQLiteDatabase db = getWritableDatabase();
+		public void createLapsTable(SQLiteDatabase db) {
 			Log.d("StudyTimerDB",
 					"execSQL(" + LapDBProperties.commands.createTable() + ")");
-			destroyTable(db);
+			db.execSQL(LapDBProperties.commands.createTable());
+		}
+
+		protected void resetTable(SQLiteDatabase db) {
+			Log.d("StudyTimerDB",
+					"execSQL(" + LapDBProperties.commands.dropTable() + ")");
+			db.execSQL(LapDBProperties.commands.dropTable());
+			createLapsTable(db);
+		}
+
+		public void reset(SQLiteDatabase db) {
+			resetTable(db);
 		}
 
 	}
@@ -157,6 +163,9 @@ public class StudyTimerDBManager {
 							+ " integer" + ");";
 					break;
 				case 3:
+					result += tableName(DBVersion) + "(" + keys.ROWID
+							+ " integer PRIMARY KEY autoincrement,"
+							+ keys.ELAPSE + " integer" + ");";
 					break;
 
 				default:
@@ -209,82 +218,7 @@ public class StudyTimerDBManager {
 				+ tableName();
 
 	}
-
-	private class LapDBManager {
-
-	}
-
-	public StudyTimerDBManager open() {
-		helper = new DBHelper(context);
-		DB = helper.getWritableDatabase();
-		lapDB = new LapDBManager();
-		return StudyTimerDBManager.this;
-	}
-
-	public void close() {
-		if (helper != null) {
-			helper.close();
-		}
-	}
-
-	public long addLap(String duration, int elapse_duration) {
-		ContentValues val = new ContentValues();
-		val.put(LapDBProperties.keys.DURATION, duration);
-		val.put(LapDBProperties.keys.ELAPSE, elapse_duration);
-
-		Log.d("StudyTimerDB", "insert(" + LapDBProperties.tableName()
-				+ ",null, " + val + ")");
-		return DB.insert(LapDBProperties.tableName(), null, val);
-	}
-
-	public int getAverage() {
-		Log.d("StudyTimerDB",
-				"rawQuery(\"SELECT CAST(avg(" + LapDBProperties.keys.ELAPSE
-						+ ") AS INTEGER) AS " + LapDBProperties.keys.ELAPSE
-						+ " from " + LapDBProperties.tableName() + ", null)\"");
-		Cursor cursor = DB.rawQuery(
-				"SELECT CAST(avg(" + LapDBProperties.keys.ELAPSE
-						+ ") AS INTEGER) AS " + LapDBProperties.keys.ELAPSE
-						+ " from " + LapDBProperties.tableName(), null);
-		cursor.moveToFirst();
-		return (int) cursor.getLong(0);
-	}
-
-	public String getFormattedAverage() {
-		int average = getAverage();
-		return Time.getFormattedTime(average);
-	}
-
-	public Cursor fetchAllLaps() {
-		Log.d("StudyTimerDB",
-				"query("
-						+ LapDBProperties.tableName()
-						+ ", "
-						+ getFormattedStringArrayElements("{",
-								LapDBProperties.columns.listViewColumns(), "}")
-						+ " , null, null, null, null, "
-						+ LapDBProperties.keys.ROWID + " DESC)");
-		Cursor cursor = DB.query(LapDBProperties.tableName(),
-				LapDBProperties.columns.listViewColumns(), null, null, null,
-				null, LapDBProperties.keys.ROWID + " DESC");
-		if (cursor != null) {
-			cursor.moveToFirst();
-		}
-		return cursor;
-	}
-
-	public int getLapCount() {
-		if (DB != null) {
-			Log.d("StudyTimerDB", "rawQuery(\"" + LapDBProperties.countQuery
-					+ "\", null)");
-			Cursor cursor = DB.rawQuery(LapDBProperties.countQuery, null);
-			int cnt = cursor.getCount();
-			cursor.close();
-			return cnt;
-		} else
-			return -1;
-	}
-
+	
 	protected static String getFormattedStringArrayElements(String prefix,
 			String[] array, String postFix) {
 		String result = prefix;
@@ -295,26 +229,107 @@ public class StudyTimerDBManager {
 		return result += postFix;
 	}
 
-	public void reset() {
-		Log.d("StudyTimer", "Database reset");
-		helper.reset();
-	}
+	public class LapDBManager {
+		private DBHelper helper;
+		private SQLiteDatabase DB;
 
-	public void distributeToLaps(long elapse) {
-		long induvidualContribution = elapse / getAverage();
-		addToEachLap(induvidualContribution);
-	}
+		public LapDBManager() {
+		}
 
-	public void addToEachLap(long induvidualContribution) {
-		if (DB != null) {
-			try {
-				Log.d("StudyTimerDB", LapDBProperties.commands.addToEachPrefix
-						+ induvidualContribution);
-				DB.execSQL(LapDBProperties.commands.addToEachPrefix
-						+ induvidualContribution);
-			} catch (SQLException e) {
-				e.printStackTrace();
+		public LapDBManager open() {
+			helper = new DBHelper(StudyTimerDBManager.this.context);
+			DB = helper.getWritableDatabase();
+			return LapDBManager.this;
+		}
+
+		public void close() {
+			if (lapsDB.helper != null) {
+				lapsDB.helper.close();
 			}
 		}
+
+		public long addLap(long elapse_duration) {
+			ContentValues val = new ContentValues();
+			val.put(LapDBProperties.keys.ELAPSE, elapse_duration);
+
+			Log.d("StudyTimerDB", "insert(" + LapDBProperties.tableName()
+					+ ",null, " + val + ")");
+			return DB.insert(LapDBProperties.tableName(), null, val);
+		}
+
+		public int getAverage() {
+			Log.d("StudyTimerDB",
+					"rawQuery(\"SELECT CAST(avg(" + LapDBProperties.keys.ELAPSE
+							+ ") AS INTEGER) AS " + LapDBProperties.keys.ELAPSE
+							+ " from " + LapDBProperties.tableName()
+							+ ", null)\"");
+			Cursor cursor = DB.rawQuery(
+					"SELECT CAST(avg(" + LapDBProperties.keys.ELAPSE
+							+ ") AS INTEGER) AS " + LapDBProperties.keys.ELAPSE
+							+ " from " + LapDBProperties.tableName(), null);
+			cursor.moveToFirst();
+			return (int) cursor.getLong(0);
+		}
+
+		public String getFormattedAverage() {
+			int average = getAverage();
+			return Time.getFormattedTime(average);
+		}
+
+		public Cursor fetchAllLaps() {
+			Log.d("StudyTimerDB",
+					"query("
+							+ LapDBProperties.tableName()
+							+ ", "
+							+ getFormattedStringArrayElements("{",
+									LapDBProperties.columns.listViewColumns(),
+									"}") + " , null, null, null, null, "
+							+ LapDBProperties.keys.ROWID + " DESC)");
+			Cursor cursor = DB.query(LapDBProperties.tableName(),
+					LapDBProperties.columns.listViewColumns(), null, null,
+					null, null, LapDBProperties.keys.ROWID + " DESC");
+			if (cursor != null) {
+				cursor.moveToFirst();
+			}
+			return cursor;
+		}
+
+		public int getLapCount() {
+			if (DB != null) {
+				Log.d("StudyTimerDB", "rawQuery(\""
+						+ LapDBProperties.countQuery + "\", null)");
+				Cursor cursor = DB.rawQuery(LapDBProperties.countQuery, null);
+				int cnt = cursor.getCount();
+				cursor.close();
+				return cnt;
+			} else
+				return -1;
+		}
+
+		public void reset() {
+			Log.d("StudyTimer", "Database reset");
+			lapsDB.helper.reset(DB);
+		}
+
+		public void distributeToLaps(long elapse) {
+			long induvidualContribution = elapse / getAverage();
+			addToEachLap(induvidualContribution);
+		}
+
+		public void addToEachLap(long induvidualContribution) {
+			if (DB != null) {
+				try {
+					Log.d("StudyTimerDB",
+							LapDBProperties.commands.addToEachPrefix
+									+ induvidualContribution);
+					DB.execSQL(LapDBProperties.commands.addToEachPrefix
+							+ induvidualContribution);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
 	}
+
 }

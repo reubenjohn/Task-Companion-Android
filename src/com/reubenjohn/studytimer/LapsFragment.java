@@ -26,7 +26,8 @@ public class LapsFragment extends Fragment implements
 		TimerElementsFragment.TimerElementsListener {
 
 	private LapsCursorAdapter adapter;
-	private StudyTimerDBManager db;
+	private StudyTimerDBManager STDB;
+	private StudyTimerDBManager.LapDBManager lapsDB;
 	ListView listView;
 	TextView currentLap;
 	ProgressBar lapProgress;
@@ -55,8 +56,8 @@ public class LapsFragment extends Fragment implements
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.laps_fragment, container, false);
-		db = new StudyTimerDBManager(getActivity().getApplicationContext());
-		db.open();
+		STDB = new StudyTimerDBManager(getActivity().getApplicationContext());
+		lapsDB=STDB.lapsDB.open();
 		bridgeXML(v);
 		initalizeFeilds();
 		generateListView();
@@ -81,7 +82,7 @@ public class LapsFragment extends Fragment implements
 		// TODO Use Cursor loaders to prevent possible janks
 		// http://developer.android.com/guide/topics/ui/layout/listview.html#Loader
 
-		Cursor cursor = db.fetchAllLaps();
+		Cursor cursor = lapsDB.fetchAllLaps();
 		/*
 		 * adapter = new SimpleCursorAdapter(getActivity(),
 		 * R.layout.laps_list_item, cursor,
@@ -94,7 +95,7 @@ public class LapsFragment extends Fragment implements
 
 	public void resetSession() {
 		Log.d("StudyTimer", "LapsFragment resetSession");
-		db.reset();
+		lapsDB.reset();
 		cache.resetSession();
 		average = 0;
 		formatedAverage = getResources().getString(
@@ -104,7 +105,7 @@ public class LapsFragment extends Fragment implements
 
 	public void reset() {
 		Log.d("StudyTimer", "LapsFragment reset");
-		db.reset();
+		lapsDB.reset();
 		cache.clear();
 		average = 0;
 		formatedAverage = getResources().getString(
@@ -116,8 +117,8 @@ public class LapsFragment extends Fragment implements
 		return cache.lapCount == 0;
 	}
 
-	public boolean addLap(String newLap, int newElapsed) {
-		db.addLap(newLap, newElapsed);
+	public boolean addLap(long newElapsed) {
+		lapsDB.addLap(newElapsed);
 		generateListView();
 		cache.lapCount++;
 		updateCurentLap(cache.lapCount);
@@ -175,11 +176,11 @@ public class LapsFragment extends Fragment implements
 	}
 
 	public int getLapCount() {
-		assert db != null;
-		if (db == null) {
+		assert lapsDB != null;
+		if (lapsDB == null) {
 			return -1;
 		} else
-			return db.getLapCount();
+			return lapsDB.getLapCount();
 	}
 
 	public int getTotalLapCount() {
@@ -194,20 +195,20 @@ public class LapsFragment extends Fragment implements
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-		db.close();
+		lapsDB.close();
 	}
 
 	public int getAverage() {
-		return db.getAverage();
+		return lapsDB.getAverage();
 	}
 
 	public String getFormattedAverage() {
-		return db.getFormattedAverage();
+		return lapsDB.getFormattedAverage();
 	}
 
 	@Override
 	public void onTotalElapseSetManually(long elapse) {
-		db.distributeToLaps(elapse);
+		lapsDB.distributeToLaps(elapse);
 	}
 
 	public void createNewSession(Bundle sessionInfo) {

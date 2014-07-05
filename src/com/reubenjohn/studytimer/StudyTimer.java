@@ -137,8 +137,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	public void lap() {
 		if (lapsF != null) {
-			lapsF.addLap(timerElements.getFormatedElapse(),
-					(int) timerElements.getElapse());
+			lapsF.addLap(timerElements.getElapse());
 			setNoLapMode(lapsF.hasNoLaps());
 		}
 		timerElements.setAverage(lapsF.getAverage());
@@ -260,10 +259,9 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	public void onNewFrame() {
 		filler.updateFillerProgress(timerElements.getLapProgress());
 		/*
-		float lapProgress=timerElements.getLapProgress();
-		if(lapProgress!=-1)
-			lapsF.updateCurrentLapProgress(lapProgress);
-		*/
+		 * float lapProgress=timerElements.getLapProgress(); if(lapProgress!=-1)
+		 * lapsF.updateCurrentLapProgress(lapProgress);
+		 */
 	}
 
 	@Override
@@ -316,7 +314,6 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		}
 	}
 
-
 	public void createNewSessionFromBundle(Bundle sessionInfo) {
 		saveSessionToPrefsFromBundle(sessionInfo);
 		Log.i("Sessions", "Creating new session:");
@@ -329,19 +326,26 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	public void putSessionInfoToBundle(Bundle sessionInfo) {
 		timerElements.putSessionInfo(sessionInfo);
 		lapsF.putSessionInfo(sessionInfo);
-		Log.i("Sessions",
-				"Session info put into bundle");
+		Log.i("Sessions", "Session info put into bundle");
 	}
-	
+
 	public void saveSessionToPrefsFromBundle(Bundle sessionInfo) {
 		SharedPreferences.Editor editor = sessionPrefs.edit();
-		editor.putLong(STSP.keys.targetTime, sessionInfo.getLong(STSP.keys.targetTime, defaults.targetTime));
-		editor.putInt(STSP.keys.totalLaps, sessionInfo.getInt(STSP.keys.totalLaps, defaults.totalLaps));
+		editor.putLong(STSP.keys.targetTime,
+				sessionInfo.getLong(STSP.keys.targetTime, defaults.targetTime));
+		editor.putInt(STSP.keys.totalLaps,
+				sessionInfo.getInt(STSP.keys.totalLaps, defaults.totalLaps));
 
-		editor.putLong(STSP.keys.elapse, sessionInfo.getLong(STSP.keys.elapse, 0));
-		editor.putLong(STSP.keys.totalElapse, sessionInfo.getLong(STSP.keys.totalElapse,0));
-		editor.putLong(STSP.keys.stopTime, sessionInfo.getLong(STSP.keys.stopTime, System.currentTimeMillis()));
-		editor.putBoolean(STSP.keys.lapTimeUp, sessionInfo.getBoolean(STSP.keys.lapTimeUp, false));
+		editor.putLong(STSP.keys.elapse,
+				sessionInfo.getLong(STSP.keys.elapse, 0));
+		editor.putLong(STSP.keys.totalElapse,
+				sessionInfo.getLong(STSP.keys.totalElapse, 0));
+		editor.putLong(
+				STSP.keys.stopTime,
+				sessionInfo.getLong(STSP.keys.stopTime,
+						System.currentTimeMillis()));
+		editor.putBoolean(STSP.keys.lapTimeUp,
+				sessionInfo.getBoolean(STSP.keys.lapTimeUp, false));
 		editor.commit();
 		Log.i("Sessions",
 				"Session saved to shared session preferences from bundle");
@@ -358,8 +362,9 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	public Bundle getSessionBundleFromPrefs() {
 		Bundle sessionInfo = new Bundle();
-		sessionInfo.putLong(STSP.keys.targetTime,
-				sessionPrefs.getLong(STSP.keys.targetTime, defaults.targetTime));
+		sessionInfo
+				.putLong(STSP.keys.targetTime, sessionPrefs.getLong(
+						STSP.keys.targetTime, defaults.targetTime));
 		sessionInfo.putInt(STSP.keys.totalLaps,
 				sessionPrefs.getInt(STSP.keys.totalLaps, defaults.totalLaps));
 		Log.i("Sessions",

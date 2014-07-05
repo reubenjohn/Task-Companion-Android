@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.reubenjohn.studytimer.StudyTimer.MODES;
-import com.reubenjohn.studytimer.StudyTimer.defaults;
 import com.reubenjohn.studytimer.preferences.STSP;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.timming.frametimer.FrameTimer;
@@ -355,7 +354,7 @@ public class TimerElementsFragment extends Fragment implements
 	}
 
 	private void removeAllLapProgressSounds() {
-		if (wakeLock.isHeld()){
+		if (wakeLock.isHeld()) {
 			wakeLock.release();
 			Log.d("StudyTimer", "WakeLock released");
 		}
@@ -382,7 +381,6 @@ public class TimerElementsFragment extends Fragment implements
 			}
 		}
 	}
-
 
 	@Override
 	public void onClick(View v) {
@@ -470,7 +468,6 @@ public class TimerElementsFragment extends Fragment implements
 		}
 	}
 
-	
 	public void putSessionInfo(Bundle sessionInfo) {
 		sessionInfo.putLong(STSP.keys.targetTime, getTargetTime());
 		sessionInfo.putLong(STSP.keys.elapse, elapse.getElapse());
@@ -478,7 +475,7 @@ public class TimerElementsFragment extends Fragment implements
 		sessionInfo.putLong(STSP.keys.stopTime, System.currentTimeMillis());
 		sessionInfo.putBoolean(STSP.keys.lapTimeUp, lapTimeUp);
 	}
-	
+
 	public void loadSessionFromBundle(Bundle sessionInfo) {
 		Log.d("StudyTimer", "Timer Elements resume state: running=" + running);
 		elapse.setElapse(sessionInfo.getLong(STSP.keys.elapse, 0));
@@ -488,9 +485,10 @@ public class TimerElementsFragment extends Fragment implements
 		lapTimeUp = sessionInfo.getBoolean(STSP.keys.lapTimeUp, false);
 		if (running) {
 			elapse.setStartTime(sessionInfo.getLong(STSP.keys.stopTime, 0));
-			totalElapse.setStartTime(sessionInfo.getLong(STSP.keys.stopTime, 0));
+			totalElapse
+					.setStartTime(sessionInfo.getLong(STSP.keys.stopTime, 0));
 		}
-		
+
 	}
 
 }
