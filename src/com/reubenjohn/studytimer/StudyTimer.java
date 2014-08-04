@@ -39,6 +39,8 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	public static class defaults {
 		public static long targetTime = 5000;
 		public static int totalLaps = 20;
+		public static long elapse = 0;
+		public static long totalElapse = 0;
 
 		public static class sounds {
 			public static boolean lapProgress = true;
@@ -335,11 +337,10 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 				sessionInfo.getLong(STSP.keys.targetTime, defaults.targetTime));
 		editor.putInt(STSP.keys.totalLaps,
 				sessionInfo.getInt(STSP.keys.totalLaps, defaults.totalLaps));
-
 		editor.putLong(STSP.keys.elapse,
-				sessionInfo.getLong(STSP.keys.elapse, 0));
-		editor.putLong(STSP.keys.totalElapse,
-				sessionInfo.getLong(STSP.keys.totalElapse, 0));
+				sessionInfo.getLong(STSP.keys.elapse, defaults.elapse));
+		editor.putLong(STSP.keys.totalElapse, sessionInfo.getLong(
+				STSP.keys.totalElapse, defaults.totalElapse));
 		editor.putLong(
 				STSP.keys.stopTime,
 				sessionInfo.getLong(STSP.keys.stopTime,
@@ -347,8 +348,8 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		editor.putBoolean(STSP.keys.lapTimeUp,
 				sessionInfo.getBoolean(STSP.keys.lapTimeUp, false));
 		editor.commit();
-		Log.i("Sessions",
-				"Session saved to shared session preferences from bundle");
+		Log.i("Sessions", "Session saved to shared session preferences from "
+				+ sessionInfo.toString());
 	}
 
 	public void saveSessionToPrefs() {
@@ -367,8 +368,18 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 						STSP.keys.targetTime, defaults.targetTime));
 		sessionInfo.putInt(STSP.keys.totalLaps,
 				sessionPrefs.getInt(STSP.keys.totalLaps, defaults.totalLaps));
-		Log.i("Sessions",
-				"Session loaded from shared session preferences to bundle");
+		sessionInfo.putLong(STSP.keys.elapse,
+				sessionPrefs.getLong(STSP.keys.elapse, defaults.elapse));
+		sessionInfo.putLong(STSP.keys.totalElapse, sessionPrefs.getLong(
+				STSP.keys.totalElapse, defaults.totalElapse));
+		sessionInfo.putLong(
+				STSP.keys.stopTime,
+				sessionPrefs.getLong(STSP.keys.stopTime,
+						System.currentTimeMillis()));
+		sessionInfo.putBoolean(STSP.keys.lapTimeUp,
+				sessionPrefs.getBoolean(STSP.keys.lapTimeUp, false));
+		Log.i("Sessions", "Session loaded from shared session preferences to "
+				+ sessionInfo.toString());
 		return sessionInfo;
 	}
 

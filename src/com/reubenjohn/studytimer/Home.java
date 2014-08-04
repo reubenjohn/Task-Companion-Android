@@ -7,6 +7,7 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -75,6 +76,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	FrameLayout lapsContainer;
 	LapsContainerParams lapsContainerParams;
 	TimePickerDialog targetDialog;
+	SharedPreferences sessionPrefs;
 
 	public enum FullScreenStatus {
 		FULLSCREEN, PENDING_FULLSCREEN, NOT_FULLSCREEN
@@ -312,6 +314,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	protected void initializeFeilds() {
 		setupSystemUIHider();
 
+		sessionPrefs = getSharedPreferences("sessionInfo", Context.MODE_PRIVATE);
 		StudyTimer.defaults.loadFromResources(getResources());
 		T = new StudyTimer(tHandler, getSupportFragmentManager(),
 				getSharedPreferences("session", Context.MODE_PRIVATE));
