@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +31,8 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
+import com.reubenjohn.senses.OnShakeListener;
+import com.reubenjohn.senses.ShakeSense;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
@@ -40,7 +43,7 @@ import com.reubenjohn.studytimer.util.SystemUiHider;
  * @see SystemUiHider
  */
 public class Home extends ActionBarActivity implements OnClickListener,
-		OnCheckedChangeListener {
+		OnCheckedChangeListener, OnShakeListener {
 
 	PowerManager.WakeLock wakeLock;
 
@@ -77,6 +80,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	LapsContainerParams lapsContainerParams;
 	TimePickerDialog targetDialog;
 	SharedPreferences sessionPrefs;
+	ShakeSense lapShakeSense;
 
 	public enum FullScreenStatus {
 		FULLSCREEN, PENDING_FULLSCREEN, NOT_FULLSCREEN
@@ -227,6 +231,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	@Override
 	protected void onStop() {
 		T.onStop();
+		lapShakeSense.onStop();
 		super.onStop();
 	}
 
@@ -234,6 +239,8 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	protected void onResume() {
 		T.onResume();
 		super.onResume();
+		
+		lapShakeSense.onResume();
 	}
 
 	@Override
@@ -343,6 +350,11 @@ public class Home extends ActionBarActivity implements OnClickListener,
 				R.string.target_dialog_summary));
 
 		fullScreenStatus = FullScreenStatus.NOT_FULLSCREEN;
+
+		lapShakeSense = new ShakeSense();
+		lapShakeSense
+				.initialize((SensorManager) getSystemService(Context.SENSOR_SERVICE));
+		lapShakeSense.setOnShakeListener(this);
 
 	}
 
@@ -554,5 +566,10 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			}
 			break;
 		}
+	}
+
+	@Override
+	public void onShaken() {
+		lap();
 	}
 }

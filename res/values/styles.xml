@@ -25,7 +25,7 @@
     <style name="AppHomeTheme" parent="AppBaseTheme">
 
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-        <item name="android:windowBackground">@color/cool_mint</item>
+        <item name="android:windowBackground">@color/blue_light</item>
     </style>
 
     <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
