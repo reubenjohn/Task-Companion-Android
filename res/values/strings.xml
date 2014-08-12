@@ -51,13 +51,18 @@
     <string name="session_edit_total_elapse_title">Set total elapsed time</string>
     <string name="session_edit_total_elapse_message">Manually set the total time spent in the current session (Minutes:Seconds)</string>
     
-    <string name="pref_lap_progress_sounds_title">Sounds</string>
+    <string name="pref_category_sounds_title">Sounds</string>
     <string name="pref_lap_progress_sounds_switch_title">Progress sounds</string>
     <string name="pref_lap_progress_sounds_switch_summary">Conveniently update you of your lap progress without having to look at the screen</string>
     
     <string name="pref_data_title">Data options</string>
     <string name="pref_data_reset_stats">Reset statistics</string>
     <string name="pref_data_reset_stats_summary">This will clear all laps and your current session</string>
+    
+    <string name="pref_category_other">Other</string>
+    <string name="pref_shake_to_lap_title">Shake to lap</string>
+    <string name="pref_shake_to_lap_summary_on">Shaking device will lap timer</string>
+    <string name="pref_shake_to_lap_summary_off">Shaking device won\'t lap timer</string>
     
     <string name="l_new_session">Start new session</string>
     <string name="title_session_setup">Session setup</string>

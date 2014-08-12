@@ -2,16 +2,21 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory
-        android:title="@string/pref_lap_progress_sounds_title" >
+        android:title="@string/pref_category_sounds_title" >
         <SwitchPreference
             android:key="key_sounds_lap_progress_switch"
             android:summary="@string/pref_lap_progress_sounds_switch_summary"
-            android:title="@string/pref_lap_progress_sounds_switch_title" />
+            android:title="@string/pref_lap_progress_sounds_switch_title"
+            android:defaultValue="true" />
     </PreferenceCategory>
     <PreferenceCategory
-        android:key="key_session_target"
-        android:summary="@string/session_create_target_hint"
-        android:title="@string/session_create_target_title" >
+        android:title="@string/pref_category_other" >
+        <SwitchPreference
+            android:key="key_shake_to_lap"
+            android:title="@string/pref_shake_to_lap_title"
+            android:summaryOn="@string/pref_shake_to_lap_summary_on"
+            android:summaryOff="@string/pref_shake_to_lap_summary_off"
+            android:defaultValue="true" />
     </PreferenceCategory>
 
 </PreferenceScreen>
