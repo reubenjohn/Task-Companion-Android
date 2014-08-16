@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
 import android.util.Log;
@@ -33,6 +34,7 @@ import android.widget.ToggleButton;
 
 import com.reubenjohn.senses.OnShakeListener;
 import com.reubenjohn.senses.ShakeSense;
+import com.reubenjohn.studytimer.sound.SoundManager;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
@@ -237,10 +239,12 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 	@Override
 	protected void onResume() {
-		T.onResume();
 		super.onResume();
-		
+		loadSettings();
+		T.onResume();
+		T.soundManager.initialize(getApplicationContext(), T);
 		lapShakeSense.onResume();
+
 	}
 
 	@Override
@@ -571,5 +575,17 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	@Override
 	public void onShaken() {
 		lap();
+	}
+
+	public void loadSettings() {
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		Bundle settings = new Bundle();
+
+		settings.putBoolean(
+				StudyTimer.keys.settings.sounds.lap_progress_switch,
+				preferences.getBoolean(
+						StudyTimer.keys.settings.sounds.lap_progress_switch,
+						StudyTimer.defaults.sounds.lapProgress));
 	}
 }

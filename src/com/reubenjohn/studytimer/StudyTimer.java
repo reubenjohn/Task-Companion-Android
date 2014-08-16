@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.reubenjohn.studytimer.preferences.STSP;
+import com.reubenjohn.studytimer.sound.SoundManager;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.timming.Timer;
 import com.reubenjohn.studytimer.timming.frametimer.FrameIntervalListener;
@@ -28,13 +29,14 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	public FrameTimer framer;
 	Timer runtime;
-	TimerElementsFragment timerElements;
+	public TimerElementsFragment timerElements;
 	LapsFragment lapsF;
 	EmptyLapFragment emptyLap;
 	FillerFragment filler;
 	SharedPreferences.OnSharedPreferenceChangeListener prefsListener;
 	FragmentManager fragM;
 	private SharedPreferences sessionPrefs;
+	SoundManager soundManager;
 
 	public static class defaults {
 		public static long targetTime = 5000;
@@ -90,7 +92,6 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		initializeFeilds();
 		setListeners(framer);
 		runtime.start();
-
 	}
 
 	protected void bridgeFragments(FragmentManager fragM) {
@@ -116,6 +117,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		runtime = new Timer();
 		runtime.setFormat("%MM:%SS.%sss");
 		setNoLapMode(lapsF.hasNoLaps());
+		soundManager = new SoundManager();
 
 	}
 
@@ -127,23 +129,42 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	public void start() {
 		timerElements.start();
+		if (SoundManager.beepManager.isBeepsEnabled()) {
+			SoundManager.postAllLapProgressSounds(timerElements.getElapse(),
+					timerElements.getTargetTime());
+		}
 	}
 
 	public void stop() {
+		SoundManager.removeAllLapProgressSounds();
 		timerElements.stop();
 	}
 
 	public void toggle() {
-		timerElements.toggle();
+		if (isRunning()) {
+			stop();
+		} else {
+			start();
+		}
 	}
 
 	public void lap() {
+		assert lapsF != null;
 		if (lapsF != null) {
 			lapsF.addLap(timerElements.getElapse());
 			setNoLapMode(lapsF.hasNoLaps());
 		}
 		timerElements.setAverage(lapsF.getAverage());
 		timerElements.lap(lapsF.getLapCount());
+		if (isRunning()) {
+			if (SoundManager.beepManager.isBeepsEnabled()) {
+				SoundManager.removeAllLapProgressSounds();
+				SoundManager.postAllLapProgressSounds(
+						timerElements.getElapse(),
+						timerElements.getTargetTime());
+			}
+
+		}
 	}
 
 	public void resetSession() {
@@ -175,9 +196,12 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		loadSessionFromBundle(getSessionBundleFromPrefs());
 		framer.start();
 		runtime.start();
+		soundManager.onResume();
 	}
 
 	public void onStop() {
+		if (SoundManager.beepManager.isBeepsEnabled())
+			SoundManager.removeAllLapProgressSounds();
 	}
 
 	public void logStatus() {
@@ -246,7 +270,12 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	public void setTargetTime(long timeInMilliseconds) {
 		Log.d("StudyTimer", "Target time set: " + timeInMilliseconds);
-		timerElements.setTargetTIme(timeInMilliseconds);
+		timerElements.setTargetTime(timeInMilliseconds);
+		if (isRunning()) {
+			SoundManager.removeAllLapProgressSounds();
+			SoundManager.postAllLapProgressSounds(timerElements.getElapse(),
+					timerElements.getTargetTime());
+		}
 	}
 
 	public float getLapProgress() {

@@ -19,7 +19,7 @@ public class PreferencesFragment extends PreferenceFragment {
 	}
 
 	public void setPrefListener(OnPreferenceChangeListener listener) {
-		Preference p = findPreference("checkbox_key");
+		Preference p = findPreference("key_shake_to_lap");
 		Log.d("StudyTimer", "PreferenceListener set to fragment: " + (p != null));
 		if (p != null) {
 			p.setOnPreferenceChangeListener(listener);

@@ -1,10 +1,12 @@
-package com.reubenjohn.studytimer;
+package com.reubenjohn.studytimer.sound;
 
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+
+import com.reubenjohn.studytimer.R;
 
 public class LapProgressSoundPool {
 

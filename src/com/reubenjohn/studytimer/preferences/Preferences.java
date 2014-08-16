@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
+import android.util.Log;
 
 import com.reubenjohn.studytimer.R;
 
@@ -43,7 +44,9 @@ public class Preferences extends PreferenceActivity {
 
 	@TargetApi(11)
 	protected void AddResourceApi11AndGreater() {
+		Log.d("Preferences", "Using Preferences fragment instead since API>=11");
 		pf = new PreferencesFragment();
+		pf.setPrefListener(prefListener);
 		getFragmentManager().beginTransaction()
 				.replace(android.R.id.content, pf).commit();
 	}

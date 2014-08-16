@@ -5,10 +5,6 @@ import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,15 +29,6 @@ public class TimerElementsFragment extends Fragment implements
 	boolean realTimeAverageEnabled = true, running, lapTimeUp;
 	int average;
 	private long targetTime;
-	WakeLock wakeLock;
-
-	private static class beepManager {
-		static boolean enabled = true;
-		static Handler handler;
-		static LapProgressSoundPool player;
-		static float decay = 2;
-		static int cutOff = 100;
-	}
 
 	private static class layout {
 		public static View total_elapse;
@@ -80,7 +67,6 @@ public class TimerElementsFragment extends Fragment implements
 	@Override
 	public void onResume() {
 		super.onResume();
-		loadSettings();
 	}
 
 	@Override
@@ -95,7 +81,6 @@ public class TimerElementsFragment extends Fragment implements
 
 	@Override
 	public void onDestroy() {
-		removeAllLapProgressSounds();
 		super.onDestroy();
 	}
 
@@ -103,28 +88,19 @@ public class TimerElementsFragment extends Fragment implements
 		elapse.start();
 		totalElapse.start();
 		running = true;
-		if (beepManager.enabled) {
-			postAllLapProgressSounds();
-		}
 	}
 
 	public void stop() {
 		elapse.stop();
 		totalElapse.stop();
 		running = false;
-		if (beepManager.enabled)
-			removeAllLapProgressSounds();
 	}
 
 	public void toggle() {
 		if (running) {
 			running = false;
-			if (beepManager.enabled)
-				removeAllLapProgressSounds();
 		} else {
 			running = true;
-			if (beepManager.enabled)
-				postAllLapProgressSounds();
 		}
 		elapse.toggle();
 		totalElapse.toggle();
@@ -134,10 +110,6 @@ public class TimerElementsFragment extends Fragment implements
 		elapse.reset();
 		if (running) {
 			elapse.start();
-			if (beepManager.enabled) {
-				removeAllLapProgressSounds();
-				postAllLapProgressSounds();
-			}
 		}
 		this.cached_lapCount = lapCount;
 		lapTimeUp = false;
@@ -153,7 +125,6 @@ public class TimerElementsFragment extends Fragment implements
 				STSP.fileNames.currentSession, Context.MODE_PRIVATE).getLong(
 				STSP.keys.targetTime, StudyTimer.defaults.targetTime);
 		resetSavedData();
-		removeAllLapProgressSounds();
 	}
 
 	public void setTotalElapse(long elapse) {
@@ -190,12 +161,8 @@ public class TimerElementsFragment extends Fragment implements
 			tv_average.setText(Time.getFormattedTime("%MM:%SS.%sss", average));
 	}
 
-	public void setTargetTIme(long targetTime) {
+	public void setTargetTime(long targetTime) {
 		this.targetTime = targetTime;
-		if (isRunning()) {
-			removeAllLapProgressSounds();
-			postAllLapProgressSounds();
-		}
 		SharedPreferences.Editor editor = getActivity().getSharedPreferences(
 				STSP.fileNames.currentSession, Context.MODE_PRIVATE).edit();
 		editor.putLong(STSP.keys.targetTime, targetTime);
@@ -227,11 +194,6 @@ public class TimerElementsFragment extends Fragment implements
 
 		elapse = factory.produceTimerView(tv_elapse);
 		totalElapse = factory.produceTimerView(tv_total_elapse);
-		wakeLock = ((PowerManager) getActivity().getSystemService(
-				Context.POWER_SERVICE)).newWakeLock(
-				PowerManager.PARTIAL_WAKE_LOCK, "StudyTimer running wakeLock");
-		beepManager.handler = new Handler();
-		beepManager.player = new LapProgressSoundPool(getActivity(), wakeLock);
 
 	}
 
@@ -276,110 +238,8 @@ public class TimerElementsFragment extends Fragment implements
 		}
 	}
 
-	public long getBeepTime(int beepNumber) {
-		if (beepNumber == Integer.MAX_VALUE)
-			return targetTime;
-		else
-			return (long) (targetTime - targetTime
-					/ (Math.pow(beepManager.decay, (float) beepNumber)));
-	}
-
-	public long getBeepDelay(int beepNumber) {
-		return getBeepTime(beepNumber) - getElapse();
-	}
-
-	public int getBeepNumberAfter(long ms) {
-		if (ms != targetTime)
-			return (int) (Math.log(targetTime / (targetTime - ms)) / Math
-					.log(beepManager.decay)) + 1;
-		else
-			return Integer.MAX_VALUE;
-	}
-
-	public long getBeepTimeAfter(long ms) {
-		if (ms != targetTime)
-			return getBeepTime(getBeepNumberAfter(ms));
-		else
-			return Long.MAX_VALUE;
-	}
-
-	public long getBeepDelayAfter(long ms) {
-		if (ms <= targetTime)
-			return getBeepTime((int) (Math.log(targetTime / (targetTime - ms)) / Math
-					.log(2)) + 1) - getElapse();
-		else
-			return Long.MAX_VALUE;
-	}
-
-	private void postAllBeeps() {
-		long beep;
-		String delayList = Boolean.toString(targetTime
-				- (beep = getBeepTime(1)) >= beepManager.cutOff)
-				+ "&&" + Boolean.toString(beep >= getElapse()) + ": ";
-		for (int i = getBeepNumberAfter(getElapse()); targetTime
-				- (beep = getBeepTime(i)) >= beepManager.cutOff; i++) {
-			if (beep >= getElapse()) {
-				beepManager.handler.postDelayed(beepManager.player.beep, beep
-						- getElapse());
-				delayList += beep + ",";
-
-			}
-		}
-		Log.d("StudyTimer", "Beeps are scheduled is " + delayList);
-	}
-
-	private void removeAllBeeps() {
-		beepManager.handler.removeCallbacks(beepManager.player.beep);
-	}
-
 	private long getRemainingLapTime() {
 		return targetTime - getElapse();
-	}
-
-	private void postCutOffSound() {
-		long delay;
-		if ((delay = getRemainingLapTime()) >= 0)
-			beepManager.handler.postDelayed(beepManager.player.cutOff, delay);
-	}
-
-	private void removeCutOffSound() {
-		beepManager.handler.removeCallbacks(beepManager.player.cutOff);
-	}
-
-	private void postAllLapProgressSounds() {
-		Log.d("StudyTimer", "WakeLock acquired");
-		wakeLock.acquire();
-		postAllBeeps();
-		postCutOffSound();
-	}
-
-	private void removeAllLapProgressSounds() {
-		if (wakeLock.isHeld()) {
-			wakeLock.release();
-			Log.d("StudyTimer", "WakeLock released");
-		}
-		removeAllBeeps();
-		removeCutOffSound();
-	}
-
-	public void loadSettings() {
-		SharedPreferences settings = PreferenceManager
-				.getDefaultSharedPreferences(getActivity().getBaseContext());
-		boolean newBeepEnabledValue = settings.getBoolean(
-				StudyTimer.keys.settings.sounds.lap_progress_switch,
-				StudyTimer.defaults.sounds.lapProgress);
-		if (newBeepEnabledValue != beepManager.enabled) {
-			beepManager.enabled = newBeepEnabledValue;
-			Log.d("TimerElementsFragment",
-					"Lap progress sound setting changed to "
-							+ newBeepEnabledValue);
-			if (running) {
-				if (newBeepEnabledValue == true)
-					postAllLapProgressSounds();
-				else
-					removeAllLapProgressSounds();
-			}
-		}
 	}
 
 	@Override
@@ -462,7 +322,7 @@ public class TimerElementsFragment extends Fragment implements
 	public void createNewSession(Bundle sessionInfo) {
 		long newTarget = sessionInfo.getLong(STSP.keys.targetTime);
 		if (newTarget > 0) {
-			setTargetTIme(newTarget);
+			setTargetTime(newTarget);
 		} else {
 			Log.d("StudyTimer", "New target is invalid or not set");
 		}
