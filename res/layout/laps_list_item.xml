@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/purple2"
+    android:background="@color/purple_glass"
     android:orientation="horizontal" >
 
     <TextView
@@ -13,7 +13,7 @@
         android:layout_gravity="center"
         android:layout_margin="4dp"
         android:layout_weight="1.5"
-        android:background="@color/purple2"
+        android:background="@color/purple_glass"
         android:gravity="center"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
@@ -29,13 +29,13 @@
         android:layout_gravity="center"
         android:layout_margin="4dp"
         android:layout_weight="5"
-        android:background="@color/blue_light_shadow"
+        android:background="@color/glass"
         android:gravity="center"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:text="@string/intitial_time"
         android:textColor="@color/orange"
-        android:textStyle="bold"
-        android:textSize="32sp" />
+        android:textSize="32sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

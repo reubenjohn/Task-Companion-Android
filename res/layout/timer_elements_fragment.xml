@@ -86,7 +86,7 @@
                 android:id="@+id/tv_l_elapse"
                 style="@style/TimeStyle"
                 android:text="@string/l_elapse"
-                android:textColor="@color/green_dark"
+                android:textColor="@color/green"
                 android:textSize="20sp" />
 
             <TextView

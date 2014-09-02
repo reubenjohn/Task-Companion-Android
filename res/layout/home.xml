@@ -47,8 +47,8 @@
                     android:id="@+id/home_laps_container"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_marginLeft="32dp"
-                    android:layout_marginRight="32dp"
+                    android:layout_marginLeft="64dp"
+                    android:layout_marginRight="64dp"
                     android:layout_weight="12" >
 
                     <fragment
