@@ -238,10 +238,9 @@ public class TimerElementsFragment extends Fragment implements
 		}
 	}
 
-	private long getRemainingLapTime() {
-		return targetTime - getElapse();
-	}
-
+	/*
+	 * private long getRemainingLapTime() { return targetTime - getElapse(); }
+	 */
 	@Override
 	public void onClick(View v) {
 		Log.d("StudyTimer", "Timer Element clicked");
@@ -280,28 +279,20 @@ public class TimerElementsFragment extends Fragment implements
 		picker.show();
 	}
 
-	private void showTotalElapseDialog() {
-		Log.d("StudyTimer", "Showing total elapse dialog");
-		TimePickerDialog picker = new TimePickerDialog(getActivity(),
-				new OnTimeSetListener() {
-					int callCount = 0;
-
-					@Override
-					public void onTimeSet(TimePicker picker, int minute,
-							int second) {
-						if (callCount == 1) {
-							setTotalElapse(Time.getTimeInMilliseconds(0, 0,
-									minute, second, 0));
-						}
-						callCount++;
-					}
-				}, 1, 0, true);
-		picker.setTitle(R.string.session_edit_total_elapse_title);
-		picker.setMessage(getResources().getString(
-				R.string.session_edit_total_elapse_message));
-		picker.show();
-	}
-
+	/*
+	 * private void showTotalElapseDialog() { Log.d("StudyTimer",
+	 * "Showing total elapse dialog"); TimePickerDialog picker = new
+	 * TimePickerDialog(getActivity(), new OnTimeSetListener() { int callCount =
+	 * 0;
+	 * 
+	 * @Override public void onTimeSet(TimePicker picker, int minute, int
+	 * second) { if (callCount == 1) {
+	 * setTotalElapse(Time.getTimeInMilliseconds(0, 0, minute, second, 0)); }
+	 * callCount++; } }, 1, 0, true);
+	 * picker.setTitle(R.string.session_edit_total_elapse_title);
+	 * picker.setMessage(getResources().getString(
+	 * R.string.session_edit_total_elapse_message)); picker.show(); }
+	 */
 	public void setMode(int MODE) {
 		switch (MODE) {
 		case MODES.NORMAL:

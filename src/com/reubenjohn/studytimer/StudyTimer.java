@@ -67,8 +67,10 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	public static class keys {
 		public static class settings {
 			public static class sounds {
-				public static final String lap_progress_switch = "key_sounds_lap_progress_switch";
+				public static final String lap_progress = "key_sounds_lap_progress_switch";
 			}
+
+			public static final String shake_to_lap = "key_shake_to_lap";
 		}
 	}
 
@@ -163,7 +165,6 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 						timerElements.getElapse(),
 						timerElements.getTargetTime());
 			}
-
 		}
 	}
 

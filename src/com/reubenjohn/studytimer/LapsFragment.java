@@ -36,7 +36,6 @@ public class LapsFragment extends Fragment implements
 	int totalLaps;
 
 	private static class cache {
-		static final int DEFAULT_TOTAL_LAP_COUNT = 20;
 		static int lapCount;
 		static int totalLapProgressPercentage;
 
@@ -49,8 +48,6 @@ public class LapsFragment extends Fragment implements
 			totalLapProgressPercentage = 0;
 		}
 	}
-
-	// pb_total_lap_progress
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,

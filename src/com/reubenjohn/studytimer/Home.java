@@ -34,7 +34,6 @@ import android.widget.ToggleButton;
 
 import com.reubenjohn.senses.OnShakeListener;
 import com.reubenjohn.senses.ShakeSense;
-import com.reubenjohn.studytimer.sound.SoundManager;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
@@ -489,57 +488,35 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		}
 	}
 
-	private void showSessionDialog(boolean windowed) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
-		Time currentTarget = new Time(T.timerElements.getTargetTime());
-		final TimePickerDialog timePicker = new TimePickerDialog(Home.this,
-				new OnTimeSetListener() {
-					short callCount = 0;
-
-					@Override
-					public void onTimeSet(TimePicker view, int minute,
-							int second) {
-						if (callCount % 2 == 1) {
-							T.setTargetTime(Time.getTimeInMilliseconds(0, 0,
-									minute, second, 0));
-						}
-						callCount++;
-					}
-				}, currentTarget.getMinutes(), currentTarget.getSeconds(), true);
-		builder.setTitle(R.string.title_session_setup)
-				.setPositiveButton(R.string.session_edit_positive,
-						new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-
-							}
-						})
-				.setNegativeButton(R.string.session_edit_negative, null)
-				.setItems(R.array.session_setup_elements,
-						new DialogInterface.OnClickListener() {
-
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								switch (which) {
-								case 0:
-									Log.d("StudyTimer",
-											"Set target time dialog");
-									timePicker.show();
-									break;
-								case 1:
-
-									break;
-								case 2:
-									break;
-								}
-							}
-						}).show();
-
-	}
-
+	/*
+	 * private void showSessionDialog(boolean windowed) { AlertDialog.Builder
+	 * builder = new AlertDialog.Builder(Home.this); Time currentTarget = new
+	 * Time(T.timerElements.getTargetTime()); final TimePickerDialog timePicker
+	 * = new TimePickerDialog(Home.this, new OnTimeSetListener() { short
+	 * callCount = 0;
+	 * 
+	 * @Override public void onTimeSet(TimePicker view, int minute, int second)
+	 * { if (callCount % 2 == 1) { T.setTargetTime(Time.getTimeInMilliseconds(0,
+	 * 0, minute, second, 0)); } callCount++; } }, currentTarget.getMinutes(),
+	 * currentTarget.getSeconds(), true);
+	 * builder.setTitle(R.string.title_session_setup)
+	 * .setPositiveButton(R.string.session_edit_positive, new
+	 * DialogInterface.OnClickListener() {
+	 * 
+	 * @Override public void onClick(DialogInterface dialog, int which) {
+	 * 
+	 * } }) .setNegativeButton(R.string.session_edit_negative, null)
+	 * .setItems(R.array.session_setup_elements, new
+	 * DialogInterface.OnClickListener() {
+	 * 
+	 * @Override public void onClick(DialogInterface dialog, int which) { switch
+	 * (which) { case 0: Log.d("StudyTimer", "Set target time dialog");
+	 * timePicker.show(); break; case 1:
+	 * 
+	 * break; case 2: break; } } }).show();
+	 * 
+	 * }
+	 */
 	private void toggleFullScreen(boolean requestFullScreen) {
 		if (requestFullScreen) {
 			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -583,9 +560,9 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		Bundle settings = new Bundle();
 
 		settings.putBoolean(
-				StudyTimer.keys.settings.sounds.lap_progress_switch,
+				StudyTimer.keys.settings.sounds.lap_progress,
 				preferences.getBoolean(
-						StudyTimer.keys.settings.sounds.lap_progress_switch,
+						StudyTimer.keys.settings.sounds.lap_progress,
 						StudyTimer.defaults.sounds.lapProgress));
 	}
 }

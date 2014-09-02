@@ -40,7 +40,7 @@ public class SoundManager {
 	public void loadSettingsFromBundle(Bundle settings) {
 
 		boolean newBeepEnabledValue = settings.getBoolean(
-				StudyTimer.keys.settings.sounds.lap_progress_switch,
+				StudyTimer.keys.settings.sounds.lap_progress,
 				StudyTimer.defaults.sounds.lapProgress);
 		if (newBeepEnabledValue != beepManager.enabled) {
 			beepManager.enabled = newBeepEnabledValue;

@@ -9,6 +9,7 @@
     <color name="blue_light_shadow">#0088CC</color>
     <color name="blue_medium">#7F00FF</color>
     <color name="blue_dark">#528B8B</color>
+    <color name="blue_dark_glass">#55528B8B</color>
     <color name="orange">#FF6600</color>
     <color name="orange_yellow">#FFA812</color>
     <color name="yellow">#FFFF00</color>
