@@ -16,6 +16,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.reubenjohn.studytimer.StudyTimer.defaults;
 import com.reubenjohn.studytimer.data.LapsCursorAdapter;
@@ -54,7 +55,7 @@ public class LapsFragment extends Fragment implements
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.laps_fragment, container, false);
 		STDB = new StudyTimerDBManager(getActivity().getApplicationContext());
-		lapsDB=STDB.lapsDB.open();
+		lapsDB = STDB.lapsDB.open();
 		bridgeXML(v);
 		initalizeFeilds();
 		generateListView();
@@ -119,6 +120,8 @@ public class LapsFragment extends Fragment implements
 		generateListView();
 		cache.lapCount++;
 		updateCurentLap(cache.lapCount);
+		if (getLapCount() >= getTotalLapCount()) {
+		}
 		// average=getAverage();
 		return cache.lapCount == 1;
 	}
@@ -211,7 +214,8 @@ public class LapsFragment extends Fragment implements
 	public void createNewSession(Bundle sessionInfo) {
 		Log.d("LapsFragment", "assert sessionInfo!=null -> "
 				+ (sessionInfo != null));
-		setTotalLapCount(sessionInfo.getInt(STSP.keys.totalLaps, defaults.totalLaps));
+		setTotalLapCount(sessionInfo.getInt(STSP.keys.totalLaps,
+				defaults.totalLaps));
 	}
 
 	public void putSessionInfo(Bundle sessionInfo) {

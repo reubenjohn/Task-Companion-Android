@@ -13,7 +13,7 @@
     </style>
 
     <style name="CustomLightActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/blue_dark</item>
+        <item name="android:background">@color/red_dark</item>
     </style>
 
     <style name="SessionCreateTheme" parent="Theme.AppCompat.Light">

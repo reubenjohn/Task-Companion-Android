@@ -23,7 +23,7 @@
             android:layout_below="@+id/tv_l_laps"
             android:layout_centerHorizontal="true"
             android:max="100"
-            android:progress="35" />
+            android:progress="0" />
 
         <TextView
             android:id="@+id/tv_current_lap"
