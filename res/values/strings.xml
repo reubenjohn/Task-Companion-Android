@@ -2,6 +2,9 @@
 <resources>
 
     <string name="app_name">StudyTimer</string>
+    <string name="activity_title_session_complete">Session complete</string>
+    <string name="activity_title_preferences">Preferences</string>
+    
     <string name="start">Start</string>
     <string name="stop">Stop</string>
     <string name="reset">Reset</string>
