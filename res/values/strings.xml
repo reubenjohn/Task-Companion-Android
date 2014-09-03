@@ -20,7 +20,6 @@
     <string name="empty_lap_adapter">No laps</string>
 	<string name="package_name">com.reubenjohn.studytimer</string>
     <string name="preferences">Preferences</string>
-    <string name="activity_name_preferences">Preferences</string>
     <string name="l_target_time_picker">Pick your ideal lap time</string>
         
     <string name="session_reset_title">Reset session</string>

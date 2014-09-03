@@ -258,9 +258,9 @@ public abstract class AbstractWheelTextAdapter extends AbstractWheelAdapter {
 	 *            the text view to be configured
 	 */
 	protected void configureTextView(TextView view) {
-		view.setTextColor(textColor);
+		//view.setTextColor(textColor);
 		view.setGravity(Gravity.CENTER);
-		view.setTextSize(textSize);
+		//view.setTextSize(textSize);
 		view.setLines(1);
 		view.setTypeface(textTypeface, textStyle);
 	}

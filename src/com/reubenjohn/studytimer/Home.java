@@ -68,6 +68,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 	private static class codes {
 		public static final int createSession = 1241;
+		public static final int completeSession = 9862;
 	}
 
 	private SystemUiHider mSystemUiHider;
@@ -424,7 +425,10 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		// TODO transition the lapsCountainer layout change during lap
 		lapsContainer
 				.setLayoutParams(lapsContainerParams.getLayoutParams(true));
-		T.lap();
+		if (T.lap())
+			startActivityForResult(
+					new Intent(Home.this, SessionComplete.class),
+					codes.completeSession);
 
 	}
 
@@ -446,15 +450,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			startActivityForResult(i, 0);
 			break;
 		case R.id.mi_new_session:
-			if (T.isRunning()) {
-				toggle.setChecked(false);
-				Log.d("Home", "Toggle button set to false");
-				T.stop();
-			}
-			Log.d("StudyTimer", "launching CREATE_SESSION");
-			i = new Intent(Home.this, SessionSetup.class);
-			startActivityForResult(i, codes.createSession);
-			// showSessionDialog(isLargeLayoutBoolean);
+			startNewSession();
 			break;
 		case R.id.mi_reset:
 			confirmReset();
@@ -484,8 +480,31 @@ public class Home extends ActionBarActivity implements OnClickListener,
 					T.createNewSessionFromBundle(sessionInfo);
 				}
 				break;
+			case codes.completeSession:
+				switch (data.getIntExtra(
+						StudyTimer.keys.extras.session_complete_proceedings,
+						R.id.b_repeat_session)) {
+				case R.id.b_repeat_session:
+					reset();
+					break;
+				case R.id.b_new_session:
+					startNewSession();
+				}
+
 			}
 		}
+	}
+
+	public void startNewSession() {
+		if (T.isRunning()) {
+			toggle.setChecked(false);
+			Log.d("Home", "Toggle button set to false");
+			T.stop();
+		}
+		Log.d("StudyTimer", "launching CREATE_SESSION");
+		Intent i = new Intent(Home.this, SessionSetup.class);
+		startActivityForResult(i, codes.createSession);
+		// showSessionDialog(isLargeLayoutBoolean);
 	}
 
 	/*
@@ -559,8 +578,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 				.getDefaultSharedPreferences(getApplicationContext());
 		Bundle settings = new Bundle();
 
-		settings.putBoolean(
-				StudyTimer.keys.settings.sounds.lap_progress,
+		settings.putBoolean(StudyTimer.keys.settings.sounds.lap_progress,
 				preferences.getBoolean(
 						StudyTimer.keys.settings.sounds.lap_progress,
 						StudyTimer.defaults.sounds.lapProgress));

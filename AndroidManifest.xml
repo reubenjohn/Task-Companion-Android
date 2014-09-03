@@ -26,7 +26,7 @@
         </activity>
         <activity
             android:name="com.reubenjohn.studytimer.preferences.Preferences"
-            android:label="@string/preferences" >
+            android:label="@string/activity_title_preferences" >
             <intent-filter>
                 <action android:name="com.reubenjohn.studytimer.PREFERENCES" />
 
@@ -40,6 +40,11 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.reubenjohn.studytimer.SessionComplete"
+            android:label="@string/activity_title_session_complete"
+            android:theme="@style/SessionCompleteTheme" >
         </activity>
     </application>
 

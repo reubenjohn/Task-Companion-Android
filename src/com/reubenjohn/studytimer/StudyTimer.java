@@ -72,6 +72,10 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 			public static final String shake_to_lap = "key_shake_to_lap";
 		}
+
+		public static class extras {
+			public static final String session_complete_proceedings = "session_complete_proceedings";
+		}
 	}
 
 	private static class logging {
@@ -150,11 +154,12 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		}
 	}
 
-	public void lap() {
+	public boolean lap() {
 		assert lapsF != null;
 		if (lapsF != null) {
 			lapsF.addLap(timerElements.getElapse());
 			setNoLapMode(lapsF.hasNoLaps());
+			return lapsF.getLapCount() == lapsF.getTotalLapCount();
 		}
 		timerElements.setAverage(lapsF.getAverage());
 		timerElements.lap(lapsF.getLapCount());
@@ -166,6 +171,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 						timerElements.getTargetTime());
 			}
 		}
+		return false;
 	}
 
 	public void resetSession() {
@@ -174,6 +180,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		timerElements.reset();
 		lapsF.resetSession();
 		setNoLapMode(true);
+		saveSessionToPrefs();
 	}
 
 	public boolean isRunning() {
