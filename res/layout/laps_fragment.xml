@@ -49,7 +49,6 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:text="@string/l_laps"
-            android:textColor="@color/orange_yellow"
             android:textSize="25sp"
             android:textStyle="bold" />
 

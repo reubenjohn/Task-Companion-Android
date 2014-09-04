@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/rectangle_rounded_glass"
+    android:background="@drawable/rectangle_rounded_themed"
     android:fadingEdge="horizontal"
     android:fadingEdgeLength="8dp"
     android:orientation="vertical"
@@ -20,12 +20,11 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/rectangle_rounded_glass"
+            android:background="@drawable/rectangle_rounded_themed"
             android:gravity="center"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:text="@string/l_laps"
-            android:textColor="@color/orange_yellow"
             android:textSize="25sp"
             android:textStyle="bold" />
 
@@ -38,7 +37,6 @@
         android:gravity="center"
         android:text="@string/empty_lap_adapter"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/purple"
         android:textSize="30sp"
         android:textStyle="bold" />
 

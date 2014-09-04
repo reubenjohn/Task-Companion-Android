@@ -30,13 +30,11 @@
             <TextView
                 android:id="@+id/tv_l_total_elapse"
                 style="@style/TimeStyleLabel"
-                android:text="@string/l_total_elapse"
-                android:textColor="@color/orange" />
+                android:text="@string/l_total_elapse" />
 
             <TextView
                 android:id="@+id/tv_total_elapse"
-                style="@style/TimeStyle"
-                android:textColor="@color/orange" />
+                style="@style/TimeStyle" />
         </LinearLayout>
 
         <LinearLayout
@@ -53,14 +51,12 @@
             <TextView
                 android:id="@+id/tv_l_average"
                 style="@style/TimeStyleLabel"
-                android:text="@string/l_average"
-                android:textColor="@color/blue" />
+                android:text="@string/l_average" />
 
             <TextView
                 android:id="@+id/tv_average"
                 style="@style/TimeStyle"
-                android:text="@string/intitial_accurate_time"
-                android:textColor="@color/blue" />
+                android:text="@string/intitial_accurate_time" />
         </LinearLayout>
     </LinearLayout>
 
@@ -86,16 +82,13 @@
                 android:id="@+id/tv_l_elapse"
                 style="@style/TimeStyle"
                 android:text="@string/l_elapse"
-                android:textColor="@color/green"
                 android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/tv_elapse"
                 style="@style/TimeStyle"
-                android:textColor="@color/green"
                 android:textSize="45sp" />
         </LinearLayout>
-
     </LinearLayout>
 
 </LinearLayout>

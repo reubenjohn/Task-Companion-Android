@@ -38,9 +38,9 @@
 
                 <gradient
                     android:angle="90"
-                    android:centerColor="@color/red"
+                    android:centerColor="@color/red_dark"
                     android:centerX="0.9"
-                    android:endColor="@color/red"
+                    android:endColor="@color/red_dark"
                     android:startColor="@color/grey" />
             </shape>
         </clip>

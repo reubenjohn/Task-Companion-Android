@@ -16,7 +16,6 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.reubenjohn.studytimer.StudyTimer.defaults;
 import com.reubenjohn.studytimer.data.LapsCursorAdapter;
@@ -73,7 +72,7 @@ public class LapsFragment extends Fragment implements
 		cache.lapCount = getLapCount();
 		updateCurentLap(cache.lapCount);
 		lapProgress.getProgressDrawable()
-				.setColorFilter(Color.RED, Mode.SRC_IN);
+				.setColorFilter(Color.CYAN, Mode.SRC_IN);
 	}
 
 	protected void generateListView() {

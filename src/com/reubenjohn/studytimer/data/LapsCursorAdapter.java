@@ -25,8 +25,7 @@ public class LapsCursorAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		view.setBackgroundColor(context.getResources()
-				.getColor(R.color.purple));
+		// view.setBackgroundColor(context.getResources().getColor(R.color.purple));
 		/*
 		 * if (cursor.getPosition() % 2 == 1) {
 		 * view.setBackgroundColor(context.getResources().getColor(
