@@ -107,6 +107,7 @@ public class TimerElementsFragment extends Fragment implements
 	}
 
 	public void lap(int lapCount) {
+		Log.d("TimerElements", "TimerElements lap called");
 		elapse.reset();
 		if (running) {
 			elapse.start();
@@ -156,6 +157,7 @@ public class TimerElementsFragment extends Fragment implements
 	}
 
 	public void setAverage(int average) {
+		Log.d("TimerElementsFragment", "setAverage called");
 		this.average = average;
 		if (!realTimeAverageEnabled)
 			tv_average.setText(Time.getFormattedTime("%MM:%SS.%sss", average));

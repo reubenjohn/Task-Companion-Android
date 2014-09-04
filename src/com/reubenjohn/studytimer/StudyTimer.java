@@ -155,11 +155,14 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	}
 
 	public boolean lap() {
+		Log.d("StudyTimer", "StudyTimer lap called");
 		assert lapsF != null;
 		if (lapsF != null) {
 			lapsF.addLap(timerElements.getElapse());
 			setNoLapMode(lapsF.hasNoLaps());
-			return lapsF.getLapCount() == lapsF.getTotalLapCount();
+			if(lapsF.getLapCount() == lapsF.getTotalLapCount()){
+				return true;
+			}
 		}
 		timerElements.setAverage(lapsF.getAverage());
 		timerElements.lap(lapsF.getLapCount());
