@@ -84,6 +84,8 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	SharedPreferences sessionPrefs;
 	ShakeSense lapShakeSense;
 
+	boolean resetScheduledForOnResume;
+
 	public enum FullScreenStatus {
 		FULLSCREEN, PENDING_FULLSCREEN, NOT_FULLSCREEN
 	}
@@ -240,10 +242,14 @@ public class Home extends ActionBarActivity implements OnClickListener,
 	@Override
 	protected void onResume() {
 		super.onResume();
-		loadSettings();
-		T.onResume();
+		loadUserSettings();
+		if (resetScheduledForOnResume) {
+			resetSession();
+		}
+		T.onResume(!resetScheduledForOnResume);
 		T.soundManager.initialize(getApplicationContext(), T);
 		lapShakeSense.onResume();
+		resetScheduledForOnResume = false;
 
 	}
 
@@ -253,7 +259,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		super.onPause();
 	}
 
-	public void reset() {
+	public void resetSession() {
 		// TODO transition the lapsCountainer layout change during reset
 		T.resetSession();
 		toggle.setChecked(false);
@@ -273,7 +279,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 							@Override
 							public void onClick(DialogInterface arg0, int arg1) {
-								reset();
+								resetSession();
 
 							}
 						})
@@ -485,14 +491,15 @@ public class Home extends ActionBarActivity implements OnClickListener,
 						StudyTimer.keys.extras.session_complete_proceedings,
 						R.id.b_repeat_session)) {
 				case R.id.b_repeat_session:
-					reset();
+					resetScheduledForOnResume = true;
 					break;
 				case R.id.b_new_session:
 					startNewSession();
 				}
 
 			}
-		}
+		} else
+			Log.e("Home", "Home Activity result not OK(" + resultCode + ")");
 	}
 
 	public void startNewSession() {
@@ -573,7 +580,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		lap();
 	}
 
-	public void loadSettings() {
+	public void loadUserSettings() {
 		SharedPreferences preferences = PreferenceManager
 				.getDefaultSharedPreferences(getApplicationContext());
 		Bundle settings = new Bundle();

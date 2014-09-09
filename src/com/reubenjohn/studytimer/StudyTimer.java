@@ -183,7 +183,6 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		timerElements.reset();
 		lapsF.resetSession();
 		setNoLapMode(true);
-		saveSessionToPrefs();
 	}
 
 	public boolean isRunning() {
@@ -202,9 +201,10 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		saveSessionToPrefs();
 	}
 
-	public void onResume() {
-		Log.d("StudyTimer", "onResume()");
-		loadSessionFromBundle(getSessionBundleFromPrefs());
+	public void onResume(boolean resumeFromPreviousState) {
+		Log.d("StudyTimer", "onResume() with resumeFromPreviousState "+resumeFromPreviousState);
+		if(resumeFromPreviousState)
+			loadSessionFromBundle(getSessionBundleFromPrefs());
 		framer.start();
 		runtime.start();
 		soundManager.onResume();
