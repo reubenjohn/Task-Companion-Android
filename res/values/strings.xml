@@ -8,7 +8,7 @@
     
     <string name="welcome">Welcome</string>
     <string name="welcome_message">It looks like this may be your first time with StudyTimer!</string>
-    <string name="welcome_message_2">Let's get you comfortable</string>
+    <string name="welcome_message_2">Let\'s get you comfortable</string>
     <string name="continue_arrows">> > ></string>
     
     <string name="start">Start</string>
@@ -86,5 +86,8 @@
     <string name="target_dialog_summary">set the ideal amount of time taken per lap</string>
     <string name="target_dialog_positive">Change</string>
     <string name="target_dialog_negative">Cancel</string>
+    
+    
+    <string name="session_complete_back_invalid_message">Please select one of the options</string>
     
 </resources>

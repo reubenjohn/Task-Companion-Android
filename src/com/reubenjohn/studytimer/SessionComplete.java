@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
@@ -19,6 +20,7 @@ public class SessionComplete extends ActionBarActivity implements
 		OnClickListener {
 
 	Button bStartNew, bRepeat;
+	Toast invalid_back_error;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +33,20 @@ public class SessionComplete extends ActionBarActivity implements
 		setOnClickListeners();
 	}
 
+	@Override
+	public void onBackPressed() {
+		if (invalid_back_error != null)
+			invalid_back_error.show();
+	}
+
 	protected void bridgeXML() {
 		bStartNew = (Button) findViewById(R.id.b_new_session);
 		bRepeat = (Button) findViewById(R.id.b_repeat_session);
 	}
 
 	protected void initializeFeilds() {
+		invalid_back_error = Toast.makeText(SessionComplete.this,
+				R.string.session_complete_back_invalid_message, Toast.LENGTH_SHORT);
 	}
 
 	private void setOnClickListeners() {
@@ -47,11 +57,13 @@ public class SessionComplete extends ActionBarActivity implements
 
 	@Override
 	public void onClick(View view) {
-		Intent result=new Intent();
-		switch(view.getId()){
+		Intent result = new Intent();
+		switch (view.getId()) {
 		case R.id.b_new_session:
 		case R.id.b_repeat_session:
-			result.putExtra(StudyTimer.keys.extras.session_complete_proceedings, view.getId());
+			result.putExtra(
+					StudyTimer.keys.extras.session_complete_proceedings,
+					view.getId());
 			setResult(RESULT_OK, result);
 			break;
 		default:

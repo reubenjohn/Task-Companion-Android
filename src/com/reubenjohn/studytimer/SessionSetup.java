@@ -20,6 +20,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
+import android.widget.Toast;
 
 import com.reubenjohn.studytimer.StudyTimer.defaults;
 import com.reubenjohn.studytimer.preferences.STSP;
@@ -276,7 +277,7 @@ public class SessionSetup extends ActionBarActivity implements
 			wheelView_100.setVisibility(View.VISIBLE);
 		else
 			wheelView_100.setVisibility(View.GONE);
-		
+
 		wheelView_1.setCurrentItem(totalLaps % 10);
 		totalLaps /= 10;
 		wheelView_10.setCurrentItem(totalLaps % 10);
