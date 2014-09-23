@@ -34,6 +34,7 @@ import android.widget.ToggleButton;
 
 import com.reubenjohn.senses.OnShakeListener;
 import com.reubenjohn.senses.ShakeSense;
+import com.reubenjohn.studytimer.preferences.STSP;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
@@ -211,10 +212,23 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
 		setContentView(R.layout.home);
 
+		handleWelcomes();
 		bridgeXML();
 		setListeners();
 		initializeFeilds();
 
+	}
+
+	private void handleWelcomes() {
+		SharedPreferences preferences = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		if (preferences.getBoolean(STSP.keys.firstRun, STSP.defaults.firstRun)) {
+			startActivity(new Intent(Home.this, Welcome.class));
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putBoolean(STSP.keys.firstRun, StudyTimer.debugMode);
+			editor.commit();
+
+		}
 	}
 
 	@Override
@@ -365,7 +379,6 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		lapShakeSense
 				.initialize((SensorManager) getSystemService(Context.SENSOR_SERVICE));
 		lapShakeSense.setOnShakeListener(this);
-
 	}
 
 	protected void setupSystemUIHider() {

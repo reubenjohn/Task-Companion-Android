@@ -12,7 +12,7 @@
             backward-compatibility can go here.
         -->
     </style>
-
+        
     <style name="SessionCreateTheme" parent="Theme.AppCompat.Light">
         <item name="actionModeCloseDrawable">@drawable/ic_action_cancel</item>
     </style>

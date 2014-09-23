@@ -20,6 +20,7 @@ import com.reubenjohn.studytimer.timming.frametimer.FrameTimerListener;
 
 public class StudyTimer implements FrameTimerListener, OnClickListener {
 
+	//TODO consider using enum instead
 	public static final class MODES {
 
 		public static final int NORMAL = 0;
@@ -27,6 +28,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	}
 
+	public static final boolean debugMode=true;
 	public FrameTimer framer;
 	Timer runtime;
 	public TimerElementsFragment timerElements;
@@ -43,6 +45,11 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		public static int totalLaps = 20;
 		public static long elapse = 0;
 		public static long totalElapse = 0;
+		
+		public static class Speech{
+
+			public static final int LapIncludedSpeech = 30000;
+		}
 
 		public static class sounds {
 			public static boolean lapProgress = true;

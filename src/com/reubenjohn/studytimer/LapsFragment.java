@@ -1,5 +1,7 @@
 package com.reubenjohn.studytimer;
 
+import java.util.Locale;
+
 import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.database.Cursor;
@@ -7,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,6 +37,8 @@ public class LapsFragment extends Fragment implements
 	String formatedAverage = null;
 	long average = 0;
 	int totalLaps;
+
+	TextToSpeech tts;
 
 	private static class cache {
 		static int lapCount;
@@ -71,8 +76,20 @@ public class LapsFragment extends Fragment implements
 		assert currentLap != null;
 		cache.lapCount = getLapCount();
 		updateCurentLap(cache.lapCount);
-		lapProgress.getProgressDrawable()
-				.setColorFilter(Color.CYAN, Mode.SRC_IN);
+		lapProgress.getProgressDrawable().setColorFilter(Color.CYAN,
+				Mode.SRC_IN);
+
+		tts = new TextToSpeech(getActivity(),
+				new TextToSpeech.OnInitListener() {
+
+					@Override
+					public void onInit(int status) {
+						if (status != TextToSpeech.ERROR) {
+							tts.setLanguage(Locale.US);
+						}
+					}
+				});
+
 	}
 
 	protected void generateListView() {
@@ -120,6 +137,13 @@ public class LapsFragment extends Fragment implements
 		cache.lapCount++;
 		updateCurentLap(cache.lapCount);
 		if (getLapCount() >= getTotalLapCount()) {
+		} else {
+			String speech = Integer.toString(getLapCount() + 1);
+			if (getAverage() > StudyTimer.defaults.Speech.LapIncludedSpeech) {
+				speech = "Lap " + speech;
+			}
+			Log.d("LapsFragment", "About to speak: " + speech);
+			tts.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 		}
 		// average=getAverage();
 		return cache.lapCount == 1;

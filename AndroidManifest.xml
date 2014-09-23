@@ -46,6 +46,10 @@
             android:label="@string/activity_title_session_complete"
             android:theme="@style/SessionCompleteTheme" >
         </activity>
+        <activity
+            android:name="com.reubenjohn.studytimer.Welcome"
+            android:label="@string/activity_title_welcome" >
+        </activity>
     </application>
 
 </manifest>
