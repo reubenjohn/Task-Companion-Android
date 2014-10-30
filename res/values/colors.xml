@@ -29,6 +29,8 @@
     <color name="glass_purple">#66EE2CEE</color>
     <color name="aquamarine">#7FFFD4</color>
     <color name="turquoise">#0FDDAF</color>
-    <color name="cool_mint">#90FEFB</color> 
+    <color name="cool_mint">#90FEFB</color>
+    <color name="wisteria">#8e44ad</color>
+    <color name="nephritis">#27ae60</color>
 
 </resources>

@@ -47,7 +47,7 @@
             android:theme="@style/SessionCompleteTheme" >
         </activity>
         <activity
-            android:name="com.reubenjohn.studytimer.Welcome"
+            android:name="com.reubenjohn.studytimer.welcome.Welcome"
             android:label="@string/activity_title_welcome" >
         </activity>
     </application>

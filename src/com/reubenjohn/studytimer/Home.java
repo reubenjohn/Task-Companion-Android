@@ -37,6 +37,7 @@ import com.reubenjohn.senses.ShakeSense;
 import com.reubenjohn.studytimer.preferences.STSP;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
+import com.reubenjohn.studytimer.welcome.Welcome;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
