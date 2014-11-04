@@ -16,7 +16,6 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:text="@string/sample_lap"
-        android:textColor="@color/aquamarine"
         android:textSize="20sp"
         tools:ignore="HardcodedText" />
 
@@ -31,7 +30,6 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:text="@string/intitial_time"
-        android:textColor="@color/aquamarine"
         android:textSize="20sp"
         android:textStyle="bold" />
 

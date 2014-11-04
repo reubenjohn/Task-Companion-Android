@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/rectangle_rounded_themed"
     android:fadingEdge="horizontal"
     android:fadingEdgeLength="8dp"
     android:orientation="vertical"
@@ -31,10 +30,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/rectangle_rounded_themed"
             android:padding="4dp"
             android:text="@string/sample_lap"
-            android:textColor="@color/blue_light_bright"
             android:textSize="25sp"
             android:textStyle="bold" />
 
@@ -45,14 +42,17 @@
             android:layout_alignBaseline="@+id/tv_current_lap"
             android:layout_alignBottom="@+id/tv_current_lap"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/rectangle_rounded_themed"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:text="@string/l_laps"
             android:textSize="25sp"
             android:textStyle="bold" />
-
     </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey" />
 
     <ListView
         android:id="@+id/lv_laps"
