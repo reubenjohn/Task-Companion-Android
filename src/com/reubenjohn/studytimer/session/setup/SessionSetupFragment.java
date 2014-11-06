@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,6 @@ import android.widget.EditText;
 import com.reubenjohn.studytimer.R;
 import com.reubenjohn.studytimer.StudyTimer;
 import com.reubenjohn.studytimer.data.SessionParams;
-import com.reubenjohn.studytimer.welcome.WelcomePageAdapter;
 
 public class SessionSetupFragment extends Fragment implements OnClickListener {
 
@@ -29,6 +29,18 @@ public class SessionSetupFragment extends Fragment implements OnClickListener {
 
 	SessionSetupLapDuration lapDuration;
 	SessionSetupSessionDuration sessionDuration;
+	private OnPageChangeListener durationPageListener;
+
+	private static class DurationPagerProperties {
+		static int position;
+
+		public static class FragmentPositions {
+
+			protected static int lapDuration = 0;
+			protected static int sessionDuration;
+
+		}
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +74,9 @@ public class SessionSetupFragment extends Fragment implements OnClickListener {
 	private void initializePaging() {
 		List<Fragment> fragments = new Vector<Fragment>();
 		fragments.add(lapDuration);
+		DurationPagerProperties.FragmentPositions.lapDuration = 0;
 		fragments.add(sessionDuration);
+		DurationPagerProperties.FragmentPositions.sessionDuration = 1;
 
 		durationPageAdapter = new DurationPageAdapter(getActivity()
 				.getSupportFragmentManager(), fragments);
@@ -71,6 +85,34 @@ public class SessionSetupFragment extends Fragment implements OnClickListener {
 		durationPageAdapter.setPageTitles(
 				res.getString(R.string.session_create_target_title),
 				res.getString(R.string.session_create_total_time_title));
+		durationPageListener = new OnPageChangeListener() {
+
+			@Override
+			public void onPageSelected(int position) {
+				DurationPagerProperties.position = position;
+
+			}
+
+			@Override
+			public void onPageScrolled(int position, float positionOffset,
+					int positionOffsetPixels) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int state) {
+				if (state == 1) {
+					if (DurationPagerProperties.position == DurationPagerProperties.FragmentPositions.lapDuration) {
+						sessionDuration.setSessionDuration(lapDuration
+								.getLapDuration() * getTotalLaps());
+					} else if (DurationPagerProperties.position == DurationPagerProperties.FragmentPositions.sessionDuration) {
+
+					}
+				}
+			}
+		};
+		durationPager.setOnPageChangeListener(durationPageListener);
 		durationPager.setAdapter(durationPageAdapter);
 	}
 

@@ -42,7 +42,7 @@
         android:orientation="vertical" >
 
         <TimePicker
-            android:id="@+id/tp_lap_duration"
+            android:id="@+id/tp_session_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

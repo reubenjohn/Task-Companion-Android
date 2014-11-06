@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TimePicker;
 
 import com.reubenjohn.studytimer.R;
+import com.reubenjohn.studytimer.timming.Time;
 
 public class SessionSetupSessionDuration extends Fragment {
 
@@ -21,11 +22,23 @@ public class SessionSetupSessionDuration extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_session_duration,
 				container, false);
 		bridgeXML(v);
+		initializeFeilds();
 		return v;
 	}
 
+	private void initializeFeilds() {
+		durationPicker.setIs24HourView(true);
+	}
+
 	private void bridgeXML(View v) {
-		durationPicker = (TimePicker) v.findViewById(R.id.tp_total_time);
+		durationPicker = (TimePicker) v.findViewById(R.id.tp_session_duration);
+	}
+
+	void setSessionDuration(long sessionDuration) {
+		Time duration = new Time(sessionDuration);
+		durationPicker.setCurrentHour((int) duration.getMinutes());
+		durationPicker.setCurrentMinute((int) duration.getSeconds());
+
 	}
 
 }

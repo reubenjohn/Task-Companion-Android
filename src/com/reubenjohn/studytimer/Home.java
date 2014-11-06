@@ -36,7 +36,7 @@ import com.reubenjohn.senses.OnShakeListener;
 import com.reubenjohn.senses.ShakeSense;
 import com.reubenjohn.studytimer.preferences.STSP;
 import com.reubenjohn.studytimer.session.SessionComplete;
-import com.reubenjohn.studytimer.session.setup.OldSessionSetup;
+import com.reubenjohn.studytimer.session.setup.SessionSetup;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 import com.reubenjohn.studytimer.welcome.Welcome;
@@ -524,7 +524,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			T.stop();
 		}
 		Log.d("StudyTimer", "launching CREATE_SESSION");
-		Intent i = new Intent(Home.this, OldSessionSetup.class);
+		Intent i = new Intent(Home.this, SessionSetup.class);
 		startActivityForResult(i, codes.createSession);
 		// showSessionDialog(isLargeLayoutBoolean);
 	}
