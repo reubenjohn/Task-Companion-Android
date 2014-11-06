@@ -3,6 +3,7 @@ package com.reubenjohn.studytimer.session.setup;
 import java.util.List;
 import java.util.Vector;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -22,7 +23,7 @@ import com.reubenjohn.studytimer.welcome.WelcomePageAdapter;
 public class SessionSetupFragment extends Fragment implements OnClickListener {
 
 	private ViewPager durationPager;
-	private WelcomePageAdapter durationPageAdapter;
+	private DurationPageAdapter durationPageAdapter;
 	Button totalLapsIncrement, totalLapsDecrement;
 	EditText totalLaps;
 
@@ -63,8 +64,13 @@ public class SessionSetupFragment extends Fragment implements OnClickListener {
 		fragments.add(lapDuration);
 		fragments.add(sessionDuration);
 
-		durationPageAdapter = new WelcomePageAdapter(getActivity()
+		durationPageAdapter = new DurationPageAdapter(getActivity()
 				.getSupportFragmentManager(), fragments);
+
+		Resources res = getResources();
+		durationPageAdapter.setPageTitles(
+				res.getString(R.string.session_create_target_title),
+				res.getString(R.string.session_create_total_time_title));
 		durationPager.setAdapter(durationPageAdapter);
 	}
 

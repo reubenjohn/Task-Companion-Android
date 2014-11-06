@@ -15,6 +15,7 @@ public class SessionSetup extends ActionBarActivity {
 
 	SessionSetupFragment sessionSetupF;
 
+	ActionMode sessionCreateActionMode;
 	private ActionMode.Callback sessionCreateActionModeCallBack = new ActionMode.Callback() {
 
 		@Override
@@ -64,6 +65,11 @@ public class SessionSetup extends ActionBarActivity {
 
 	private void initializeFeilds() {
 		sessionSetupF = new SessionSetupFragment();
+
+		if (sessionCreateActionMode == null) {
+			sessionCreateActionMode = SessionSetup.this
+					.startSupportActionMode(sessionCreateActionModeCallBack);
+		}
 	}
 
 	@Override

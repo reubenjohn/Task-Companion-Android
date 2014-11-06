@@ -28,7 +28,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	}
 
-	public static final boolean debugMode = true;
+	public static final boolean debugMode = false;
 	public FrameTimer framer;
 	Timer runtime;
 	public TimerElementsFragment timerElements;
@@ -56,8 +56,8 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		}
 
 		public static String getConcatenatedDefaults() {
-			return "{ " + "lapDuration:" + lapDuration + "," + " totalLaps" + ":"
-					+ totalLaps + "," + " sounds.lapProgress" + ":"
+			return "{ " + "lapDuration:" + lapDuration + "," + " totalLaps"
+					+ ":" + totalLaps + "," + " sounds.lapProgress" + ":"
 					+ sounds.lapProgress + " }";
 		}
 
@@ -72,8 +72,8 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	}
 
 	public static class prefs {
-		public static int minLaps=5;
-		public static int maxLaps=1000;
+		public static int minLaps = 5;
+		public static int maxLaps = 1000;
 	}
 
 	public static class keys {
@@ -87,7 +87,15 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 		public static class extras {
 			public static final String session_complete_proceedings = "session_complete_proceedings";
+			public static final String first_run = "first_run";
 		}
+	}
+
+	public static class codes {
+		public static class request {
+			public static int welcome = 2045;
+		}
+
 	}
 
 	private static class logging {
@@ -416,9 +424,8 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	public Bundle getSessionBundleFromPrefs() {
 		Bundle sessionInfo = new Bundle();
-		sessionInfo
-				.putLong(STSP.keys.targetTime, sessionPrefs.getLong(
-						STSP.keys.targetTime, defaults.lapDuration));
+		sessionInfo.putLong(STSP.keys.targetTime, sessionPrefs.getLong(
+				STSP.keys.targetTime, defaults.lapDuration));
 		sessionInfo.putInt(STSP.keys.totalLaps,
 				sessionPrefs.getInt(STSP.keys.totalLaps, defaults.totalLaps));
 		sessionInfo.putLong(STSP.keys.elapse,

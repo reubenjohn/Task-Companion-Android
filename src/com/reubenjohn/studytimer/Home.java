@@ -230,7 +230,6 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			SharedPreferences.Editor editor = preferences.edit();
 			editor.putBoolean(STSP.keys.firstRun, StudyTimer.debugMode);
 			editor.commit();
-
 		}
 	}
 

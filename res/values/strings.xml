@@ -18,6 +18,7 @@
     <string name="l_total_elapse">Total elapsed</string>
     <string name="l_average">Average</string>
     <string name="l_laps">Laps</string>
+    <string name="l_eta">ETA</string>
     <string name="intitial_time">00:00.0</string>
     <string name="intitial_accurate_time">00:00.000</string>
     <string name="sample_lap">17</string>

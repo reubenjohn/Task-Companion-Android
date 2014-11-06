@@ -23,11 +23,11 @@ public class TimerElementsFragment extends Fragment implements
 		android.view.View.OnClickListener, FrameTimerListener {
 
 	private int mode;
-	private TextView tv_elapse, tv_total_elapse, tv_average;
+	private TextView tv_elapse, tv_total_elapse, tv_average, tv_eta;
 	private TimerView elapse, totalElapse;
 	int cached_lapCount;
 	boolean realTimeAverageEnabled = true, running, lapTimeUp;
-	int average;
+	long average;
 	private long targetTime;
 
 	private static class layout {
@@ -114,6 +114,7 @@ public class TimerElementsFragment extends Fragment implements
 		}
 		this.cached_lapCount = lapCount;
 		lapTimeUp = false;
+		average = totalElapse.getElapse() / lapCount;
 	}
 
 	public void reset() {
@@ -186,6 +187,7 @@ public class TimerElementsFragment extends Fragment implements
 		tv_elapse = (TextView) v.findViewById(R.id.tv_elapse);
 		tv_total_elapse = (TextView) v.findViewById(R.id.tv_total_elapse);
 		tv_average = (TextView) v.findViewById(R.id.tv_average);
+		tv_eta = (TextView) v.findViewById(R.id.tv_eta);
 		layout.total_elapse = (View) v.findViewById(R.id.total_elapse);
 		layout.elapse = (View) v.findViewById(R.id.elapse);
 	}
@@ -207,10 +209,14 @@ public class TimerElementsFragment extends Fragment implements
 	@Override
 	public void onNewFrame() {
 		if (realTimeAverageEnabled) {
-			int realTimeAverage = (int) (average * cached_lapCount + elapse
-					.getElapse()) / (cached_lapCount + 1);
+			totalElapse.getElapse();
+			long realTimeAverage = totalElapse.getElapse()
+					/ (cached_lapCount + 1);
 			tv_average.setText(Time.getFormattedTime("%MM:%SS.%sss",
 					realTimeAverage));
+			int total_laps = 20;
+			long eta = realTimeAverage * total_laps - totalElapse.getElapse();
+			tv_eta.setText(Time.getFormattedTime("%MM:%SS.%sss", eta));
 		}
 
 	}

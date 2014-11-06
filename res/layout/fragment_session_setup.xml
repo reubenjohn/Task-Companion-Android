@@ -29,7 +29,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
             <TextView
-                android:id="@+id/TextView01"
+                android:id="@+id/tv_eta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -55,6 +55,7 @@
                 android:id="@+id/et_total_laps"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:inputType="number" >
 
                 <requestFocus />
@@ -66,7 +67,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableBottom="@android:drawable/arrow_down_float" />
-
         </LinearLayout>
     </LinearLayout>
 
@@ -80,6 +80,11 @@
         android:id="@+id/vp_session_setup_duration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
+
+        <android.support.v4.view.PagerTitleStrip
+         android:id="@+id/pager_title_strip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </android.support.v4.view.ViewPager>
 
 </LinearLayout>

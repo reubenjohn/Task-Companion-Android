@@ -3,6 +3,7 @@ package com.reubenjohn.studytimer.welcome;
 import java.util.List;
 import java.util.Vector;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.reubenjohn.studytimer.R;
+import com.reubenjohn.studytimer.StudyTimer;
 import com.reubenjohn.studytimer.session.setup.SessionSetup;
 import com.reubenjohn.studytimer.session.setup.SessionSetupFragment;
 
@@ -69,8 +71,12 @@ public class WelcomeFragment extends Fragment implements OnPageChangeListener {
 
 	@Override
 	public void onPageSelected(int position) {
+		Intent intent;
 		switch (position) {
-		case 2:
+		case 3:
+			intent=new Intent(getActivity(), SessionSetup.class);
+			intent.putExtra(StudyTimer.keys.extras.first_run, true);
+			getActivity().startActivity(intent);
 			break;
 
 		default:

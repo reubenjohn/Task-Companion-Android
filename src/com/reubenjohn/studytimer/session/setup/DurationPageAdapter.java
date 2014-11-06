@@ -1,4 +1,4 @@
-package com.reubenjohn.studytimer.welcome;
+package com.reubenjohn.studytimer.session.setup;
 
 import java.util.List;
 
@@ -6,11 +6,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-public class WelcomePageAdapter extends FragmentPagerAdapter {
+public class DurationPageAdapter extends FragmentPagerAdapter {
 
 	private List<Fragment> fragments;
+	String titles[] = null;
 
-	public WelcomePageAdapter(FragmentManager fm, List<Fragment> fragments) {
+	public void setPageTitles(String... titles) {
+		this.titles = titles;
+	}
+
+	public DurationPageAdapter(FragmentManager fm, List<Fragment> fragments) {
 		super(fm);
 		this.fragments = fragments;
 	}
@@ -27,6 +32,10 @@ public class WelcomePageAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public CharSequence getPageTitle(int position) {
-		return "Your static title";
+		if (titles != null) {
+			if (titles[position] != null)
+				return titles[position];
+		}
+		return "";
 	}
 }
