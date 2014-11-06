@@ -41,4 +41,9 @@ public class SessionSetupSessionDuration extends Fragment {
 
 	}
 
+	public long getSessionDuration() {
+		return Time.getTimeInMilliseconds(0, durationPicker.getCurrentHour(),
+				durationPicker.getCurrentMinute(), 0, 0);
+	}
+
 }

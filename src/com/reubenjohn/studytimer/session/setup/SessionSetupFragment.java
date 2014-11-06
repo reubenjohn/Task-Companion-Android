@@ -107,7 +107,8 @@ public class SessionSetupFragment extends Fragment implements OnClickListener {
 						sessionDuration.setSessionDuration(lapDuration
 								.getLapDuration() * getTotalLaps());
 					} else if (DurationPagerProperties.position == DurationPagerProperties.FragmentPositions.sessionDuration) {
-
+						lapDuration.setLapDuration(sessionDuration
+								.getSessionDuration() / getTotalLaps());
 					}
 				}
 			}

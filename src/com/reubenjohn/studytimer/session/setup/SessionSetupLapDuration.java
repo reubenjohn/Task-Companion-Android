@@ -24,6 +24,7 @@ public class SessionSetupLapDuration extends Fragment {
 				false);
 
 		bridgeXML(v);
+		initializeFeilds();
 
 		return v;
 	}
@@ -33,10 +34,18 @@ public class SessionSetupLapDuration extends Fragment {
 	}
 
 	public long getLapDuration() {
-		long target = Time
-				.getTimeInMilliseconds(0, 0, lapDuration.getCurrentHour(),
-						lapDuration.getCurrentMinute(), 0);
-		return target;
+		return Time.getTimeInMilliseconds(0, 0, lapDuration.getCurrentHour(),
+				lapDuration.getCurrentMinute(), 0);
+	}
+
+	private void initializeFeilds() {
+		lapDuration.setIs24HourView(true);
+	}
+
+	public void setLapDuration(long sessionDuration) {
+		Time duration = new Time(sessionDuration);
+		lapDuration.setCurrentHour((int) duration.getHours());
+		lapDuration.setCurrentMinute((int) duration.getMinutes());
 	}
 
 }
