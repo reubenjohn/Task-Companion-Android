@@ -124,7 +124,7 @@ public class TimerElementsFragment extends Fragment implements
 		average = 0;
 		targetTime = getActivity().getSharedPreferences(
 				STSP.fileNames.currentSession, Context.MODE_PRIVATE).getLong(
-				STSP.keys.targetTime, StudyTimer.defaults.targetTime);
+				STSP.keys.targetTime, StudyTimer.defaults.lapDuration);
 		resetSavedData();
 	}
 
@@ -241,7 +241,7 @@ public class TimerElementsFragment extends Fragment implements
 	}
 
 	/*
-	 * private long getRemainingLapTime() { return targetTime - getElapse(); }
+	 * private long getRemainingLapTime() { return lapDuration - getElapse(); }
 	 */
 	@Override
 	public void onClick(View v) {
@@ -334,7 +334,7 @@ public class TimerElementsFragment extends Fragment implements
 		elapse.setElapse(sessionInfo.getLong(STSP.keys.elapse, 0));
 		totalElapse.setElapse(sessionInfo.getLong(STSP.keys.totalElapse, 0));
 		targetTime = sessionInfo.getLong(STSP.keys.targetTime,
-				StudyTimer.defaults.targetTime);
+				StudyTimer.defaults.lapDuration);
 		lapTimeUp = sessionInfo.getBoolean(STSP.keys.lapTimeUp, false);
 		if (running) {
 			elapse.setStartTime(sessionInfo.getLong(STSP.keys.stopTime, 0));

@@ -35,6 +35,8 @@ import android.widget.ToggleButton;
 import com.reubenjohn.senses.OnShakeListener;
 import com.reubenjohn.senses.ShakeSense;
 import com.reubenjohn.studytimer.preferences.STSP;
+import com.reubenjohn.studytimer.session.SessionComplete;
+import com.reubenjohn.studytimer.session.setup.OldSessionSetup;
 import com.reubenjohn.studytimer.timming.Time;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 import com.reubenjohn.studytimer.welcome.Welcome;
@@ -357,7 +359,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 		lapsContainer.setLayoutParams(lapsContainerParams
 				.getLayoutParams(!T.lapsF.hasNoLaps()));
 
-		Time currentTarget = new Time(StudyTimer.defaults.targetTime);
+		Time currentTarget = new Time(StudyTimer.defaults.lapDuration);
 		targetDialog = new TimePickerDialog(Home.this, new OnTimeSetListener() {
 			short callCount = 0;
 
@@ -523,7 +525,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
 			T.stop();
 		}
 		Log.d("StudyTimer", "launching CREATE_SESSION");
-		Intent i = new Intent(Home.this, SessionSetup.class);
+		Intent i = new Intent(Home.this, OldSessionSetup.class);
 		startActivityForResult(i, codes.createSession);
 		// showSessionDialog(isLargeLayoutBoolean);
 	}

@@ -7,7 +7,8 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -17,7 +18,7 @@
         <activity
             android:name="com.reubenjohn.studytimer.Home"
             android:label="@string/app_name"
-        	android:theme="@style/AppHomeTheme" >
+            android:theme="@style/AppHomeTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,8 +34,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.reubenjohn.studytimer.SessionSetup" >
+        <activity android:name="com.reubenjohn.studytimer.session.setup.SessionSetup" >
             <intent-filter>
                 <action android:name="com.reubenjohn.studytimer.CREATE_SESSION" />
 
@@ -42,13 +42,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.reubenjohn.studytimer.SessionComplete"
+            android:name="com.reubenjohn.studytimer.session.SessionComplete"
             android:label="@string/activity_title_session_complete"
             android:theme="@style/SessionCompleteTheme" >
         </activity>
         <activity
             android:name="com.reubenjohn.studytimer.welcome.Welcome"
             android:label="@string/activity_title_welcome" >
+        </activity>
+        <activity
+            android:name="com.reubenjohn.studytimer.session.setup.SessionSetup"
+            android:label="@string/title_activity_session_setup" >
         </activity>
     </application>
 

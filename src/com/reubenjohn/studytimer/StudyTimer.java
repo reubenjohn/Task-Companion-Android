@@ -20,7 +20,7 @@ import com.reubenjohn.studytimer.timming.frametimer.FrameTimerListener;
 
 public class StudyTimer implements FrameTimerListener, OnClickListener {
 
-	//TODO consider using enum instead
+	// TODO consider using enum instead
 	public static final class MODES {
 
 		public static final int NORMAL = 0;
@@ -28,7 +28,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	}
 
-	public static final boolean debugMode=true;
+	public static final boolean debugMode = true;
 	public FrameTimer framer;
 	Timer runtime;
 	public TimerElementsFragment timerElements;
@@ -41,12 +41,12 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	SoundManager soundManager;
 
 	public static class defaults {
-		public static long targetTime = 5000;
+		public static long lapDuration = 5000;
 		public static int totalLaps = 20;
 		public static long elapse = 0;
 		public static long totalElapse = 0;
-		
-		public static class Speech{
+
+		public static class Speech {
 
 			public static final int LapIncludedSpeech = 30000;
 		}
@@ -56,19 +56,24 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		}
 
 		public static String getConcatenatedDefaults() {
-			return "{ " + "targetTime:" + targetTime + "," + " totalLaps" + ":"
+			return "{ " + "lapDuration:" + lapDuration + "," + " totalLaps" + ":"
 					+ totalLaps + "," + " sounds.lapProgress" + ":"
 					+ sounds.lapProgress + " }";
 		}
 
 		public static void loadFromResources(Resources resources) {
-			targetTime = resources.getInteger(R.integer.target_time);
+			lapDuration = resources.getInteger(R.integer.target_time);
 			totalLaps = resources.getInteger(R.integer.total_laps);
 			sounds.lapProgress = resources
 					.getBoolean(R.bool.lap_progress_sounds);
 			Log.d("StudyTimer", "Loaded defaults from rescources->"
 					+ getConcatenatedDefaults());
 		}
+	}
+
+	public static class prefs {
+		public static int minLaps=5;
+		public static int maxLaps=1000;
 	}
 
 	public static class keys {
@@ -167,7 +172,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		if (lapsF != null) {
 			lapsF.addLap(timerElements.getElapse());
 			setNoLapMode(lapsF.hasNoLaps());
-			if(lapsF.getLapCount() == lapsF.getTotalLapCount()){
+			if (lapsF.getLapCount() == lapsF.getTotalLapCount()) {
 				return true;
 			}
 		}
@@ -209,8 +214,9 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	}
 
 	public void onResume(boolean resumeFromPreviousState) {
-		Log.d("StudyTimer", "onResume() with resumeFromPreviousState "+resumeFromPreviousState);
-		if(resumeFromPreviousState)
+		Log.d("StudyTimer", "onResume() with resumeFromPreviousState "
+				+ resumeFromPreviousState);
+		if (resumeFromPreviousState)
 			loadSessionFromBundle(getSessionBundleFromPrefs());
 		framer.start();
 		runtime.start();
@@ -381,7 +387,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	public void saveSessionToPrefsFromBundle(Bundle sessionInfo) {
 		SharedPreferences.Editor editor = sessionPrefs.edit();
 		editor.putLong(STSP.keys.targetTime,
-				sessionInfo.getLong(STSP.keys.targetTime, defaults.targetTime));
+				sessionInfo.getLong(STSP.keys.targetTime, defaults.lapDuration));
 		editor.putInt(STSP.keys.totalLaps,
 				sessionInfo.getInt(STSP.keys.totalLaps, defaults.totalLaps));
 		editor.putLong(STSP.keys.elapse,
@@ -412,7 +418,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		Bundle sessionInfo = new Bundle();
 		sessionInfo
 				.putLong(STSP.keys.targetTime, sessionPrefs.getLong(
-						STSP.keys.targetTime, defaults.targetTime));
+						STSP.keys.targetTime, defaults.lapDuration));
 		sessionInfo.putInt(STSP.keys.totalLaps,
 				sessionPrefs.getInt(STSP.keys.totalLaps, defaults.totalLaps));
 		sessionInfo.putLong(STSP.keys.elapse,

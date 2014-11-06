@@ -1,4 +1,10 @@
-package com.reubenjohn.studytimer;
+package com.reubenjohn.studytimer.session.setup;
+
+import com.reubenjohn.studytimer.R;
+import com.reubenjohn.studytimer.R.array;
+import com.reubenjohn.studytimer.R.id;
+import com.reubenjohn.studytimer.R.layout;
+import com.reubenjohn.studytimer.R.string;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -11,7 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-public class SessionSetupFragment extends DialogFragment {
+public class OldSessionSetupFragment extends DialogFragment {
 
 	ListView list;
 	Button positive, negative;
@@ -26,7 +32,7 @@ public class SessionSetupFragment extends DialogFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.session_setup_fragment, container,
+		View v = inflater.inflate(R.layout.old_session_setup_fragment, container,
 				false);
 		bridgeXML(v);
 		initializeFeilds();

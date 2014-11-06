@@ -1,15 +1,15 @@
 package com.reubenjohn.studytimer.welcome;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v7.view.ActionMode;
 
 import com.reubenjohn.studytimer.R;
 
 public class Welcome extends FragmentActivity {
+
+	ActionMode sessionSetupActionMode;
+	WelcomeFragment welcomeF;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +17,11 @@ public class Welcome extends FragmentActivity {
 		setContentView(R.layout.welcome);
 		bridgeXML();
 		initiateFeilds();
+
+		if (savedInstanceState == null) {
+			getSupportFragmentManager().beginTransaction()
+					.add(R.id.fl_welcome, welcomeF).commit();
+		}
 	}
 
 	private void bridgeXML() {
@@ -24,31 +29,11 @@ public class Welcome extends FragmentActivity {
 	}
 
 	private void initiateFeilds() {
-		initializePaging();
-	}
-
-	private void initializePaging() {
+		welcomeF = new WelcomeFragment();
 	}
 
 	@Override
 	public void onBackPressed() {
-	}
-
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
-
-		public PlaceholderFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_welcome,
-					container, false);
-			return rootView;
-		}
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.reubenjohn.studytimer;
+package com.reubenjohn.studytimer.session;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.reubenjohn.studytimer.R;
+import com.reubenjohn.studytimer.StudyTimer;
+import com.reubenjohn.studytimer.R.id;
+import com.reubenjohn.studytimer.R.layout;
+import com.reubenjohn.studytimer.R.string;
+import com.reubenjohn.studytimer.StudyTimer.keys;
+import com.reubenjohn.studytimer.StudyTimer.keys.extras;
 import com.reubenjohn.studytimer.util.SystemUiHider;
 
 /**

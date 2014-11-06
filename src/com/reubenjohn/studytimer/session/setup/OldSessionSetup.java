@@ -1,4 +1,4 @@
-package com.reubenjohn.studytimer;
+package com.reubenjohn.studytimer.session.setup;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,8 +20,9 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
-import android.widget.Toast;
 
+import com.reubenjohn.studytimer.R;
+import com.reubenjohn.studytimer.StudyTimer;
 import com.reubenjohn.studytimer.StudyTimer.defaults;
 import com.reubenjohn.studytimer.preferences.STSP;
 import com.reubenjohn.studytimer.timming.Time;
@@ -29,7 +30,7 @@ import com.reubenjohn.studytimer.util.kankan.widget.OnWheelChangedListener;
 import com.reubenjohn.studytimer.util.kankan.widget.WheelView;
 import com.reubenjohn.studytimer.util.kankan.widget.adapters.NumericWheelAdapter;
 
-public class SessionSetup extends ActionBarActivity implements
+public class OldSessionSetup extends ActionBarActivity implements
 		OnCheckedChangeListener, OnWheelChangedListener, OnTimeChangedListener {
 
 	CheckBox smartTargetTimeToggle;
@@ -86,7 +87,7 @@ public class SessionSetup extends ActionBarActivity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.session_setup);
+		setContentView(R.layout.old_session_setup);
 
 		bridgeXML();
 		initializeFeilds();
@@ -111,7 +112,7 @@ public class SessionSetup extends ActionBarActivity implements
 		wheelView.setShadowColours(backgroundColor, backgroundColor,
 				0x00FFFFFF & backgroundColor);
 		wheelView.setInterpolator(new AnticipateOvershootInterpolator());
-		wheelView.addChangingListener(SessionSetup.this);
+		wheelView.addChangingListener(OldSessionSetup.this);
 	}
 
 	private void bridgeXML() {
@@ -132,11 +133,11 @@ public class SessionSetup extends ActionBarActivity implements
 		SharedPreferences sessionPrefs = getSharedPreferences(
 				STSP.fileNames.currentSession, Context.MODE_PRIVATE);
 		long targerTime = sessionPrefs.getLong(STSP.keys.targetTime,
-				StudyTimer.defaults.targetTime);
+				StudyTimer.defaults.lapDuration);
 		int totalLaps = sessionPrefs.getInt(STSP.keys.totalLaps,
 				defaults.totalLaps);
-		Log.d("SessionSetup", "Retreived targetTime=" + targerTime);
-		Log.d("SessionSetup", "Retreived totalLaps=" + totalLaps);
+		Log.d("OldSessionSetup", "Retreived lapDuration=" + targerTime);
+		Log.d("OldSessionSetup", "Retreived totalLaps=" + totalLaps);
 
 		Time currentTargetTime = new Time(targerTime);
 		targetPicker.setCurrentHour((int) currentTargetTime.getMinutes());
@@ -153,7 +154,7 @@ public class SessionSetup extends ActionBarActivity implements
 		sessionInfo = new Bundle();
 
 		if (sessionCreateActionMode == null) {
-			sessionCreateActionMode = SessionSetup.this
+			sessionCreateActionMode = OldSessionSetup.this
 					.startSupportActionMode(sessionCreateActionModeCallBack);
 		}
 		initializeDigitWheel(R.id.wv_total_lap_picker_digit1);
