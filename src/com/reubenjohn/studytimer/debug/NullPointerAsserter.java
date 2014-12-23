@@ -1,4 +1,4 @@
-package com.reubenjohn.android.debug;
+package com.reubenjohn.studytimer.debug;
 
 import android.util.Log;
 
@@ -10,11 +10,15 @@ public class NullPointerAsserter {
 		this.tag = tag;
 	}
 
-	public void assertPointer(Object... objects) {
+	public boolean assertPointer(Object... objects) {
+		boolean allGood = true;
 		for (Object o : objects) {
-			if (o == null)
-				Log.e(tag, "XML bridge failure");
+			if (o == null) {
+				allGood = false;
+				Log.e(tag, "NullPointerException of object");
+			}
 		}
+		return allGood;
 	}
 
 	public void setTag(String tag) {

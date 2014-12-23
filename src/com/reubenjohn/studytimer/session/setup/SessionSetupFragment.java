@@ -3,6 +3,8 @@ package com.reubenjohn.studytimer.session.setup;
 import java.util.List;
 import java.util.Vector;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,9 +20,15 @@ import android.widget.EditText;
 
 import com.reubenjohn.studytimer.R;
 import com.reubenjohn.studytimer.StudyTimer;
+import com.reubenjohn.studytimer.StudyTimer.defaults;
 import com.reubenjohn.studytimer.data.SessionParams;
+import com.reubenjohn.studytimer.debug.NullPointerAsserter;
+import com.reubenjohn.studytimer.preferences.STSP;
 
 public class SessionSetupFragment extends Fragment implements OnClickListener {
+
+	NullPointerAsserter asserter = new NullPointerAsserter(
+			SessionSetupFragment.class.getName());
 
 	private ViewPager durationPager;
 	private DurationPageAdapter durationPageAdapter;
@@ -69,6 +77,35 @@ public class SessionSetupFragment extends Fragment implements OnClickListener {
 		totalLapsDecrement.setOnClickListener(this);
 		totalLaps.setText(String.valueOf(StudyTimer.defaults.totalLaps));
 		initializePaging();
+		setSessionParams(getSessionParamsFromPreferences());
+	}
+
+	private void setSessionParams(SessionParams params) {
+		if (asserter.assertPointer(params)) {
+			setTotalLaps(params.getTotalLaps());
+			setLapDuration(params.getLapDuration());
+		}
+	}
+
+	private void setLapDuration(long lapDuration) {
+		this.lapDuration.setLapDuration(lapDuration);
+
+	}
+
+	private SessionParams getSessionParamsFromPreferences() {
+		SharedPreferences sessionPrefs = getActivity().getSharedPreferences(
+				STSP.fileNames.currentSession, Context.MODE_PRIVATE);
+		long lapDuration = sessionPrefs.getLong(STSP.keys.targetTime,
+				StudyTimer.defaults.lapDuration);
+		int totalLaps = sessionPrefs.getInt(STSP.keys.totalLaps,
+				defaults.totalLaps);
+		Log.d("SessionSetupFragment", "Retreived lapDuration=" + lapDuration);
+		Log.d("SessionSetupFragment", "Retreived totalLaps=" + totalLaps);
+		SessionParams params = new SessionParams();
+		params.setLapDuration(lapDuration);
+		params.setTotalLaps(totalLaps);
+		return params;
+
 	}
 
 	private void initializePaging() {
@@ -168,6 +205,14 @@ public class SessionSetupFragment extends Fragment implements OnClickListener {
 			return StudyTimer.prefs.maxLaps;
 		return ++currentTotalLaps;
 
+	}
+
+	private void setTotalLaps(int totalLaps) {
+		if (totalLaps <= StudyTimer.prefs.minLaps)
+			totalLaps = StudyTimer.prefs.minLaps;
+		else if (totalLaps >= StudyTimer.prefs.maxLaps)
+			totalLaps = StudyTimer.prefs.maxLaps;
+		this.totalLaps.setText(String.valueOf(totalLaps));
 	}
 
 	public SessionParams getSessionParams() {

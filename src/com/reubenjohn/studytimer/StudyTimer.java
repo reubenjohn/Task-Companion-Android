@@ -72,6 +72,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	}
 
 	public static class prefs {
+		public static final long minLapDuration = 1000;
 		public static int minLaps = 5;
 		public static int maxLaps = 1000;
 	}

@@ -1,4 +1,4 @@
-package com.reubenjohn.android.debug;
+package com.reubenjohn.studytimer.debug;
 
 public class Debug {
 

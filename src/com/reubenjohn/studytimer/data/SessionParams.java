@@ -15,11 +15,17 @@ public class SessionParams {
 	}
 
 	public void setTotalLaps(int totalLaps) {
-		this.totalLaps = totalLaps;
+		if (totalLaps <= StudyTimer.prefs.minLaps)
+			this.totalLaps = StudyTimer.prefs.minLaps;
+		else if (totalLaps >= StudyTimer.prefs.maxLaps)
+			this.totalLaps = StudyTimer.prefs.maxLaps;
 	}
 
 	public void setLapDuration(long lapDuration) {
-		this.lapDuration = lapDuration;
+		if (lapDuration < StudyTimer.prefs.minLapDuration)
+			this.lapDuration = StudyTimer.prefs.minLapDuration;
+		else
+			this.lapDuration = lapDuration;
 	}
 
 	public Bundle getBundledSessionParams() {
@@ -27,5 +33,13 @@ public class SessionParams {
 		sessionInfo.putInt(STSP.keys.totalLaps, totalLaps);
 		sessionInfo.putLong(STSP.keys.targetTime, lapDuration);
 		return sessionInfo;
+	}
+
+	public int getTotalLaps() {
+		return totalLaps;
+	}
+
+	public long getLapDuration() {
+		return lapDuration;
 	}
 }

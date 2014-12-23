@@ -8,9 +8,12 @@ import android.view.ViewGroup;
 import android.widget.TimePicker;
 
 import com.reubenjohn.studytimer.R;
+import com.reubenjohn.studytimer.debug.NullPointerAsserter;
 import com.reubenjohn.studytimer.timming.Time;
 
 public class SessionSetupLapDuration extends Fragment {
+	NullPointerAsserter asserter = new NullPointerAsserter(
+			SessionSetupFragment.class.getName());
 
 	TimePicker lapDuration;
 
@@ -42,10 +45,11 @@ public class SessionSetupLapDuration extends Fragment {
 		lapDuration.setIs24HourView(true);
 	}
 
-	public void setLapDuration(long sessionDuration) {
-		Time duration = new Time(sessionDuration);
-		lapDuration.setCurrentHour((int) duration.getHours());
-		lapDuration.setCurrentMinute((int) duration.getMinutes());
+	public void setLapDuration(long lapDuration) {
+		Time duration = new Time(lapDuration);
+		this.lapDuration.setCurrentHour((int) duration.getHours());
+		this.lapDuration.setCurrentMinute((int) duration.getMinutes());
+
 	}
 
 }
