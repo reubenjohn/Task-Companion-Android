@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.reubenjohn.studytimer"
+    package="com.aspirephile.studytimer"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.reubenjohn.studytimer.Home"
+            android:name="com.aspirephile.studytimer.Home"
             android:label="@string/app_name"
             android:theme="@style/AppHomeTheme" >
             <intent-filter>
@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.reubenjohn.studytimer.preferences.Preferences"
+            android:name="com.aspirephile.studytimer.preferences.Preferencess"
             android:label="@string/activity_title_preferences" >
             <intent-filter>
                 <action android:name="com.reubenjohn.studytimer.PREFERENCES" />
@@ -34,7 +34,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.reubenjohn.studytimer.session.setup.SessionSetup" >
+        <activity android:name="com.aspirephile.studytimer.session.setup.SessionSetup" >
             <intent-filter>
                 <action android:name="com.reubenjohn.studytimer.CREATE_SESSION" />
 
@@ -42,17 +42,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.reubenjohn.studytimer.session.SessionComplete"
+            android:name="com.aspirephile.studytimer.session.SessionComplete"
             android:label="@string/activity_title_session_complete"
             android:theme="@style/SessionCompleteTheme" >
         </activity>
         <activity
-            android:name="com.reubenjohn.studytimer.welcome.Welcome"
+            android:name="com.aspirephile.studytimer.welcome.Welcome"
             android:label="@string/activity_title_welcome" >
-        </activity>
-        <activity
-            android:name="com.reubenjohn.studytimer.session.setup.SessionSetup"
-            android:label="@string/title_activity_session_setup" >
         </activity>
     </application>
 

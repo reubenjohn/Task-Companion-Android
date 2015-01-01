@@ -23,7 +23,7 @@
     <string name="intitial_accurate_time">00:00.000</string>
     <string name="sample_lap">17</string>
     <string name="empty_lap_adapter">No laps</string>
-    <string name="package_name">com.reubenjohn.studytimer</string>
+    <string name="package_name">com.aspirephile.studytimer</string>
     <string name="preferences">Preferences</string>
     <string name="l_target_time_picker">Pick your ideal lap time</string>
     <string name="session_reset_title">Reset session</string>
