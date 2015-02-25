@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.aspirephile.studytimer.R;
 import com.aspirephile.studytimer.preferences.STSP;
 import com.aspirephile.studytimer.sound.SoundManager;
 import com.aspirephile.studytimer.timming.Time;
@@ -44,6 +43,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 	public static class defaults {
 		public static long lapDuration = 5000;
 		public static int totalLaps = 20;
+		public static final long sessionDuration = lapDuration * totalLaps;
 		public static long elapse = 0;
 		public static long totalElapse = 0;
 
@@ -74,11 +74,29 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 
 	public static class prefs {
 		public static final long minLapDuration = 1000;
+		public static final int totalLapsLongPressIterationDelay = 100;
 		public static int minLaps = 5;
 		public static int maxLaps = 1000;
 	}
 
+	public static class props {
+
+		public static final int splashScreenDuration = 500;
+	}
+
+	public static class files {
+
+		public static final String appPrefs = "appPrefs";
+
+	}
+
 	public static class keys {
+		public static class prefs {
+
+			public static final String firstRun = "firstRun";
+
+		}
+
 		public static class settings {
 			public static class sounds {
 				public static final String lap_progress = "key_sounds_lap_progress_switch";
@@ -90,12 +108,15 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
 		public static class extras {
 			public static final String session_complete_proceedings = "session_complete_proceedings";
 			public static final String first_run = "first_run";
+			public static final String firstRunCompleted = null;
 		}
 	}
 
 	public static class codes {
 		public static class request {
-			public static int welcome = 2045;
+			public static final int welcome = 2045;
+			public static final int home = 4153;
+			public static final int sessionSetup = 5764;
 		}
 
 	}

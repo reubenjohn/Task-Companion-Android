@@ -79,5 +79,6 @@
     <string name="title_activity_session_setup">Session Setup</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_splash">Splash</string>
 
 </resources>

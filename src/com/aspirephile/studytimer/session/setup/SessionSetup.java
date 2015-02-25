@@ -4,14 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.studytimer.R;
 
 public class SessionSetup extends ActionBarActivity {
+	Logger l = new Logger(SessionSetup.class);
 
 	SessionSetupFragment sessionSetupF;
 
@@ -39,15 +40,25 @@ public class SessionSetup extends ActionBarActivity {
 
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem menu) {
-			Log.d("StudyTimer", "Action item clicked");
-			Intent result = new Intent();
-			Bundle sessionInfo = sessionSetupF.getSessionParams()
-					.getBundledSessionParams();
-			result.putExtras(sessionInfo);
-			setResult(RESULT_OK, result);
-			finish();
+			l.d("Action item clicked");
+			switch (menu.getItemId()) {
+			case R.id.mi_session_create_done:
+
+				Intent result = new Intent();
+				Bundle sessionInfo = sessionSetupF.getSessionParams()
+						.getBundledSessionParams();
+				result.putExtras(sessionInfo);
+				setResult(RESULT_OK, result);
+				finish();
+				break;
+
+			default:
+				l.w("Unknown Option selected");
+				break;
+			}
 			return false;
 		}
+
 	};
 
 	@Override

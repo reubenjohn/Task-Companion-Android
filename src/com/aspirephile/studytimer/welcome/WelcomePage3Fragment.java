@@ -1,14 +1,11 @@
 package com.aspirephile.studytimer.welcome;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
-import com.aspirephile.studytimer.Home;
 import com.aspirephile.studytimer.R;
 
 public class WelcomePage3Fragment extends Fragment {
@@ -26,17 +23,6 @@ public class WelcomePage3Fragment extends Fragment {
 	}
 
 	private void initializeFeilds() {
-
-		OnClickListener finishButtonListener = new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Play welcome sound
-				Intent startHome = new Intent(getActivity(), Home.class);
-				getActivity().startActivity(startHome);
-				getActivity().finish();
-			}
-		};
 	}
 
 	private void bridgeXML(View v) {

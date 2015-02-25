@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="21" />
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
@@ -16,9 +16,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.aspirephile.studytimer.Home"
-            android:label="@string/app_name"
-            android:theme="@style/AppHomeTheme" >
+            android:name="com.aspirephile.studytimer.splash.Splash"
+            android:label="@string/title_activity_splash" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +25,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.aspirephile.studytimer.preferences.Preferencess"
+            android:name=".Home"
+            android:label="@string/app_name"
+            android:theme="@style/AppHomeTheme" >
+        </activity>
+        <activity
+            android:name=".preferences.Preferencess"
             android:label="@string/activity_title_preferences" >
             <intent-filter>
                 <action android:name="com.reubenjohn.studytimer.PREFERENCES" />
@@ -34,7 +38,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.aspirephile.studytimer.session.setup.SessionSetup" >
+        <activity android:name=".session.setup.SessionSetup" >
             <intent-filter>
                 <action android:name="com.reubenjohn.studytimer.CREATE_SESSION" />
 
@@ -42,12 +46,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.aspirephile.studytimer.session.SessionComplete"
+            android:name=".session.SessionComplete"
             android:label="@string/activity_title_session_complete"
             android:theme="@style/SessionCompleteTheme" >
         </activity>
         <activity
-            android:name="com.aspirephile.studytimer.welcome.Welcome"
+            android:name=".welcome.Welcome"
             android:label="@string/activity_title_welcome" >
         </activity>
     </application>

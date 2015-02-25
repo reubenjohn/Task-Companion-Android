@@ -14,12 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.studytimer.R;
 import com.aspirephile.studytimer.StudyTimer;
 import com.aspirephile.studytimer.session.setup.SessionSetup;
 import com.aspirephile.studytimer.session.setup.SessionSetupFragment;
 
 public class WelcomeFragment extends Fragment implements OnPageChangeListener {
+	Logger l = new Logger(WelcomeFragment.class);
 
 	private WelcomePageAdapter welcomePageAdapter;
 	ViewPager welcomePager;
@@ -74,9 +76,10 @@ public class WelcomeFragment extends Fragment implements OnPageChangeListener {
 		Intent intent;
 		switch (position) {
 		case 3:
-			intent=new Intent(getActivity(), SessionSetup.class);
+			intent = new Intent(getActivity(), SessionSetup.class);
 			intent.putExtra(StudyTimer.keys.extras.first_run, true);
-			getActivity().startActivity(intent);
+			getActivity().startActivityForResult(intent,
+					StudyTimer.codes.request.sessionSetup);
 			break;
 
 		default:
@@ -105,4 +108,5 @@ public class WelcomeFragment extends Fragment implements OnPageChangeListener {
 			break;
 		}
 	}
+
 }
