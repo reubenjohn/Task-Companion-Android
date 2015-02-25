@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+
+    -->
+    <style name="AppBaseTheme" parent="Theme.AppCompat">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+        
+    <style name="SessionCreateTheme" parent="Theme.AppCompat.Light">
+        <item name="actionModeCloseDrawable">@drawable/ic_action_cancel</item>
+    </style>
+    
+    <style name="SessionCompleteTheme" parent="AppBaseTheme">
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="AppHomeTheme" parent="AppBaseTheme">
+
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@color/blue_light</item>
+    </style>
+
+    <style name="TimeStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:text">@string/intitial_time</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">25sp</item>
+    </style>
+
+    <style name="TimeStyleLabel" parent="TimeStyle">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="LightFragment">
+        <item name="android:background">@color/blue_light</item>
+    </style>
+
+    <style name="ToggleButton">
+        <item name="android:text">@string/start</item>
+        <item name="android:textColor">@drawable/toggle_text_color</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textOff">@string/start</item>
+        <item name="android:textOn">@string/stop</item>
+    </style>
+
+    <style name="LapButton">
+        <item name="android:text">@string/lap</item>
+        <item name="android:textColor">@color/blue_light</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ResetButton">
+        <item name="android:text">@string/reset</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget"></style>
+
+    <style name="Widget.ProgressBar">
+        <item name="android:indeterminateOnly">true</item>
+        <item name="android:indeterminateBehavior">repeat</item>
+        <item name="android:indeterminateDuration">3500</item>
+        <item name="android:minWidth">48dip</item>
+        <item name="android:maxWidth">48dip</item>
+        <item name="android:minHeight">48dip</item>
+        <item name="android:maxHeight">48dip</item>
+    </style>
+
+    <style name="Widget.ProgressBar.Vertical">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/vertical_progress_bar</item>
+        <item name="android:indeterminateDrawable">@android:drawable/progress_indeterminate_horizontal</item>
+        <item name="android:minWidth">1dip</item>
+        <item name="android:maxWidth">12dip</item>
+    </style>
+
+</resources>
