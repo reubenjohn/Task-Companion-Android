@@ -1,42 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    <!-- Shared styles -->
+    <style name="AppBaseTheme" parent="Theme.AppCompat" />
 
-    -->
-    <style name="AppBaseTheme" parent="Theme.AppCompat">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
-    </style>
-        
-    <style name="SessionCreateTheme" parent="Theme.AppCompat.Light">
-        <item name="actionModeCloseDrawable">@drawable/ic_action_cancel</item>
-    </style>
-    
-    <style name="SessionCompleteTheme" parent="AppBaseTheme">
+    <style name="AppTheme" parent="AppBaseTheme" />
+
+    <style name="FullscreenTheme" parent="AppBaseTheme">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style>
-
+    <!-- Activity styles -->
     <style name="AppHomeTheme" parent="AppBaseTheme">
 
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:windowBackground">@color/black</item>
     </style>
 
-    <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@color/blue_light</item>
+    <style name="SessionCreateTheme" parent="Theme.AppCompat.Light">
+        <item name="actionModeCloseDrawable">@drawable/ic_action_cancel</item>
     </style>
 
+    <style name="SessionCompleteTheme" parent="AppBaseTheme" />
+
+    <style name="SplashTheme" parent="FullscreenTheme" />
+
+    <!-- View styles -->
     <style name="TimeStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
@@ -49,10 +40,6 @@
 
     <style name="TimeStyleLabel" parent="TimeStyle">
         <item name="android:textSize">15sp</item>
-    </style>
-
-    <style name="LightFragment">
-        <item name="android:background">@color/blue_light</item>
     </style>
 
     <style name="ToggleButton">
@@ -78,7 +65,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="Widget"></style>
+    <style name="Widget" />
 
     <style name="Widget.ProgressBar">
         <item name="android:indeterminateOnly">true</item>
@@ -93,7 +80,9 @@
     <style name="Widget.ProgressBar.Vertical">
         <item name="android:indeterminateOnly">false</item>
         <item name="android:progressDrawable">@drawable/vertical_progress_bar</item>
-        <item name="android:indeterminateDrawable">@android:drawable/progress_indeterminate_horizontal</item>
+        <item name="android:indeterminateDrawable">
+            @android:drawable/progress_indeterminate_horizontal
+        </item>
         <item name="android:minWidth">1dip</item>
         <item name="android:maxWidth">12dip</item>
     </style>
