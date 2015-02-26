@@ -4,80 +4,91 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.studytimer.R;
 
 public class SessionSetup extends ActionBarActivity {
+    Logger l = new Logger(SessionSetup.class);
 
-	SessionSetupFragment sessionSetupF;
+    SessionSetupFragment sessionSetupF;
 
-	ActionMode sessionCreateActionMode;
-	private ActionMode.Callback sessionCreateActionModeCallBack = new ActionMode.Callback() {
+    ActionMode sessionCreateActionMode;
+    private ActionMode.Callback sessionCreateActionModeCallBack = new ActionMode.Callback() {
 
-		@Override
-		public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-			return false;
-		}
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
 
-		@Override
-		public void onDestroyActionMode(ActionMode mode) {
-			Intent result = new Intent();
-			setResult(RESULT_CANCELED, result);
-			finish();
-		}
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            Intent result = new Intent();
+            setResult(RESULT_CANCELED, result);
+            finish();
+        }
 
-		@Override
-		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-			MenuInflater inflater = mode.getMenuInflater();
-			inflater.inflate(R.menu.context_create_session, menu);
-			return true;
-		}
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.context_create_session, menu);
+            return true;
+        }
 
-		@Override
-		public boolean onActionItemClicked(ActionMode mode, MenuItem menu) {
-			Log.d("StudyTimer", "Action item clicked");
-			Intent result = new Intent();
-			Bundle sessionInfo = sessionSetupF.getSessionParams()
-					.getBundledSessionParams();
-			result.putExtras(sessionInfo);
-			setResult(RESULT_OK, result);
-			finish();
-			return false;
-		}
-	};
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem menu) {
+            l.d("Action item clicked");
+            switch (menu.getItemId()) {
+                case R.id.mi_session_create_done:
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.session_setup);
+                    Intent result = new Intent();
+                    Bundle sessionInfo = sessionSetupF.getSessionParams()
+                            .getBundledSessionParams();
+                    result.putExtras(sessionInfo);
+                    setResult(RESULT_OK, result);
+                    finish();
+                    break;
 
-		initializeFeilds();
+                default:
+                    l.w("Unknown Option selected");
+                    break;
+            }
+            return false;
+        }
 
-		if (savedInstanceState == null) {
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.fl_session_setup, sessionSetupF).commit();
-		}
-	}
+    };
 
-	private void initializeFeilds() {
-		sessionSetupF = new SessionSetupFragment();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.session_setup);
 
-		if (sessionCreateActionMode == null) {
-			sessionCreateActionMode = SessionSetup.this
-					.startSupportActionMode(sessionCreateActionModeCallBack);
-		}
-	}
+        initializeFeilds();
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fl_session_setup, sessionSetupF).commit();
+        }
+    }
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.session_setup, menu);
-		return true;
-	}
+    private void initializeFeilds() {
+        sessionSetupF = new SessionSetupFragment();
+
+        if (sessionCreateActionMode == null) {
+            sessionCreateActionMode = SessionSetup.this
+                    .startSupportActionMode(sessionCreateActionModeCallBack);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.session_setup, menu);
+        return true;
+    }
 
 }

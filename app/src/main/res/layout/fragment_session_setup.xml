@@ -2,24 +2,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.aspirephile.studytimer.SessionSetup$PlaceholderFragment" >
+    tools:context="com.aspirephile.studytimer.SessionSetup$PlaceholderFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/TextView02"
@@ -42,7 +43,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/b_total_laps_increment"
@@ -56,7 +57,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:inputType="number" >
+                android:inputType="number"
+                android:maxLength="3">
 
                 <requestFocus />
             </EditText>
@@ -79,10 +81,10 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_session_setup_duration"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <android.support.v4.view.PagerTitleStrip
-         android:id="@+id/pager_title_strip"
+            android:id="@+id/pager_title_strip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </android.support.v4.view.ViewPager>

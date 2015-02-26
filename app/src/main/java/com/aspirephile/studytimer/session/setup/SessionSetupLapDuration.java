@@ -7,51 +7,81 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TimePicker;
 
+import com.aspirephile.shared.debug.Logger;
+import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.studytimer.R;
-import com.aspirephile.studytimer.debug.NullPointerAsserter;
+import com.aspirephile.studytimer.StudyTimer;
 import com.aspirephile.studytimer.timming.Time;
 
 public class SessionSetupLapDuration extends Fragment {
-	NullPointerAsserter asserter = new NullPointerAsserter(
-			SessionSetupFragment.class.getName());
+    Logger l = new Logger(SessionSetupLapDuration.class);
+    NullPointerAsserter asserter = new NullPointerAsserter(
+            SessionSetupFragment.class.getName());
 
-	TimePicker lapDuration;
+    TimePicker lapDuration;
+    long duration;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		if (container == null)
-			return null;
+    public SessionSetupLapDuration() {
+        l.d("Constructing " + SessionSetupLapDuration.class.toString());
+        duration = StudyTimer.defaults.lapDuration;
+        if (asserter.assertPointer(duration))
+            l.d("Construction successful");
+    }
 
-		View v = inflater.inflate(R.layout.fragment_lap_duration, container,
-				false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        l.d("Creating " + SessionSetupLapDuration.class.toString());
+        if (container == null)
+            return null;
 
-		bridgeXML(v);
-		initializeFeilds();
+        l.d("Inflating view");
+        View v = inflater.inflate(R.layout.fragment_lap_duration, container,
+                false);
 
-		return v;
-	}
+        bridgeXML(v);
+        initializeFeilds();
 
-	private void bridgeXML(View v) {
-		lapDuration = (TimePicker) v.findViewById(R.id.tp_lap_duration);
-		
-		asserter.assertPointer(lapDuration);
-	}
+        return v;
+    }
 
-	public long getLapDuration() {
-		return Time.getTimeInMilliseconds(0, 0, lapDuration.getCurrentHour(),
-				lapDuration.getCurrentMinute(), 0);
-	}
+    private void bridgeXML(View v) {
+        l.d("Bridging XML");
+        lapDuration = (TimePicker) v.findViewById(R.id.tp_lap_duration);
 
-	private void initializeFeilds() {
-		lapDuration.setIs24HourView(true);
-	}
+        if (asserter.assertPointer(lapDuration))
+            l.d("Bridging sucessful");
+    }
 
-	public void setLapDuration(long lapDuration) {
-		Time duration = new Time(lapDuration);
-		this.lapDuration.setCurrentHour((int) duration.getHours());
-		this.lapDuration.setCurrentMinute((int) duration.getMinutes());
+    public long getLapDuration() {
+        if (asserter.assertPointer(lapDuration))
+            return Time.getTimeInMilliseconds(0, 0,
+                    lapDuration.getCurrentHour(),
+                    lapDuration.getCurrentMinute(), 0);
+        else
+            return StudyTimer.defaults.lapDuration;
+    }
 
-	}
+    public void setLapDuration(long lapDuration) {
+        l.d("Setting lap duration to " + lapDuration);
+        duration = lapDuration;
+        updateLapDuration();
+    }
+
+    private void initializeFeilds() {
+        l.d("Initializing feilds");
+        lapDuration.setIs24HourView(true);
+        updateLapDuration();
+    }
+
+    private void updateLapDuration() {
+        l.d("Updating lap duration to " + duration);
+        if (asserter.assertPointer(this.lapDuration)) {
+            this.lapDuration.setCurrentHour((int) Time.getMinutes(duration));
+            this.lapDuration.setCurrentMinute((int) Time.getSeconds(duration));
+            l.d("Update successful");
+        }
+
+    }
 
 }
