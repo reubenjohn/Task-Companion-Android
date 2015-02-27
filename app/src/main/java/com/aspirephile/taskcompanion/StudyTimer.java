@@ -14,11 +14,11 @@ import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.taskcompanion.preferences.STSP;
 import com.aspirephile.taskcompanion.sound.SoundManager;
-import com.aspirephile.taskcompanion.timming.Time;
-import com.aspirephile.taskcompanion.timming.Timer;
-import com.aspirephile.taskcompanion.timming.frametimer.FrameIntervalListener;
-import com.aspirephile.taskcompanion.timming.frametimer.FrameTimer;
-import com.aspirephile.taskcompanion.timming.frametimer.FrameTimerListener;
+import com.aspirephile.shared.timming.Time;
+import com.aspirephile.shared.timming.Timer;
+import com.aspirephile.shared.timming.frametimer.FrameIntervalListener;
+import com.aspirephile.shared.timming.frametimer.FrameTimer;
+import com.aspirephile.shared.timming.frametimer.FrameTimerListener;
 
 public class StudyTimer implements FrameTimerListener, OnClickListener {
     public static final boolean debugMode = false;

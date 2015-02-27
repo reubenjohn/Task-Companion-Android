@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.aspirephile.taskcompanion.timming.Time;
+import com.aspirephile.shared.timming.Time;
 
 public class StudyTimerDBManager {
 

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.aspirephile.taskcompanion.R;
 import com.aspirephile.taskcompanion.data.StudyTimerDBManager.LapDBProperties;
-import com.aspirephile.taskcompanion.timming.Time;
+import com.aspirephile.shared.timming.Time;
 
 public class LapsCursorAdapter extends CursorAdapter {
 

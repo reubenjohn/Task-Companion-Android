@@ -38,7 +38,7 @@ import com.aspirephile.shared.senses.ShakeSense;
 import com.aspirephile.taskcompanion.preferences.STSP;
 import com.aspirephile.taskcompanion.session.SessionComplete;
 import com.aspirephile.taskcompanion.session.setup.SessionSetup;
-import com.aspirephile.taskcompanion.timming.Time;
+import com.aspirephile.shared.timming.Time;
 import com.aspirephile.taskcompanion.util.SystemUiHider;
 import com.aspirephile.taskcompanion.welcome.Welcome;
 

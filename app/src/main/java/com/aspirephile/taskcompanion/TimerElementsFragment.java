@@ -16,9 +16,9 @@ import android.widget.TimePicker;
 
 import com.aspirephile.shared.ui.TimerView;
 import com.aspirephile.taskcompanion.preferences.STSP;
-import com.aspirephile.taskcompanion.timming.Time;
-import com.aspirephile.taskcompanion.timming.frametimer.FrameTimer;
-import com.aspirephile.taskcompanion.timming.frametimer.FrameTimerListener;
+import com.aspirephile.shared.timming.Time;
+import com.aspirephile.shared.timming.frametimer.FrameTimer;
+import com.aspirephile.shared.timming.frametimer.FrameTimerListener;
 
 public class TimerElementsFragment extends Fragment implements
         android.view.View.OnClickListener, FrameTimerListener {

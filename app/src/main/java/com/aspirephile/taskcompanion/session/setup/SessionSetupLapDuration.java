@@ -11,7 +11,7 @@ import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.taskcompanion.R;
 import com.aspirephile.taskcompanion.StudyTimer;
-import com.aspirephile.taskcompanion.timming.Time;
+import com.aspirephile.shared.timming.Time;
 
 public class SessionSetupLapDuration extends Fragment {
     Logger l = new Logger(SessionSetupLapDuration.class);
