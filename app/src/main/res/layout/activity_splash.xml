@@ -3,6 +3,6 @@
     android:id="@+id/splash_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.aspirephile.studytimer.splash.Splash"
+    tools:context="com.aspirephile.taskcompanion.splash.Splash"
     tools:ignore="MergeRootFrame" />
 

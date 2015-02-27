@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.aspirephile.studytimer.Home" >
+    tools:context="com.aspirephile.taskcompanion.Home" >
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
             android:id="@+id/filler_background"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            class="com.aspirephile.studytimer.FillerFragment"
+            class="com.aspirephile.taskcompanion.FillerFragment"
             tools:layout="@layout/filler" />
 
         <LinearLayout
@@ -38,7 +38,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="11"
-                    class="com.aspirephile.studytimer.TimerElementsFragment"
+                    class="com.aspirephile.taskcompanion.TimerElementsFragment"
                     tools:ignore="NestedWeights"
                     tools:layout="@layout/timer_elements_fragment" />
 
@@ -55,14 +55,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        class="com.aspirephile.studytimer.EmptyLapFragment"
+                        class="com.aspirephile.taskcompanion.EmptyLapFragment"
                         tools:layout="@layout/empty_lap_fragment" />
 
                     <fragment
                         android:id="@+id/home_laps"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        class="com.aspirephile.studytimer.LapsFragment"
+                        class="com.aspirephile.taskcompanion.LapsFragment"
                         tools:layout="@layout/laps_fragment" />
 
                 </FrameLayout>

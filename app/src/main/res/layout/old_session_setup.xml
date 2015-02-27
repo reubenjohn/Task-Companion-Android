@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/com.aspirephile.studytimer"
+    xmlns:app="http://schemas.android.com/apk/res/com.aspirephile.taskcompanion"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -90,7 +90,7 @@
                                     android:orientation="horizontal"
                                     android:padding="8dp" >
 
-                                    <com.aspirephile.studytimer.util.kankan.widget.WheelView
+                                    <com.aspirephile.taskcompanion.util.kankan.widget.WheelView
                                         android:id="@+id/wv_total_lap_picker_digit100"
                                         android:layout_width="0dp"
                                         android:layout_height="fill_parent"
@@ -98,14 +98,14 @@
                                         app:layout_gravity="center"
                                         tools:ignore="NestedWeights" />
 
-                                    <com.aspirephile.studytimer.util.kankan.widget.WheelView
+                                    <com.aspirephile.taskcompanion.util.kankan.widget.WheelView
                                         android:id="@+id/wv_total_lap_picker_digit10"
                                         android:layout_width="0dp"
                                         android:layout_height="fill_parent"
                                         android:layout_weight="1"
                                         app:layout_gravity="center" />
 
-                                    <com.aspirephile.studytimer.util.kankan.widget.WheelView
+                                    <com.aspirephile.taskcompanion.util.kankan.widget.WheelView
                                         android:id="@+id/wv_total_lap_picker_digit1"
                                         android:layout_width="0dp"
                                         android:layout_height="fill_parent"
