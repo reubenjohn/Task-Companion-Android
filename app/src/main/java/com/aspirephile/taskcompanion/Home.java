@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.view.ActionMode;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,21 +34,19 @@ import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.shared.senses.OnShakeListener;
 import com.aspirephile.shared.senses.ShakeSense;
+import com.aspirephile.shared.timming.Time;
 import com.aspirephile.taskcompanion.preferences.STSP;
 import com.aspirephile.taskcompanion.session.SessionComplete;
 import com.aspirephile.taskcompanion.session.setup.SessionSetup;
-import com.aspirephile.shared.timming.Time;
 import com.aspirephile.taskcompanion.util.SystemUiHider;
 import com.aspirephile.taskcompanion.welcome.Welcome;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- * @see SystemUiHider
- */
 public class Home extends ActionBarActivity implements OnClickListener,
         OnCheckedChangeListener, OnShakeListener {
+    private Logger l = new Logger(Home.class);
+    private NullPointerAsserter asserter = new NullPointerAsserter(l);
+    private SystemUiHider mSystemUiHider;
+
     ToggleButton toggle;
     Button lap;
     View controlsView, contentView;
@@ -127,9 +124,6 @@ public class Home extends ActionBarActivity implements OnClickListener,
             return false;
         }
     };
-    private Logger l = new Logger(Home.class);
-    private NullPointerAsserter asserter = new NullPointerAsserter(l);
-    private SystemUiHider mSystemUiHider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -140,7 +134,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
         handleWelcomes();
         bridgeXML();
         setListeners();
-        initializeFeilds();
+        initializeFields();
 
     }
 
@@ -165,7 +159,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        Log.d("StudyTimer", "Home created");
+        l.d("Home created");
         if (Preferences.AUTO_HIDE)
             delayedHide(Preferences.AUTO_HIDE_DELAY_MILLIS);
     }
@@ -198,7 +192,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
     }
 
     public void resetSession() {
-        // TODO transition the lapsCountainer layout change during reset
+        // TODO transition the lapsContainer layout change during reset
         T.resetSession();
         toggle.setChecked(false);
         lapsContainer.setLayoutParams(lapsContainerParams
@@ -266,7 +260,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
         contentView.setOnClickListener(this);
     }
 
-    protected void initializeFeilds() {
+    protected void initializeFields() {
         setupSystemUIHider();
 
         sessionPrefs = getSharedPreferences(StudyTimer.files.sessionInfo, Context.MODE_PRIVATE);
@@ -411,16 +405,15 @@ public class Home extends ActionBarActivity implements OnClickListener,
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("StudyTimer",
+        l.i(
                 "Result received with requestResult:" + requestCode
                         + " resultCode:" + resultCode + " and data->"
-                        + Boolean.toString(data != null));
+                        + Boolean.toString(asserter.assertPointerQuietly(data)));
         if (resultCode == RESULT_OK && asserter.assertPointer(data)) {
-            assert data != null;
             switch (requestCode) {
                 case codes.createSession:
-                    Bundle sessionInfo = sessionInfo = data.getExtras();
-                    if (sessionInfo != null) {
+                    Bundle sessionInfo = data.getExtras();
+                    if (asserter.assertPointer(sessionInfo)) {
                         T.createNewSessionFromBundle(sessionInfo);
                     } else l.e("Could not create session! No extras found!");
                     break;
@@ -437,16 +430,16 @@ public class Home extends ActionBarActivity implements OnClickListener,
 
             }
         } else
-            Log.e("Home", "Home Activity result received result code: " + resultCode + " and intent data: " + data);
+            l.e("Home Activity result received result code: " + resultCode + " and intent data: " + data);
     }
 
     public void startNewSession() {
         if (T.isRunning()) {
             toggle.setChecked(false);
-            Log.d("Home", "Toggle button set to false");
+            l.d("Toggle button set to false");
             T.stop();
         }
-        Log.d("StudyTimer", "launching CREATE_SESSION");
+        l.d("launching CREATE_SESSION");
         Intent i = new Intent(Home.this, SessionSetup.class);
         startActivityForResult(i, codes.createSession);
         // showSessionDialog(isLargeLayoutBoolean);
@@ -474,7 +467,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
      * DialogInterface.OnClickListener() {
      *
      * @Override public void onClick(DialogInterface dialog, int which) { switch
-     * (which) { case 0: Log.d("StudyTimer", "Set target time dialog");
+     * (which) { case 0: l.d("Set target time dialog");
      * timePicker.show(); break; case 1:
      *
      * break; case 2: break; } } }).show();
@@ -558,7 +551,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
         }
 
         public LayoutParams getLayoutParams(boolean hasLaps) {
-            Log.d("StudyTuner", "sending lapsLayoutParames with landscape: "
+            l.d("sending lapsLayoutParames with landscape: "
                     + lapsContainerParams.cached_isLandscape + " and hasLaps: "
                     + hasLaps);
             if (hasLaps) {

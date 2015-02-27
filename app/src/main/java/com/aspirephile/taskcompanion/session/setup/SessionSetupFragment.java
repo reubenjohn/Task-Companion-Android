@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,7 +51,7 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
         View v = inflater.inflate(R.layout.fragment_session_setup, container,
                 false);
         bridgeXML(v);
-        initializeFeilds();
+        initializeFields();
         return v;
     }
 
@@ -70,7 +69,7 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
             l.d("Bridging successful");
     }
 
-    private void initializeFeilds() {
+    private void initializeFields() {
         l.d("Initializing feilds");
         lapDuration = new SessionSetupLapDuration();
         sessionDuration = new SessionSetupSessionDuration();
@@ -95,7 +94,8 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
     }
 
     private void setLapDuration(long lapDuration) {
-        this.lapDuration.setLapDuration(lapDuration);
+        if (asserter.assertPointer(this.lapDuration))
+            this.lapDuration.setLapDuration(lapDuration);
 
     }
 
@@ -106,8 +106,8 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
                 StudyTimer.defaults.lapDuration);
         int totalLaps = sessionPrefs.getInt(STSP.keys.totalLaps,
                 defaults.totalLaps);
-        Log.d("SessionSetupFragment", "Retreived lapDuration=" + lapDuration);
-        Log.d("SessionSetupFragment", "Retreived totalLaps=" + totalLaps);
+        l.d("Retrieved lapDuration=" + lapDuration);
+        l.d("Retrieved totalLaps=" + totalLaps);
         SessionParams params = new SessionParams();
         params.setLapDuration(lapDuration);
         params.setTotalLaps(totalLaps);
@@ -171,7 +171,7 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
                 totalLaps.setText(String.valueOf(decrementTotalLaps()));
                 break;
             default:
-                Log.d(SessionSetupFragment.class.getName(), "Unknown item clicked");
+                l.d("Unknown item clicked");
                 break;
         }
     }

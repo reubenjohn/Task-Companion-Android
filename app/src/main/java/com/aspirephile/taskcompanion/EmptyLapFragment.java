@@ -13,7 +13,7 @@ public class EmptyLapFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.empty_lap_fragment, container, false);
 		bridgeXML(v);
-		initalizeFeilds();
+		initializeFields();
 		generateListView();
 		return v;
 	}
@@ -22,7 +22,7 @@ public class EmptyLapFragment extends Fragment {
 		
 	}
 
-	public void initalizeFeilds() {
+	public void initializeFields() {
 		
 	}
 

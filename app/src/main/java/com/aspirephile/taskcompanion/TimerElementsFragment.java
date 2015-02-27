@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +13,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.aspirephile.shared.ui.TimerView;
-import com.aspirephile.taskcompanion.preferences.STSP;
+import com.aspirephile.shared.debug.Logger;
+import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.shared.timming.Time;
 import com.aspirephile.shared.timming.frametimer.FrameTimer;
 import com.aspirephile.shared.timming.frametimer.FrameTimerListener;
+import com.aspirephile.shared.ui.TimerView;
+import com.aspirephile.taskcompanion.preferences.STSP;
 
+@SuppressWarnings("UnusedDeclaration")
 public class TimerElementsFragment extends Fragment implements
         android.view.View.OnClickListener, FrameTimerListener {
+    private static Logger l = new Logger(TimerElementsFragment.class);
+    private NullPointerAsserter asserter = new NullPointerAsserter(l);
 
     public TimerElementsListener timerElementsListener;
     int cached_lapCount;
@@ -44,9 +48,9 @@ public class TimerElementsFragment extends Fragment implements
         View v = inflater.inflate(R.layout.timer_elements_fragment, container,
                 false);
         bridgeXML(v);
-        initializeFeilds();
+        initializeFields();
         setOnClickListeners();
-        if (savedInstanceState != null) {
+        if (asserter.assertPointerQuietly(savedInstanceState)) {
 
             if (savedInstanceState.getBoolean(STSP.keys.running, false)) {
                 start();
@@ -94,7 +98,7 @@ public class TimerElementsFragment extends Fragment implements
     }
 
     public void lap(int lapCount) {
-        Log.d("TimerElements", "TimerElements lap called");
+        l.d("TimerElements lap called");
         elapse.reset();
         if (running) {
             elapse.start();
@@ -105,7 +109,7 @@ public class TimerElementsFragment extends Fragment implements
     }
 
     public void reset() {
-        Log.d("StudyTimer", "TimerElements reset");
+        l.d("TimerElements reset");
         elapse.reset();
         totalElapse.reset();
         cached_lapCount = 0;
@@ -117,7 +121,7 @@ public class TimerElementsFragment extends Fragment implements
     }
 
     public void setTotalElapse(long elapse) {
-        Log.d("StudyTimer", "Total elapse set: " + elapse);
+        l.d("Total elapse set: " + elapse);
         totalElapse.setElapse(elapse);
         timerElementsListener.onTotalElapseSetManually(elapse);
     }
@@ -145,7 +149,7 @@ public class TimerElementsFragment extends Fragment implements
     }
 
     public void setAverage(int average) {
-        Log.d("TimerElementsFragment", "setAverage called");
+        l.d("setAverage called");
         this.average = average;
         if (!realTimeAverageEnabled)
             tv_average.setText(Time.getFormattedTime("%MM:%SS.%sss", average));
@@ -171,7 +175,7 @@ public class TimerElementsFragment extends Fragment implements
         layout.elapse = (LinearLayout) v.findViewById(R.id.ll_elapse);
     }
 
-    protected void initializeFeilds() {
+    protected void initializeFields() {
         TimerViewFactory factory = new TimerViewFactory();
         factory.setDefaultFormat("%MM:%SS.%s");
 
@@ -238,7 +242,7 @@ public class TimerElementsFragment extends Fragment implements
      */
     @Override
     public void onClick(View v) {
-        Log.d("StudyTimer", "Timer Element clicked");
+        l.d("Timer Element clicked");
         if (mode == StudyTimer.Mode.SESSION_EDIT) {
             switch (v.getId()) {
                 case R.id.ll_total_elapse:
@@ -252,7 +256,7 @@ public class TimerElementsFragment extends Fragment implements
     }
 
     private void showElapseDialog() {
-        Log.d("StudyTimer", "Showing elapse dialog");
+        l.d("Showing elapse dialog");
         Time time = new Time(getElapse());
         TimePickerDialog picker = new TimePickerDialog(getActivity(),
                 new OnTimeSetListener() {
@@ -275,7 +279,7 @@ public class TimerElementsFragment extends Fragment implements
     }
 
     /*
-     * private void showTotalElapseDialog() { Log.d("StudyTimer",
+     * private void showTotalElapseDialog() { l.d("StudyTimer",
      * "Showing total elapse dialog"); TimePickerDialog picker = new
      * TimePickerDialog(getActivity(), new OnTimeSetListener() { int callCount =
      * 0;
@@ -293,10 +297,10 @@ public class TimerElementsFragment extends Fragment implements
             case NORMAL:
             case SESSION_EDIT:
                 this.mode = mode;
-                Log.d("StudyTimer", "TimerElement mode set: " + mode);
+                l.d("TimerElement mode set: " + mode);
                 break;
             default:
-                Log.d("StudyTimer", "Unknown TimerElement mode request received: "
+                l.d("Unknown TimerElement mode request received: "
                         + mode);
         }
     }
@@ -310,7 +314,7 @@ public class TimerElementsFragment extends Fragment implements
         if (newTarget > 0) {
             setTargetTime(newTarget);
         } else {
-            Log.d("StudyTimer", "New target is invalid or not set");
+            l.d("New target is invalid or not set");
         }
     }
 
@@ -323,7 +327,7 @@ public class TimerElementsFragment extends Fragment implements
     }
 
     public void loadSessionFromBundle(Bundle sessionInfo) {
-        Log.d("StudyTimer", "Timer Elements resume state: running=" + running);
+        l.d("Timer Elements resume state: running=" + running);
         elapse.setElapse(sessionInfo.getLong(STSP.keys.elapse, 0));
         totalElapse.setElapse(sessionInfo.getLong(STSP.keys.totalElapse, 0));
         targetTime = sessionInfo.getLong(STSP.keys.targetTime,

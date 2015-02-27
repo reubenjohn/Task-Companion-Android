@@ -30,14 +30,14 @@
             android:name=".preferences.Preferences"
             android:label="@string/activity_title_preferences">
             <intent-filter>
-                <action android:name="com.reubenjohn.studytimer.PREFERENCES" />
+                <action android:name="com.aspirephile.taskcompanion.PREFERENCES" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".session.setup.SessionSetup">
             <intent-filter>
-                <action android:name="com.reubenjohn.studytimer.CREATE_SESSION" />
+                <action android:name="com.aspirephile.taskcompanion.CREATE_SESSION" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

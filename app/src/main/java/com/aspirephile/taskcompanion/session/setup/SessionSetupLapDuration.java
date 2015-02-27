@@ -40,7 +40,7 @@ public class SessionSetupLapDuration extends Fragment {
                 false);
 
         bridgeXML(v);
-        initializeFeilds();
+        initializeFields();
 
         return v;
     }
@@ -68,7 +68,7 @@ public class SessionSetupLapDuration extends Fragment {
         updateLapDuration();
     }
 
-    private void initializeFeilds() {
+    private void initializeFields() {
         l.d("Initializing feilds");
         lapDuration.setIs24HourView(true);
         updateLapDuration();

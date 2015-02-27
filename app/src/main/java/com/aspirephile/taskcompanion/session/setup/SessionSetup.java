@@ -66,7 +66,7 @@ public class SessionSetup extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.session_setup);
 
-        initializeFeilds();
+        initializeFields();
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -74,7 +74,7 @@ public class SessionSetup extends ActionBarActivity {
         }
     }
 
-    private void initializeFeilds() {
+    private void initializeFields() {
         sessionSetupF = new SessionSetupFragment();
 
         if (sessionCreateActionMode == null) {

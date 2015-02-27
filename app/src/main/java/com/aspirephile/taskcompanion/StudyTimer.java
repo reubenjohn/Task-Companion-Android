@@ -6,21 +6,25 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
-import com.aspirephile.taskcompanion.preferences.STSP;
-import com.aspirephile.taskcompanion.sound.SoundManager;
 import com.aspirephile.shared.timming.Time;
 import com.aspirephile.shared.timming.Timer;
 import com.aspirephile.shared.timming.frametimer.FrameIntervalListener;
+import com.aspirephile.shared.timming.frametimer.FrameIntervalListenerContainer;
 import com.aspirephile.shared.timming.frametimer.FrameTimer;
 import com.aspirephile.shared.timming.frametimer.FrameTimerListener;
+import com.aspirephile.taskcompanion.preferences.STSP;
+import com.aspirephile.taskcompanion.sound.SoundManager;
 
+@SuppressWarnings("UnusedDeclaration")
 public class StudyTimer implements FrameTimerListener, OnClickListener {
+    private static Logger l = new Logger(StudyTimer.class);
+    private NullPointerAsserter asserter = new NullPointerAsserter(l);
+
     public static final boolean debugMode = false;
     public FrameTimer framer;
     public TimerElementsFragment timerElements;
@@ -30,8 +34,6 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
     FillerFragment filler;
     FragmentManager fragM;
     SoundManager soundManager;
-    private Logger l = new Logger(StudyTimer.class);
-    private NullPointerAsserter asserter = new NullPointerAsserter(l);
     private SharedPreferences sessionPrefs;
     private Mode mode;
 
@@ -40,7 +42,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
         framer = new FrameTimer(thisHandler);
         bridgeFragments(fragM);
         this.sessionPrefs = sessionPrefs;
-        initializeFeilds();
+        initializeFields();
         setListeners(framer);
         runtime.start();
     }
@@ -54,13 +56,10 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
                 .findFragmentById(R.id.home_empty_laps);
         filler = (FillerFragment) fragM
                 .findFragmentById(R.id.filler_background);
-        assert timerElements != null;
-        assert lapsF != null;
-        assert emptyLap != null;
-        assert filler != null;
+        l.bridgeXML(asserter.assertPointer(timerElements, lapsF, emptyLap, filler));
     }
 
-    protected void initializeFeilds() {
+    protected void initializeFields() {
         timerElements.initializeLapCount(lapsF.getLapCount());
         timerElements.setAverage(lapsF.getAverage());
         Time.setDefaultFormat("%MM:%SS.%s");
@@ -100,7 +99,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
     }
 
     public boolean lap() {
-        Log.d("StudyTimer", "StudyTimer lap called");
+        l.d("StudyTimer lap called");
         if (asserter.assertPointer(lapsF)) {
             lapsF.addLap(timerElements.getElapse());
             setNoLapMode(lapsF.hasNoLaps());
@@ -122,7 +121,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
     }
 
     public void resetSession() {
-        Log.d("StudyTimer", "reset() called");
+        l.d("reset() called");
         stop();
         timerElements.reset();
         lapsF.resetSession();
@@ -139,14 +138,14 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
     }
 
     public void onPause() {
-        Log.d("StudyTimer", "onPause() called");
+        l.d("onPause() called");
         framer.stop();
         runtime.stop();
         saveSessionToPrefs();
     }
 
     public void onResume(boolean resumeFromPreviousState) {
-        Log.d("StudyTimer", "onResume() with resumeFromPreviousState "
+        l.d("onResume() with resumeFromPreviousState "
                 + resumeFromPreviousState);
         if (resumeFromPreviousState)
             loadSessionFromBundle(getSessionBundleFromPrefs());
@@ -161,7 +160,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
     }
 
     public void logStatus() {
-        Log.i("StudyTimer", getStatus());
+        l.i(getStatus());
     }
 
     public String getStatus() {
@@ -171,21 +170,21 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
     }
 
     public String getTimerElementsStatus() {
-        if (timerElements != null)
+        if (asserter.assertPointerQuietly(timerElements))
             return "Basic timer elements[OK]";
         else
             return "Basic timer elements[BAD]";
     }
 
     public String getDBFStatus() {
-        if (lapsF != null)
+        if (asserter.assertPointerQuietly(lapsF))
             return "Lap elements[OK]: Laps[" + lapsF.getLapCount() + "]";
         else
             return "Lap elements[BAD]";
     }
 
     public String getLapsFStatus() {
-        if (lapsF != null)
+        if (asserter.assertPointerQuietly(lapsF))
             return "Lap elements[OK]: Laps[" + lapsF.getLapCount() + "]";
         else
             return "Lap elements[BAD]";
@@ -206,26 +205,27 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
         if (status) {
             if (!logging.status) {
                 logging.status = true;
-                logging.listener = new FrameIntervalListener() {
-                    @Override
-                    public void OnFrameReached() {
-                        logStatus();
-                    }
-                };
-                framer.addFrameReachListener(logging.listener,
-                        logging.loggingInterval);
+                if (asserter.assertPointer(logging.listenerContainer)) {
+                    logging.listenerContainer = new FrameIntervalListenerContainer(new FrameIntervalListener() {
+                        @Override
+                        public void OnFrameReached() {
+                            logStatus();
+                        }
+                    }, logging.loggingInterval);
+                }
+                framer.addFrameIntervalListenerContainer(logging.listenerContainer);
             }
         } else {
             if (logging.status) {
-                if (logging.listener != null)
+                if (asserter.assertPointer(logging.listenerContainer))
                     logging.status = false;
-                framer.removeFrameIntervalListenerContainer(logging.listener);
+                framer.removeFrameIntervalListenerContainer(logging.listenerContainer);
             }
         }
     }
 
     public void setTargetTime(long timeInMilliseconds) {
-        Log.d("StudyTimer", "Target time set: " + timeInMilliseconds);
+        l.d("Target time set: " + timeInMilliseconds);
         timerElements.setTargetTime(timeInMilliseconds);
         if (isRunning()) {
             SoundManager.removeAllLapProgressSounds();
@@ -273,7 +273,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
         }
     }
 
-    public void setNoLapMode(boolean noLaps) {
+    public void setNoLapMode(boolean noLaps) /**/{
         FragmentTransaction transaction = fragM.beginTransaction();
         if (noLaps) {
             transaction.hide(lapsF);
@@ -295,28 +295,28 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
         switch (mode) {
             case NORMAL:
             case SESSION_EDIT:
-                Log.d("StudyTimer", "Setting mode to: " + mode);
+                l.d("Setting mode to: " + mode);
                 timerElements.setMode(mode);
                 break;
             default:
-                Log.d("StudyTimer", "Unknown TimerElement mode request received: "
+                l.d("Unknown TimerElement mode request received: "
                         + mode);
         }
     }
 
     public void createNewSessionFromBundle(Bundle sessionInfo) {
         saveSessionToPrefsFromBundle(sessionInfo);
-        Log.i("Sessions", "Creating new session:");
+        l.i("Creating new session:");
         resetSession();
         lapsF.createNewSession(sessionInfo);
         timerElements.createNewSession(sessionInfo);
-        Log.i("Sessions", "Session created");
+        l.i("Session created");
     }
 
     public void putSessionInfoToBundle(Bundle sessionInfo) {
         timerElements.putSessionInfo(sessionInfo);
         lapsF.putSessionInfo(sessionInfo);
-        Log.i("Sessions", "Session info put into bundle");
+        l.i("Session info put into bundle");
     }
 
     public void saveSessionToPrefsFromBundle(Bundle sessionInfo) {
@@ -336,7 +336,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
         editor.putBoolean(STSP.keys.lapTimeUp,
                 sessionInfo.getBoolean(STSP.keys.lapTimeUp, false));
         editor.commit();
-        Log.i("Sessions", "Session saved to shared session preferences from "
+        l.i("Session saved to shared session preferences from "
                 + sessionInfo.toString());
     }
 
@@ -344,7 +344,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
         Bundle sessionInfo = new Bundle();
         timerElements.putSessionInfo(sessionInfo);
         lapsF.putSessionInfo(sessionInfo);
-        Log.i("Sessions",
+        l.i(
                 "Session bundled and about to be parceled to save session to preferences from bundle");
         saveSessionToPrefsFromBundle(sessionInfo);
     }
@@ -365,7 +365,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
                         System.currentTimeMillis()));
         sessionInfo.putBoolean(STSP.keys.lapTimeUp,
                 sessionPrefs.getBoolean(STSP.keys.lapTimeUp, false));
-        Log.i("Sessions", "Session loaded from shared session preferences to "
+        l.i("Session loaded from shared session preferences to "
                 + sessionInfo.toString());
         return sessionInfo;
     }
@@ -373,7 +373,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
     public void loadSessionFromBundle(Bundle sessionInfo) {
         timerElements.loadSessionFromBundle(sessionInfo);
         lapsF.loadSessionFromBundle(sessionInfo);
-        Log.i("Sessions", "Session loaded from bundle");
+        l.i("Session loaded from bundle");
     }
 
     public enum Mode {
@@ -401,7 +401,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
             totalLaps = resources.getInteger(R.integer.total_laps);
             sounds.lapProgress = resources
                     .getBoolean(R.bool.lap_progress_sounds);
-            Log.d("StudyTimer", "Loaded defaults from rescources->"
+            l.d("Loaded defaults from rescources->"
                     + getConcatenatedDefaults());
         }
 
@@ -468,7 +468,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
     private static class logging {
         static boolean status = false;
         static int loggingInterval = 300;
-        static FrameIntervalListener listener = null;
+        static FrameIntervalListenerContainer listenerContainer = null;
     }
 
     public class SessionInfo {

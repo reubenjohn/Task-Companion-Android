@@ -30,11 +30,11 @@ public class SessionSetupSessionDuration extends Fragment {
         View v = inflater.inflate(R.layout.fragment_session_duration,
                 container, false);
         bridgeXML(v);
-        initializeFeilds();
+        initializeFields();
         return v;
     }
 
-    private void initializeFeilds() {
+    private void initializeFields() {
         l.d("Initializing feilds");
         durationPicker.setIs24HourView(true);
         updateSessionDuration();

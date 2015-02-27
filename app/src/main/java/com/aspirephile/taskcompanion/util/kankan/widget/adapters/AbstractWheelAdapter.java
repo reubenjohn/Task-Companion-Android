@@ -23,13 +23,20 @@ import android.database.DataSetObserver;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.aspirephile.shared.debug.Logger;
+import com.aspirephile.shared.debug.NullPointerAsserter;
+
 /**
  * Abstract Wheel adapter.
  */
+@SuppressWarnings("UnusedDeclaration")
 public abstract class AbstractWheelAdapter implements WheelViewAdapter {
+    Logger l = new Logger(AbstractWheelTextAdapter.class);
+    private NullPointerAsserter asserter = new NullPointerAsserter(l);
+
     // Observers
     private List<DataSetObserver> datasetObservers;
-    
+
     @Override
     public View getEmptyItem(View convertView, ViewGroup parent) {
         return null;
@@ -38,34 +45,34 @@ public abstract class AbstractWheelAdapter implements WheelViewAdapter {
     @Override
     public void registerDataSetObserver(DataSetObserver observer) {
         if (datasetObservers == null) {
-            datasetObservers = new LinkedList<DataSetObserver>();
+            datasetObservers = new LinkedList<>();
         }
         datasetObservers.add(observer);
     }
 
     @Override
     public void unregisterDataSetObserver(DataSetObserver observer) {
-        if (datasetObservers != null) {
+        if (asserter.assertPointer(datasetObservers)) {
             datasetObservers.remove(observer);
         }
     }
-    
+
     /**
      * Notifies observers about data changing
      */
     protected void notifyDataChangedEvent() {
-        if (datasetObservers != null) {
+        if (asserter.assertPointer(datasetObservers)) {
             for (DataSetObserver observer : datasetObservers) {
                 observer.onChanged();
             }
         }
     }
-    
+
     /**
      * Notifies observers about invalidating data
      */
     protected void notifyDataInvalidatedEvent() {
-        if (datasetObservers != null) {
+        if (asserter.assertPointer(datasetObservers)) {
             for (DataSetObserver observer : datasetObservers) {
                 observer.onInvalidated();
             }

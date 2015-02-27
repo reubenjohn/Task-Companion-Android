@@ -2,17 +2,22 @@ package com.aspirephile.taskcompanion;
 
 import android.widget.TextView;
 
+import com.aspirephile.shared.debug.Logger;
+import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.shared.ui.TimerView;
 
+@SuppressWarnings("UnusedDeclaration")
 public class TimerViewFactory {
     private String defaultFormat = "%MM:%SS.%s";
+    Logger l = new Logger(TimerViewFactory.class);
+    private NullPointerAsserter asserter = new NullPointerAsserter(l);
 
     public String getDefaultFormat() {
         return defaultFormat;
     }
 
     public void setDefaultFormat(String format) {
-        if (format != null)
+        if (asserter.assertPointer(defaultFormat))
             defaultFormat = format;
     }
 

@@ -17,11 +17,11 @@ public class WelcomePage3Fragment extends Fragment {
             return null;
         View v = inflater.inflate(R.layout.fragment_welcome_page_3, container,
                 false);
-        initializeFeilds();
+        initializeFields();
         return v;
     }
 
-    private void initializeFeilds() {
+    private void initializeFields() {
     }
 
 }

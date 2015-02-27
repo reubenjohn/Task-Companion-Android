@@ -69,7 +69,7 @@ public class WelcomeFragment extends Fragment implements OnPageChangeListener {
     }
 
     public void setOnPageChangeListener(OnPageChangeListener listener) {
-        Log.d(SessionSetupFragment.class.getName(), "OnPageChangelistener set");
+        l.d("OnPageChangelistener set");
         welcomePager.setOnPageChangeListener(listener);
 
     }
@@ -86,7 +86,7 @@ public class WelcomeFragment extends Fragment implements OnPageChangeListener {
                 break;
 
             default:
-                Log.d(SessionSetup.class.getName(), "No action for selected page: "
+                l.d("No action for selected page: "
                         + position);
                 break;
         }
@@ -106,7 +106,7 @@ public class WelcomeFragment extends Fragment implements OnPageChangeListener {
                 break;
 
             default:
-                Log.d(SessionSetup.class.getName(), "No action for page state: "
+                l.d("No action for page state: "
                         + state);
                 break;
         }

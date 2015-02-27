@@ -18,35 +18,47 @@ package com.aspirephile.taskcompanion.util.kankan.widget.adapters;
 
 import android.content.Context;
 
+import com.aspirephile.shared.debug.Logger;
+import com.aspirephile.shared.debug.NullPointerAsserter;
+
 /**
  * Numeric Wheel adapter.
  */
 public class NumericWheelAdapter extends AbstractWheelTextAdapter {
-    
-    /** The default min value */
+    Logger l = new Logger(NumericWheelAdapter.class);
+    private NullPointerAsserter asserter = new NullPointerAsserter(l);
+
+    /**
+     * The default min value
+     */
     public static final int DEFAULT_MAX_VALUE = 9;
 
-    /** The default max value */
+    /**
+     * The default max value
+     */
     private static final int DEFAULT_MIN_VALUE = 0;
-    
+
     // Values
     private int minValue;
     private int maxValue;
-    
+
     // format
     private String format;
-    
+
     /**
      * Constructor
+     *
      * @param context the current context
      */
+    @SuppressWarnings("UnusedDeclaration")
     public NumericWheelAdapter(Context context) {
         this(context, DEFAULT_MIN_VALUE, DEFAULT_MAX_VALUE);
     }
 
     /**
      * Constructor
-     * @param context the current context
+     *
+     * @param context  the current context
      * @param minValue the wheel min value
      * @param maxValue the wheel max value
      */
@@ -56,14 +68,15 @@ public class NumericWheelAdapter extends AbstractWheelTextAdapter {
 
     /**
      * Constructor
-     * @param context the current context
+     *
+     * @param context  the current context
      * @param minValue the wheel min value
      * @param maxValue the wheel max value
-     * @param format the format string
+     * @param format   the format string
      */
     public NumericWheelAdapter(Context context, int minValue, int maxValue, String format) {
         super(context);
-        
+
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.format = format;
@@ -73,7 +86,7 @@ public class NumericWheelAdapter extends AbstractWheelTextAdapter {
     public CharSequence getItemText(int index) {
         if (index >= 0 && index < getItemsCount()) {
             int value = minValue + index;
-            return format != null ? String.format(format, value) : Integer.toString(value);
+            return asserter.assertPointerQuietly(format) ? String.format(format, value) : Integer.toString(value);
         }
         return null;
     }
@@ -81,5 +94,5 @@ public class NumericWheelAdapter extends AbstractWheelTextAdapter {
     @Override
     public int getItemsCount() {
         return maxValue - minValue + 1;
-    }    
+    }
 }
