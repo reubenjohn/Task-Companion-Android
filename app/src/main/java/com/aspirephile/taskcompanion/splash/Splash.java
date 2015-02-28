@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.ui.FullScreenManager;
 import com.aspirephile.taskcompanion.R;
-import com.aspirephile.taskcompanion.StudyTimer;
+import com.aspirephile.taskcompanion.TaskCompanion;
 
 public class Splash extends ActionBarActivity {
     Logger l = new Logger(Splash.class);
@@ -57,9 +57,9 @@ public class Splash extends ActionBarActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case StudyTimer.codes.request.welcome:
+                case TaskCompanion.codes.request.welcome:
                     boolean firstRunSuccessResult = data.getExtras().getBoolean(
-                            StudyTimer.keys.extras.firstRunCompleted);
+                            TaskCompanion.keys.extras.firstRunCompleted);
                     l.d("First run result received with success: "
                             + firstRunSuccessResult);
                     splashF.sendFirstRunCompletionResult(firstRunSuccessResult);
@@ -72,7 +72,7 @@ public class Splash extends ActionBarActivity {
         } else {
             l.e("Bad result code received");
             switch (requestCode) {
-                case StudyTimer.codes.request.welcome:
+                case TaskCompanion.codes.request.welcome:
                     l.d("Welcome activity result received with bad result code, thus finishing Splash activity");
                     finish();
                     break;

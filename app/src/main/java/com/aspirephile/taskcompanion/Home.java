@@ -50,7 +50,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
     ToggleButton toggle;
     Button lap;
     View controlsView, contentView;
-    StudyTimer T;
+    TaskCompanion T;
     Handler tHandler = new Handler();
     Boolean isLargeLayoutBoolean = false;
     FrameLayout lapsContainer;
@@ -80,7 +80,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             sessionEditActionMode = null;
-            T.setMode(StudyTimer.Mode.NORMAL);
+            T.setMode(TaskCompanion.Mode.NORMAL);
         }
 
         @Override
@@ -144,7 +144,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
         if (preferences.getBoolean(STSP.keys.firstRun, STSP.defaults.firstRun)) {
             startActivity(new Intent(Home.this, Welcome.class));
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(STSP.keys.firstRun, StudyTimer.debugMode);
+            editor.putBoolean(STSP.keys.firstRun, TaskCompanion.debugMode);
             editor.commit();
         }
     }
@@ -263,9 +263,9 @@ public class Home extends ActionBarActivity implements OnClickListener,
     protected void initializeFields() {
         setupSystemUIHider();
 
-        sessionPrefs = getSharedPreferences(StudyTimer.files.sessionInfo, Context.MODE_PRIVATE);
-        StudyTimer.defaults.loadFromResources(getResources());
-        T = new StudyTimer(tHandler, getSupportFragmentManager(),
+        sessionPrefs = getSharedPreferences(TaskCompanion.files.sessionInfo, Context.MODE_PRIVATE);
+        TaskCompanion.defaults.loadFromResources(getResources());
+        T = new TaskCompanion(tHandler, getSupportFragmentManager(),
                 getSharedPreferences("session", Context.MODE_PRIVATE));
         T.setStatusLogging(true);
         isLargeLayoutBoolean = getResources().getBoolean(R.bool.large_layout);
@@ -274,7 +274,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
         lapsContainer.setLayoutParams(lapsContainerParams
                 .getLayoutParams(!T.lapsF.hasNoLaps()));
 
-        Time currentTarget = new Time(StudyTimer.defaults.lapDuration);
+        Time currentTarget = new Time(TaskCompanion.defaults.lapDuration);
         targetDialog = new TimePickerDialog(Home.this, new OnTimeSetListener() {
             short callCount = 0;
 
@@ -396,7 +396,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
                 if (sessionEditActionMode == null)
                     sessionEditActionMode = Home.this
                             .startSupportActionMode(sessionEditActionModeCallBack);
-                T.setMode(StudyTimer.Mode.SESSION_EDIT);
+                T.setMode(TaskCompanion.Mode.SESSION_EDIT);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -419,7 +419,7 @@ public class Home extends ActionBarActivity implements OnClickListener,
                     break;
                 case codes.completeSession:
                     switch (data.getIntExtra(
-                            StudyTimer.keys.extras.session_complete_proceedings,
+                            TaskCompanion.keys.extras.session_complete_proceedings,
                             R.id.b_repeat_session)) {
                         case R.id.b_repeat_session:
                             resetScheduledForOnResume = true;
@@ -516,10 +516,10 @@ public class Home extends ActionBarActivity implements OnClickListener,
                 .getDefaultSharedPreferences(getApplicationContext());
         Bundle settings = new Bundle();
 
-        settings.putBoolean(StudyTimer.keys.settings.sounds.lap_progress,
+        settings.putBoolean(TaskCompanion.keys.settings.sounds.lap_progress,
                 preferences.getBoolean(
-                        StudyTimer.keys.settings.sounds.lap_progress,
-                        StudyTimer.defaults.sounds.lapProgress));
+                        TaskCompanion.keys.settings.sounds.lap_progress,
+                        TaskCompanion.defaults.sounds.lapProgress));
     }
 
     public enum FullScreenStatus {

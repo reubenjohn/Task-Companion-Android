@@ -2,7 +2,7 @@ package com.aspirephile.taskcompanion.data;
 
 import android.os.Bundle;
 
-import com.aspirephile.taskcompanion.StudyTimer;
+import com.aspirephile.taskcompanion.TaskCompanion;
 import com.aspirephile.taskcompanion.preferences.STSP;
 
 public class SessionParams {
@@ -10,20 +10,20 @@ public class SessionParams {
 	long lapDuration;
 
 	public SessionParams() {
-		totalLaps = StudyTimer.defaults.totalLaps;
-		lapDuration = StudyTimer.defaults.lapDuration;
+		totalLaps = TaskCompanion.defaults.totalLaps;
+		lapDuration = TaskCompanion.defaults.lapDuration;
 	}
 
 	public void setTotalLaps(int totalLaps) {
-		if (totalLaps <= StudyTimer.prefs.minLaps)
-			this.totalLaps = StudyTimer.prefs.minLaps;
-		else if (totalLaps >= StudyTimer.prefs.maxLaps)
-			this.totalLaps = StudyTimer.prefs.maxLaps;
+		if (totalLaps <= TaskCompanion.prefs.minLaps)
+			this.totalLaps = TaskCompanion.prefs.minLaps;
+		else if (totalLaps >= TaskCompanion.prefs.maxLaps)
+			this.totalLaps = TaskCompanion.prefs.maxLaps;
 	}
 
 	public void setLapDuration(long lapDuration) {
-		if (lapDuration < StudyTimer.prefs.minLapDuration)
-			this.lapDuration = StudyTimer.prefs.minLapDuration;
+		if (lapDuration < TaskCompanion.prefs.minLapDuration)
+			this.lapDuration = TaskCompanion.prefs.minLapDuration;
 		else
 			this.lapDuration = lapDuration;
 	}

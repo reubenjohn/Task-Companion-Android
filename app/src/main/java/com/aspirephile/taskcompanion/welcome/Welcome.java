@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentActivity;
 
 import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.taskcompanion.R;
-import com.aspirephile.taskcompanion.StudyTimer;
+import com.aspirephile.taskcompanion.TaskCompanion;
 
 public class Welcome extends FragmentActivity {
     Logger l = new Logger(Welcome.class);
@@ -47,9 +47,9 @@ public class Welcome extends FragmentActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
-                case StudyTimer.codes.request.sessionSetup:
+                case TaskCompanion.codes.request.sessionSetup:
                     boolean firstRunSuccessResult = data.getExtras().getBoolean(
-                            StudyTimer.keys.extras.firstRunCompleted);
+                            TaskCompanion.keys.extras.firstRunCompleted);
                     l.d("First run result received with success: "
                             + firstRunSuccessResult);
 
@@ -64,7 +64,7 @@ public class Welcome extends FragmentActivity {
         } else {
             l.e("Bad result code received");
             switch (requestCode) {
-                case StudyTimer.codes.request.sessionSetup:
+                case TaskCompanion.codes.request.sessionSetup:
                     l.d("Welcome activity result received with bad result code, thus finishing Splash activity");
                     finish();
                     break;

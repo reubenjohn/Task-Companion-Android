@@ -19,9 +19,9 @@ import android.widget.TextView;
 
 import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
-import com.aspirephile.taskcompanion.StudyTimer.defaults;
+import com.aspirephile.taskcompanion.TaskCompanion.defaults;
 import com.aspirephile.taskcompanion.data.LapsCursorAdapter;
-import com.aspirephile.taskcompanion.data.StudyTimerDBManager;
+import com.aspirephile.taskcompanion.data.TaskCompanionDBManager;
 import com.aspirephile.taskcompanion.preferences.STSP;
 
 import java.util.Locale;
@@ -33,8 +33,8 @@ public class LapsFragment extends Fragment implements
     private NullPointerAsserter asserter = new NullPointerAsserter(l);
 
     private LapsCursorAdapter adapter;
-    private StudyTimerDBManager STDB;
-    private StudyTimerDBManager.LapDBManager lapsDB;
+    private TaskCompanionDBManager STDB;
+    private TaskCompanionDBManager.LapDBManager lapsDB;
     ListView listView;
     TextView currentLap;
     ProgressBar lapProgress;
@@ -66,7 +66,7 @@ public class LapsFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.laps_fragment, container, false);
-        STDB = new StudyTimerDBManager(getActivity().getApplicationContext());
+        STDB = new TaskCompanionDBManager(getActivity().getApplicationContext());
         lapsDB = STDB.lapsDB.open();
         bridgeXML(v);
         initializeFields();
@@ -108,8 +108,8 @@ public class LapsFragment extends Fragment implements
         /*
          * adapter = new SimpleCursorAdapter(getActivity(),
 		 * R.layout.laps_list_item, cursor,
-		 * StudyTimerDBManager.LapDBProperties.columns,
-		 * StudyTimerDBManager.LapDBProperties.to);
+		 * TaskCompanionDBManager.LapDBProperties.columns,
+		 * TaskCompanionManager.LapDBProperties.to);
 		 */
         adapter = new LapsCursorAdapter(getActivity(), cursor, 0);
         listView.setAdapter(adapter);
@@ -149,7 +149,7 @@ public class LapsFragment extends Fragment implements
         } else {
             int lapUtteranceCount = getLapCount() + 1;
             CharSequence speech = Integer.toString(lapUtteranceCount);
-            if (getAverage() > StudyTimer.defaults.Speech.LapIncludedSpeech) {
+            if (getAverage() > TaskCompanion.defaults.Speech.LapIncludedSpeech) {
                 speech = "Lap " + speech;
             }
             l.d("About to speak: " + speech);

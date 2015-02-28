@@ -7,14 +7,14 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
 import com.aspirephile.shared.debug.Logger;
-import com.aspirephile.taskcompanion.StudyTimer;
+import com.aspirephile.taskcompanion.TaskCompanion;
 
 @SuppressWarnings("UnusedDeclaration")
 public class SoundManager {
     private static Logger l = new Logger(SoundManager.class);
 
     static WakeLock wakeLock;
-    StudyTimer T;
+    TaskCompanion T;
 
     public static class beepManager {
         private static boolean enabled = true;
@@ -29,11 +29,11 @@ public class SoundManager {
 
     }
 
-    public void initialize(Context context, StudyTimer T) {
+    public void initialize(Context context, TaskCompanion T) {
 
         wakeLock = ((PowerManager) context
                 .getSystemService(Context.POWER_SERVICE)).newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK, "StudyTimer running wakeLock");
+                PowerManager.PARTIAL_WAKE_LOCK, "TaskCompanion running wakeLock");
         beepManager.handler = new Handler();
         beepManager.player = new LapProgressSoundPool(context, wakeLock);
         this.T = T;
@@ -42,8 +42,8 @@ public class SoundManager {
     public void loadSettingsFromBundle(Bundle settings) {
 
         boolean newBeepEnabledValue = settings.getBoolean(
-                StudyTimer.keys.settings.sounds.lap_progress,
-                StudyTimer.defaults.sounds.lapProgress);
+                TaskCompanion.keys.settings.sounds.lap_progress,
+                TaskCompanion.defaults.sounds.lapProgress);
         if (newBeepEnabledValue != beepManager.enabled) {
             beepManager.enabled = newBeepEnabledValue;
             l.d("Lap progress sound setting changed to "

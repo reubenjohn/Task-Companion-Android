@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.taskcompanion.R;
-import com.aspirephile.taskcompanion.StudyTimer;
+import com.aspirephile.taskcompanion.TaskCompanion;
 import com.aspirephile.taskcompanion.util.SystemUiHider;
 
 /**
@@ -70,7 +70,7 @@ public class SessionComplete extends ActionBarActivity implements
             case R.id.b_new_session:
             case R.id.b_repeat_session:
                 result.putExtra(
-                        StudyTimer.keys.extras.session_complete_proceedings,
+                        TaskCompanion.keys.extras.session_complete_proceedings,
                         view.getId());
                 setResult(RESULT_OK, result);
                 break;

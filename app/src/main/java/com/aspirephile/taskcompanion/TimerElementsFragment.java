@@ -31,7 +31,7 @@ public class TimerElementsFragment extends Fragment implements
     int cached_lapCount;
     boolean realTimeAverageEnabled = true, running, lapTimeUp;
     long average;
-    private StudyTimer.Mode mode;
+    private TaskCompanion.Mode mode;
     private TextView tv_elapse, tv_total_elapse, tv_average, tv_eta;
     private TimerView elapse, totalElapse;
     private long targetTime;
@@ -116,7 +116,7 @@ public class TimerElementsFragment extends Fragment implements
         average = 0;
         targetTime = getActivity().getSharedPreferences(
                 STSP.fileNames.currentSession, Context.MODE_PRIVATE).getLong(
-                STSP.keys.targetTime, StudyTimer.defaults.lapDuration);
+                STSP.keys.targetTime, TaskCompanion.defaults.lapDuration);
         resetSavedData();
     }
 
@@ -243,7 +243,7 @@ public class TimerElementsFragment extends Fragment implements
     @Override
     public void onClick(View v) {
         l.d("Timer Element clicked");
-        if (mode == StudyTimer.Mode.SESSION_EDIT) {
+        if (mode == TaskCompanion.Mode.SESSION_EDIT) {
             switch (v.getId()) {
                 case R.id.ll_total_elapse:
                     // showTotalElapseDialog();
@@ -279,7 +279,7 @@ public class TimerElementsFragment extends Fragment implements
     }
 
     /*
-     * private void showTotalElapseDialog() { l.d("StudyTimer",
+     * private void showTotalElapseDialog() { l.d("TaskCompanion",
      * "Showing total elapse dialog"); TimePickerDialog picker = new
      * TimePickerDialog(getActivity(), new OnTimeSetListener() { int callCount =
      * 0;
@@ -292,7 +292,7 @@ public class TimerElementsFragment extends Fragment implements
      * picker.setMessage(getResources().getString(
      * R.string.session_edit_total_elapse_message)); picker.show(); }
      */
-    public void setMode(StudyTimer.Mode mode) {
+    public void setMode(TaskCompanion.Mode mode) {
         switch (mode) {
             case NORMAL:
             case SESSION_EDIT:
@@ -331,7 +331,7 @@ public class TimerElementsFragment extends Fragment implements
         elapse.setElapse(sessionInfo.getLong(STSP.keys.elapse, 0));
         totalElapse.setElapse(sessionInfo.getLong(STSP.keys.totalElapse, 0));
         targetTime = sessionInfo.getLong(STSP.keys.targetTime,
-                StudyTimer.defaults.lapDuration);
+                TaskCompanion.defaults.lapDuration);
         lapTimeUp = sessionInfo.getBoolean(STSP.keys.lapTimeUp, false);
         if (running) {
             elapse.setStartTime(sessionInfo.getLong(STSP.keys.stopTime, 0));

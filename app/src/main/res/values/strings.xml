@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">StudyTimer</string>
-    <string name="activity_title_welcome">StudyTimer</string>
+    <string name="app_name">TaskCompanion</string>
+    <string name="activity_title_welcome">TaskCompanion</string>
     <string name="activity_title_session_complete">Session complete</string>
     <string name="activity_title_preferences">Preferences</string>
     <string name="welcome">Welcome</string>
-    <string name="welcome_message">It looks like this may be your first time with StudyTimer!</string>
+    <string name="welcome_message">It looks like this may be your first time with TaskCompanion!</string>
     <string name="welcome_message_2">Let\'s get you comfortable</string>
     <string name="continue_arrows">></string>
     <string name="start">Start</string>

@@ -10,7 +10,7 @@ import android.widget.TimePicker;
 import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.taskcompanion.R;
-import com.aspirephile.taskcompanion.StudyTimer;
+import com.aspirephile.taskcompanion.TaskCompanion;
 import com.aspirephile.shared.timming.Time;
 
 public class SessionSetupLapDuration extends Fragment {
@@ -23,7 +23,7 @@ public class SessionSetupLapDuration extends Fragment {
 
     public SessionSetupLapDuration() {
         l.d("Constructing " + SessionSetupLapDuration.class.toString());
-        duration = StudyTimer.defaults.lapDuration;
+        duration = TaskCompanion.defaults.lapDuration;
         if (asserter.assertPointer(duration))
             l.d("Construction successful");
     }
@@ -59,7 +59,7 @@ public class SessionSetupLapDuration extends Fragment {
                     lapDuration.getCurrentHour(),
                     lapDuration.getCurrentMinute(), 0);
         else
-            return StudyTimer.defaults.lapDuration;
+            return TaskCompanion.defaults.lapDuration;
     }
 
     public void setLapDuration(long lapDuration) {

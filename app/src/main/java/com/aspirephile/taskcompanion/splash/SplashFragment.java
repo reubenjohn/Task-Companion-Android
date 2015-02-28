@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.aspirephile.shared.FirstRunManager;
 import com.aspirephile.taskcompanion.Home;
 import com.aspirephile.taskcompanion.R;
-import com.aspirephile.taskcompanion.StudyTimer;
+import com.aspirephile.taskcompanion.TaskCompanion;
 import com.aspirephile.taskcompanion.welcome.Welcome;
 
 public class SplashFragment extends Fragment {
@@ -27,19 +27,19 @@ public class SplashFragment extends Fragment {
     private void initializeFields() {
         firstRunManager = new FirstRunManager(getActivity());
         firstRunManager.firstRunConfig.setLaunchActivity(Welcome.class)
-                .setRequestCode(StudyTimer.codes.request.welcome)
+                .setRequestCode(TaskCompanion.codes.request.welcome)
                 .setTransitions(R.anim.slide_in, R.anim.slide_out);
         firstRunManager.subsequentRunConfig.setLaunchActivity(Home.class)
-                .setRequestCode(StudyTimer.codes.request.home)
+                .setRequestCode(TaskCompanion.codes.request.home)
                 .setTransitions(R.anim.slide_in, R.anim.slide_out);
-        firstRunManager.setBooleanKey(StudyTimer.keys.prefs.firstRun)
-                .setSharedPrefsName(StudyTimer.files.appPrefs);
+        firstRunManager.setBooleanKey(TaskCompanion.keys.prefs.firstRun)
+                .setSharedPrefsName(TaskCompanion.files.appPrefs);
     }
 
     @Override
     public void onResume() {
         firstRunManager
-                .scheduleNextActivity(StudyTimer.props.splashScreenDuration);
+                .scheduleNextActivity(TaskCompanion.props.splashScreenDuration);
         super.onResume();
     }
 

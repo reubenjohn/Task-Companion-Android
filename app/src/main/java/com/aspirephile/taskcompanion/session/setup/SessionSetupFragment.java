@@ -21,8 +21,8 @@ import android.widget.EditText;
 import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.taskcompanion.R;
-import com.aspirephile.taskcompanion.StudyTimer;
-import com.aspirephile.taskcompanion.StudyTimer.defaults;
+import com.aspirephile.taskcompanion.TaskCompanion;
+import com.aspirephile.taskcompanion.TaskCompanion.defaults;
 import com.aspirephile.taskcompanion.data.SessionParams;
 import com.aspirephile.taskcompanion.preferences.STSP;
 
@@ -81,7 +81,7 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
         totalLapsDecrement.setOnClickListener(this);
         totalLapsDecrement.setOnLongClickListener(this);
         totalLapsDecrement.setOnTouchListener(this);
-        totalLaps.setText(String.valueOf(StudyTimer.defaults.totalLaps));
+        totalLaps.setText(String.valueOf(TaskCompanion.defaults.totalLaps));
         initializePaging();
         applySessionParams(getSessionParamsFromPreferences());
     }
@@ -103,7 +103,7 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
         SharedPreferences sessionPrefs = getActivity().getSharedPreferences(
                 STSP.fileNames.currentSession, Context.MODE_PRIVATE);
         long lapDuration = sessionPrefs.getLong(STSP.keys.targetTime,
-                StudyTimer.defaults.lapDuration);
+                TaskCompanion.defaults.lapDuration);
         int totalLaps = sessionPrefs.getInt(STSP.keys.totalLaps,
                 defaults.totalLaps);
         l.d("Retrieved lapDuration=" + lapDuration);
@@ -139,24 +139,24 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
             processed = Integer.parseInt(raw);
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            processed = StudyTimer.defaults.totalLaps;
+            processed = TaskCompanion.defaults.totalLaps;
         } catch (Exception e) {
             e.printStackTrace();
-            processed = StudyTimer.defaults.totalLaps;
+            processed = TaskCompanion.defaults.totalLaps;
         }
-        if (processed < StudyTimer.prefs.minLaps)
-            return StudyTimer.prefs.minLaps;
-        if (processed > StudyTimer.prefs.maxLaps)
-            return StudyTimer.prefs.maxLaps;
+        if (processed < TaskCompanion.prefs.minLaps)
+            return TaskCompanion.prefs.minLaps;
+        if (processed > TaskCompanion.prefs.maxLaps)
+            return TaskCompanion.prefs.maxLaps;
         return processed;
 
     }
 
     private void setTotalLaps(int totalLaps) {
-        if (totalLaps <= StudyTimer.prefs.minLaps)
-            totalLaps = StudyTimer.prefs.minLaps;
-        else if (totalLaps >= StudyTimer.prefs.maxLaps)
-            totalLaps = StudyTimer.prefs.maxLaps;
+        if (totalLaps <= TaskCompanion.prefs.minLaps)
+            totalLaps = TaskCompanion.prefs.minLaps;
+        else if (totalLaps >= TaskCompanion.prefs.maxLaps)
+            totalLaps = TaskCompanion.prefs.maxLaps;
         this.totalLaps.setText(String.valueOf(totalLaps));
     }
 
@@ -215,8 +215,8 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
 
     private int decrementTotalLaps() {
         int currentTotalLaps = getTotalLaps();
-        if (currentTotalLaps <= StudyTimer.prefs.minLaps)
-            return StudyTimer.prefs.minLaps;
+        if (currentTotalLaps <= TaskCompanion.prefs.minLaps)
+            return TaskCompanion.prefs.minLaps;
         return --currentTotalLaps;
 
     }
@@ -224,8 +224,8 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
     private int incrementTotalLaps() {
 
         int currentTotalLaps = getTotalLaps();
-        if (currentTotalLaps >= StudyTimer.prefs.maxLaps)
-            return StudyTimer.prefs.maxLaps;
+        if (currentTotalLaps >= TaskCompanion.prefs.maxLaps)
+            return TaskCompanion.prefs.maxLaps;
         return ++currentTotalLaps;
 
     }
@@ -300,11 +300,11 @@ public class SessionSetupFragment extends Fragment implements OnClickListener,
                 totalLaps.setText(String.valueOf(incrementTotalLaps()));
                 totalLaps.setSelection(totalLaps.getText().length());
                 iterativeUpdateHandler.postDelayed(this,
-                        StudyTimer.prefs.totalLapsLongPressIterationDelay);
+                        TaskCompanion.prefs.totalLapsLongPressIterationDelay);
             } else if (mode == LapIteratorMode.DECREMENT) {
                 totalLaps.setText(String.valueOf(decrementTotalLaps()));
                 iterativeUpdateHandler.postDelayed(this,
-                        StudyTimer.prefs.totalLapsLongPressIterationDelay);
+                        TaskCompanion.prefs.totalLapsLongPressIterationDelay);
             }
 
         }

@@ -10,7 +10,7 @@ import android.widget.TimePicker;
 import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.taskcompanion.R;
-import com.aspirephile.taskcompanion.StudyTimer;
+import com.aspirephile.taskcompanion.TaskCompanion;
 import com.aspirephile.shared.timming.Time;
 
 public class SessionSetupSessionDuration extends Fragment {
@@ -60,7 +60,7 @@ public class SessionSetupSessionDuration extends Fragment {
                     durationPicker.getCurrentHour(),
                     durationPicker.getCurrentMinute(), 0, 0);
         else
-            return StudyTimer.defaults.getSessionDuration();
+            return TaskCompanion.defaults.getSessionDuration();
     }
 
     void setSessionDuration(long sessionDuration) {

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import android.view.ViewGroup;
 import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.taskcompanion.R;
-import com.aspirephile.taskcompanion.StudyTimer;
+import com.aspirephile.taskcompanion.TaskCompanion;
 import com.aspirephile.taskcompanion.session.setup.SessionSetup;
 import com.aspirephile.taskcompanion.session.setup.SessionSetupFragment;
 
@@ -80,9 +79,9 @@ public class WelcomeFragment extends Fragment implements OnPageChangeListener {
         switch (position) {
             case 3:
                 intent = new Intent(getActivity(), SessionSetup.class);
-                intent.putExtra(StudyTimer.keys.extras.first_run, true);
+                intent.putExtra(TaskCompanion.keys.extras.first_run, true);
                 getActivity().startActivityForResult(intent,
-                        StudyTimer.codes.request.sessionSetup);
+                        TaskCompanion.codes.request.sessionSetup);
                 break;
 
             default:

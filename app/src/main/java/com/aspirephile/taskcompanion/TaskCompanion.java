@@ -21,8 +21,8 @@ import com.aspirephile.taskcompanion.preferences.STSP;
 import com.aspirephile.taskcompanion.sound.SoundManager;
 
 @SuppressWarnings("UnusedDeclaration")
-public class StudyTimer implements FrameTimerListener, OnClickListener {
-    private static Logger l = new Logger(StudyTimer.class);
+public class TaskCompanion implements FrameTimerListener, OnClickListener {
+    private static Logger l = new Logger(TaskCompanion.class);
     private NullPointerAsserter asserter = new NullPointerAsserter(l);
 
     public static final boolean debugMode = false;
@@ -37,8 +37,8 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
     private SharedPreferences sessionPrefs;
     private Mode mode;
 
-    StudyTimer(Handler thisHandler, FragmentManager fragM,
-               SharedPreferences sessionPrefs) {
+    TaskCompanion(Handler thisHandler, FragmentManager fragM,
+                  SharedPreferences sessionPrefs) {
         framer = new FrameTimer(thisHandler);
         bridgeFragments(fragM);
         this.sessionPrefs = sessionPrefs;
@@ -99,7 +99,7 @@ public class StudyTimer implements FrameTimerListener, OnClickListener {
     }
 
     public boolean lap() {
-        l.d("StudyTimer lap called");
+        l.d("TaskCompanion lap called");
         if (asserter.assertPointer(lapsF)) {
             lapsF.addLap(timerElements.getElapse());
             setNoLapMode(lapsF.hasNoLaps());

@@ -1,4 +1,4 @@
-Study-Timer-Android
+Task-Companion-Android
 ===================
 
-Helps you keep pace with your target time. Android release of original Windows Study Timer (https://github.com/reubenjohn/study-timer)
+Task companion accompanies you, making sure you complete your tasks on time. Android release of our original Windows Study Timer (https://github.com/reubenjohn/study-timer)

@@ -11,20 +11,20 @@ import com.aspirephile.shared.debug.Logger;
 import com.aspirephile.shared.debug.NullPointerAsserter;
 import com.aspirephile.shared.timming.Time;
 
-public class StudyTimerDBManager {
-    private Logger l = new Logger(StudyTimerDBManager.class);
+public class TaskCompanionDBManager {
+    private Logger l = new Logger(TaskCompanionDBManager.class);
     private NullPointerAsserter asserter = new NullPointerAsserter(l);
 
     protected final Context context;
     public LapDBManager lapsDB;
 
-    public StudyTimerDBManager(Context context) {
+    public TaskCompanionDBManager(Context context) {
         this.context = context;
         lapsDB = new LapDBManager();
     }
 
     private static class properties {
-        public final static String DATABASE_NAME = "StudyTimer.db";
+        public final static String DATABASE_NAME = "TaskCompanion.db";
         public final static int DATABASE_VERSION = 3;
     }
 
@@ -241,7 +241,7 @@ public class StudyTimerDBManager {
         }
 
         public LapDBManager open() {
-            helper = new DBHelper(StudyTimerDBManager.this.context);
+            helper = new DBHelper(TaskCompanionDBManager.this.context);
             DB = helper.getWritableDatabase();
             return LapDBManager.this;
         }
