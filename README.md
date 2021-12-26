@@ -17,3 +17,15 @@ We hope to be able to enhance any task you do by creating a virtual companion th
  - Gaming features: Compete with friends, top the leaderboards and earn point for performance.
 
 This is the Android release of our original Windows Study Timer (https://github.com/reubenjohn/study-timer)
+
+**To Do**
+ - Add a Clock somewhere in the app ... maybe even have it integrated to work smartly with it!
+ - Display goal time
+ - method (keyboard button) to freeze the mouse (or consume all mouse clicks) to use a wireless mouse as a wireless button
+ - Display catchup time /lead time ((average time - goal time) * no of laps)
+ - reset button (do not reset goal time!) 
+ - save_state button turns red when progress is not saved and green when current state is saved
+ - Audio only plays on clicking not tapping key
+ - Display Elapsed time
+ - Play tone to notify "hurry up" or "keep going!" 
+ - Provide option to deactivate mouse to allow use of a wireless mouse as a portable button! 
